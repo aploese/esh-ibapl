@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+<parent>
+	<groupId>de.ibapl.esh</groupId>
+	<artifactId>ibapl-esh</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+</parent>
+	<artifactId>setup-karaf-esh</artifactId>
+
+	<name>Setup Karaf And ESH</name>
+	<packaging>pom</packaging>
+
+<build>
+		<plugins>
+<plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>run</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <karafDistribution>mvn:org.apache.karaf/apache-karaf/${karaf.version}/zip</karafDistribution>
+                            <keepRunning>false</keepRunning>
+                            <commands>
+                                <command>feature:repo-add mvn:org.eclipse.smarthome/esh-core/${esh.version}/xml/features</command>
+                                <command>feature:repo-add mvn:org.eclipse.smarthome/esh-ext/${esh.version}/xml/features</command>
+                                <command>feature:repo-add mvn:org.eclipse.smarthome/esh-tp/${esh.version}/xml/features</command>
+                                <command>feature:repo-add mvn:de.ibapl.esh/esh-ibapl-kar/${project.version}/xml/features</command>
+                            </commands>
+                            <deployProjectArtifact>false</deployProjectArtifact>
+                        </configuration>
+                    </execution>
+                </executions>
+</plugin>
+	
+		</plugins>
+	</build>
+
+	<dependencies>
+	</dependencies>
+</project>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.ibapl.esh</groupId>
+		<artifactId>ibapl-esh</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>esh-ibapl-kar</artifactId>
+
+	<name>ESH:IbApl:Kar</name>
+	<packaging>kar</packaging>
+
+	<properties>
+        <license.licenseResolver>${project.baseUri}/../src/license</license.licenseResolver>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>karaf-maven-plugin</artifactId>
+				<version>4.2.1</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- build> <plugins> <plugin> <groupId>org.apache.karaf.tooling</groupId> 
+		<artifactId>karaf-maven-plugin</artifactId> <version>4.2.1</version> <executions> 
+		<execution> <id>kar</id> <goals> <goal>kar</goal> </goals> <configuration> 
+		<!- - <classifier>my</classifier> - -> <featuresFile>${basedir}/src/features/features-repo.xml</featuresFile> 
+		</configuration> </execution> </executions> </plugin> </plugins> </build -->
+
+</project>
