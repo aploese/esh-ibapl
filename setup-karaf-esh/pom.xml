@@ -27,12 +27,13 @@
                         </goals>
                         <configuration>
                             <karafDistribution>mvn:org.apache.karaf/apache-karaf/${karaf.version}/zip</karafDistribution>
-                            <keepRunning>false</keepRunning>
+                            <keepRunning>true</keepRunning>
                             <commands>
                                 <command>feature:repo-add mvn:org.eclipse.smarthome/esh-core/${esh.version}/xml/features</command>
                                 <command>feature:repo-add mvn:org.eclipse.smarthome/esh-ext/${esh.version}/xml/features</command>
                                 <command>feature:repo-add mvn:org.eclipse.smarthome/esh-tp/${esh.version}/xml/features</command>
                                 <command>feature:repo-add mvn:de.ibapl.esh/esh-ibapl-kar/${project.version}/xml/features</command>
+                                <command>system:shutdown -h -f</command>
                             </commands>
                             <deployProjectArtifact>false</deployProjectArtifact>
                         </configuration>

@@ -20,6 +20,10 @@
 
 <features name="esh-ibapl-features-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
+    <feature name="de.ibapl.jnhw.libloader" version="${jnhw.version}">
+		<bundle >mvn:de.ibapl.jnhw/de.ibapl.jnhw.libloader/${jnhw.version}</bundle>
+    </feature>
+
     <feature name="de.ibapl.spsw.provider" version="${spsw.version}">
 	<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
 	<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.jniprovider/${spsw.version}</bundle>
