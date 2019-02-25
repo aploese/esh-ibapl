@@ -104,7 +104,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
             fhtThingHandler.put(rfh.getHousecode(), rfh);
             logger.info("Added FHT 80B " + rfh.getHousecode());
             try {
-                fhzAdapter.initFhtReporting(rfh.getHousecode());
+                if (fhzAdapter != null) {
+                    fhzAdapter.initFhtReporting(rfh.getHousecode());
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
