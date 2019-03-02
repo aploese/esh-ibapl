@@ -14,39 +14,39 @@
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0
   
-  SPDX-License-Identifier: EPL-2.0
-  #L%
-  -->
+SPDX-License-Identifier: EPL-2.0
+#L%
+-->
 
 <thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+                          xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-	<!-- Sample Thing Type -->
-	<thing-type id="em-1000-em">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge-cul" />
-		</supported-bridge-type-refs>
+    <!-- Sample Thing Type -->
+    <thing-type id="em-1000-em">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge-cul" />
+        </supported-bridge-type-refs>
 
-		<label>EM 1000 EM</label>
-		<description>Energy Measurement</description>
+        <label>EM 1000 EM</label>
+        <description>Energy Measurement</description>
 
-		<channels>
-			<channel id="energyTotal" typeId="energyMeasured" />
-			<channel id="power5Minutes" typeId="powerMeasured">
-				<label>Power 5 min</label>
-			</channel>
+        <channels>
+            <channel id="energyTotal" typeId="energyMeasured" />
+            <channel id="power5Minutes" typeId="powerMeasured">
+                <label>Power 5 min</label>
+            </channel>
             <channel id="maxPower5Minutes" typeId="powerMeasured">
                 <label>max Power 5 min</label>
             </channel>
-		</channels>
+        </channels>
 
-		<config-description>
-			<parameter name="address" type="integer">
-				<label>Address</label>
-				<description>The Address.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <config-description>
+            <parameter name="address" type="integer">
+                <label>Address</label>
+                <description>The Address.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 
 </thing:thing-descriptions>

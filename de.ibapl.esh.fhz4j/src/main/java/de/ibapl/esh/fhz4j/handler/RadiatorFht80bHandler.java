@@ -18,7 +18,6 @@ package de.ibapl.esh.fhz4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.*;
 
 import java.io.IOException;
@@ -54,14 +53,20 @@ import de.ibapl.fhz4j.protocol.fht.FhtTimeMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtTimesMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtValvePosMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtWarningMessage;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZonedDateTime;
+import org.eclipse.smarthome.core.library.types.DateTimeType;
 
 /**
- * The {@link RadiatorFht80bHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link RadiatorFht80bHandler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
 public class RadiatorFht80bHandler extends BaseThingHandler {
+
     protected ThingStatusDetail fht80HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
@@ -167,15 +172,91 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
                 break;
+            case CHANNEL_BATT_LOW:
+                if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
+                }
+                break;
+            case CHANNEL_MODE:
+                if (command instanceof StringType) {
+                    try {
+                        switch (((StringType) command).toString()) {
+                            case "AUTO":
+                                ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtModeAutoMessage(housecode);
+                                break;
+                            case "MANUAL":
+                                ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtModeManuMessage(housecode);
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Cant set mode to " + ((StringType) command).toString());
+                        }
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
+                }
+                break;
+            case CHANNEL_TEMPERATURE_MEASURED:
+                if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
+                }
+                break;
+            case CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP:
+                if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
+                }
+                break;
+            case CHANNEL_PARTY_END_TIME:
+                if (command instanceof StringType) {
+                    String value = command.toString();
+
+                    // TIME_FORMATTER.parse("12:00-13:00 15:00-18:00", new ParsePosition(0)).query(LocalTime::from);
+                    String val = value.substring(0, 5);
+                    final LocalTime toTime = TIME_NOT_SET.equals(val) ? null : TIME_FORMATTER.parse(val, LocalTime::from);
+                    LocalDateTime toDateTime = LocalDateTime.now();
+                    LocalTime nowTime = LocalTime.from(toDateTime);
+                    if (toTime.isBefore(nowTime)) {
+                        //it is tomorrow
+                        toDateTime = toDateTime.plusDays(1);
+                    }
+                    toDateTime = LocalDateTime.of(toDateTime.getYear(), toDateTime.getMonth(), toDateTime.getDayOfMonth(), toTime.getHour(), toTime.getMinute());
+
+                    try {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtPartyMessage(housecode, (float) 27.0, toDateTime);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
+                }
+                break;
+            case CHANNEL_HOLLYDAY_END_DATE:
+                if (command instanceof DateTimeType) {
+                    final ZonedDateTime value = ((DateTimeType) command).getZonedDateTime();
+
+                    final LocalDate toDate = LocalDate.of(value.getYear(), value.getMonth(), value.getDayOfMonth());
+                    try {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtHolidayMessage(housecode, (float) 17.0, toDate);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else if (command instanceof RefreshType) {
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
+                }
+                break;
             default:
-                logger.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}",  channelUID.getId());
+                logger.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}", channelUID.getId());
         }
     }
 
     private void sendCycle(DayOfWeek dayOfWeek, @NonNull StringType command) {
         String value = command.toString();
 
-        // TIME_FORMATTER.parse("12:00-134:00 15:00-18:00", new ParsePosition(0)).query(LocalTime::from);
+        // TIME_FORMATTER.parse("12:00-13:00 15:00-18:00", new ParsePosition(0)).query(LocalTime::from);
         String val = value.substring(0, 5);
         final LocalTime from1 = TIME_NOT_SET.equals(val) ? null : TIME_FORMATTER.parse(val, LocalTime::from);
 
@@ -311,10 +392,15 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     }
 
     private void updateHolidays(FhtDateMessage fhtMsg) {
-        String result = fhtMsg.day + "." + fhtMsg.month;
-        updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLLYDAY_END_DATE), new StringType((result)));
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime result = ZonedDateTime.of(now.getYear(), fhtMsg.month, fhtMsg.day, 0, 0, 0, 0, now.getZone());
+        if (result.isBefore(now)) {
+            result = result.plusYears(1);
+        }
+        updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLLYDAY_END_DATE), new DateTimeType(result));
     }
 
+    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM");
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private final static String TIME_NOT_SET = "XX:XX";
 

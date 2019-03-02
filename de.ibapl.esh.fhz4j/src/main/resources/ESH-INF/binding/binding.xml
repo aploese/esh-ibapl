@@ -14,17 +14,17 @@
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0
   
-  SPDX-License-Identifier: EPL-2.0
-  #L%
-  -->
+SPDX-License-Identifier: EPL-2.0
+#L%
+-->
 
 <binding:binding id="fhz4j"
-				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
-				 xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
+                 xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
 
-	<name>FHZ4J Binding</name>
-	<description>This is the binding for FHZ4J.</description>
-	<author>aploese@gmx.de</author>
+    <name>FHZ4J Binding</name>
+    <description>This is the binding for FHZ4J.</description>
+    <author>aploese@gmx.de</author>
 
 </binding:binding>

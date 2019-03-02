@@ -24,10 +24,23 @@
 		<bundle >mvn:de.ibapl.jnhw/de.ibapl.jnhw.libloader/${jnhw.version}</bundle>
     </feature>
 
+    <feature name="de.ibapl.jnhw.jnhw" version="${jnhw.version}">
+		<feature>de.ibapl.jnhw.libloader</feature>
+		<bundle >mvn:de.ibapl.jnhw/de.ibapl.jnhw.common/${jnhw.version}</bundle>
+		<bundle >mvn:de.ibapl.jnhw/de.ibapl.jnhw.posix/${jnhw.version}</bundle>
+		<bundle >mvn:de.ibapl.jnhw/de.ibapl.jnhw.winapi/${jnhw.version}</bundle>
+    </feature>
+
     <feature name="de.ibapl.spsw.jniprovider" version="${spsw.version}">
 		<feature>de.ibapl.jnhw.libloader</feature>
 		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
 		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.jniprovider/${spsw.version}</bundle>
+    </feature>
+
+    <feature name="de.ibapl.spsw.jnhwprovider" version="${spsw.version}">
+		<feature>de.ibapl.jnhw.jnhw</feature>
+		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.jnhwprovider/${spsw.version}</bundle>
     </feature>
 
     <feature name="esh-fhz4j-binding" version="${project.version}">

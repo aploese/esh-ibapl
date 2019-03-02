@@ -18,7 +18,6 @@ package de.ibapl.esh.fhz4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B;
 
 import java.io.IOException;
@@ -50,6 +49,7 @@ import de.ibapl.fhz4j.api.FhzAdapter;
 import de.ibapl.fhz4j.api.FhzDataListener;
 import de.ibapl.fhz4j.parser.cul.CulMessage;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
+import de.ibapl.fhz4j.protocol.fht.Fht80bMode;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
@@ -57,6 +57,8 @@ import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -190,12 +192,16 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
         if (refreshJob != null) {
             refreshJob.cancel(true);
         }
-        final FhzAdapter cp = fhzAdapter;
+        FhzAdapter cp = fhzAdapter;
+        fhzAdapter = null;
         if (cp != null) {
             try {
                 cp.close();
             } catch (Exception e) {
                 // TODO: handle exception
+                cp = null;
+                //Trigger gc to get rid of current cp ...
+                System.gc();
             }
         }
         fhtThingHandler.clear();
@@ -274,6 +280,14 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
         this.discoveryListener = discoveryListener;
     }
 
+    public void sendFhtModeAutoMessage(short housecode) throws IOException {
+        fhzAdapter.writeFhtModeAuto(housecode);
+    }
+
+    public void sendFhtModeManuMessage(short housecode) throws IOException {
+        fhzAdapter.writeFhtModeManu(housecode);
+    }
+
     public void sendFhtMessage(short housecode, FhtProperty fhtProperty, float value) throws IOException {
         fhzAdapter.writeFht(housecode, fhtProperty, value);
     }
@@ -281,6 +295,14 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
     public void sendFhtMessage(short housecode, DayOfWeek dayOfWeek, LocalTime from1, LocalTime to1, LocalTime from2,
             LocalTime to2) throws IOException {
         fhzAdapter.writeFhtCycle(housecode, dayOfWeek, from1, to1, from2, to2);
+    }
+
+    public void sendFhtPartyMessage(short housecode, float temp, LocalDateTime to) throws IOException {
+        fhzAdapter.writeFhtModeParty(housecode, temp, to);
+    }
+
+    public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException {
+        fhzAdapter.writeFhtModeHoliday(housecode, temp, to);
     }
 
     @Override

@@ -14,35 +14,35 @@
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0
   
-  SPDX-License-Identifier: EPL-2.0
-  #L%
-  -->
+SPDX-License-Identifier: EPL-2.0
+#L%
+-->
 
 <thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+                          xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-	<!-- Sample Thing Type -->
-	<thing-type id="hms-100-tf">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge-cul" />
-		</supported-bridge-type-refs>
+    <!-- Sample Thing Type -->
+    <thing-type id="hms-100-tf">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge-cul" />
+        </supported-bridge-type-refs>
 
-		<label>HMS 100 TF Sensor</label>
-		<description>Temp Humidity sensor</description>
+        <label>HMS 100 TF Sensor</label>
+        <description>Temp Humidity sensor</description>
 
-		<channels>
-			<channel id="temperatureMeasured" typeId="temperatureMeasured" />
-			<channel id="humidityMeasured" typeId="humidityMeasured" />
+        <channels>
+            <channel id="temperatureMeasured" typeId="temperatureMeasured" />
+            <channel id="humidityMeasured" typeId="humidityMeasured" />
             <channel id="low-battery" typeId="system.low-battery" />
-		</channels>
+        </channels>
 
-		<config-description>
-			<parameter name="housecode" type="integer">
-				<label>Housecode</label>
-				<description>The Housecode.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <config-description>
+            <parameter name="housecode" type="integer">
+                <label>Housecode</label>
+                <description>The Housecode.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 
 </thing:thing-descriptions>

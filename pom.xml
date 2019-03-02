@@ -31,7 +31,7 @@
 		<karaf.version>4.2.2</karaf.version>
 		<jnhw.version>1.0.0-SNAPSHOT</jnhw.version>
 		<spsw.version>2.1.0-SNAPSHOT</spsw.version>
-		<esh.version>0.11.0-SNAPSHOT</esh.version>
+		<esh.version>0.10.0</esh.version>
 		<osgi.version>6.0.0</osgi.version>
 		<license.licenseName>epl_2_0</license.licenseName>
 		<license.licenseResolver>${project.baseUri}/src/license</license.licenseResolver>

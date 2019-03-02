@@ -14,13 +14,13 @@
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0
   
-  SPDX-License-Identifier: EPL-2.0
-  #L%
-  -->
+SPDX-License-Identifier: EPL-2.0
+#L%
+-->
 
 <thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+                          xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
 
 
@@ -51,17 +51,17 @@
         </state>
     </channel-type>
 
-	<channel-type id="temperatureMeasured">
-		<item-type>Number</item-type>
-		<label>Temperature</label>
-		<description>Measured Temperature</description>
-		<category>Radiator</category>
-		<tags>
-			<tag>CurrentTemperature</tag>
-		</tags>
-		<state readOnly="true" pattern="%.1f °C">
-		</state>
-	</channel-type>
+    <channel-type id="temperatureMeasured">
+        <item-type>Number</item-type>
+        <label>Temperature</label>
+        <description>Measured Temperature</description>
+        <category>Radiator</category>
+        <tags>
+            <tag>CurrentTemperature</tag>
+        </tags>
+        <state readOnly="true" pattern="%.1f °C">
+        </state>
+    </channel-type>
 
     <channel-type id="desiredTemperature">
         <item-type>Number</item-type>
@@ -111,44 +111,44 @@
         </state>
     </channel-type>
 
-	<channel-type id="valvePos">
-		<item-type>Number</item-type>
-		<label>Valve Position</label>
-		<description>Position of the radiator valve.</description>
-		<category>Radiator</category>
-		<tags>
-			<tag>RadiatorValvePos</tag>
-		</tags>
-		<state readOnly="true" pattern="%.1f %%">
-		</state>
-	</channel-type>
+    <channel-type id="valvePos">
+        <item-type>Number</item-type>
+        <label>Valve Position</label>
+        <description>Position of the radiator valve.</description>
+        <category>Radiator</category>
+        <tags>
+            <tag>RadiatorValvePos</tag>
+        </tags>
+        <state readOnly="true" pattern="%.1f %%">
+        </state>
+    </channel-type>
 
-	<channel-type id="valveAllowLowBattBeep">
-		<item-type>Switch</item-type>
-		<label>Allow battery beep</label>
-		<description>Allow beep on valve if battery is low.</description>
-		<category>Radiator</category>
-		<tags>
-			<tag>RadiatorValveBeep</tag>
-		</tags>
-		<state readOnly="true">
-		</state>
-	</channel-type>
+    <channel-type id="valveAllowLowBattBeep">
+        <item-type>Switch</item-type>
+        <label>Allow battery beep</label>
+        <description>Allow beep on valve if battery is low.</description>
+        <category>Radiator</category>
+        <tags>
+            <tag>RadiatorValveBeep</tag>
+        </tags>
+        <state readOnly="true">
+        </state>
+    </channel-type>
 
-	<channel-type id="mode">
-		<item-type>String</item-type>
-		<label>Mode</label>
-		<description>Mode of temperature control</description>
-		<category>Radiator</category>
-		<state>
-			<options>
-				<option value="AUTO">Auto</option>
-				<option value="MANUAL">Manual</option>
-				<option value="PARTY">Party</option>
-				<option value="HOLIDAYS">Holidays</option>
-			</options>
-		</state>
-	</channel-type>
+    <channel-type id="fht80Mode">
+        <item-type>String</item-type>
+        <label>Mode Type</label>
+        <description>Mode of temperature control</description>
+        <category>Radiator</category>
+        <state>
+            <options>
+                <option value="AUTO">Auto</option>
+                <option value="MANUAL">Manual</option>
+                <option value="PARTY">Party</option>
+                <option value="HOLIDAYS">Holidays</option>
+            </options>
+        </state>
+    </channel-type>
 
 
     <channel-type id="date">
