@@ -18,6 +18,7 @@ package de.ibapl.esh.fhz4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+import com.google.common.collect.HashBiMap;
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.*;
 
 import java.io.IOException;
@@ -70,6 +71,8 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     protected ThingStatusDetail fht80HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    
+    private float desiredTemp;
 
     private short housecode;
 
@@ -83,13 +86,15 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             case CHANNEL_DESIRED_TEMPERATURE:
                 if (command instanceof DecimalType) {
                     try {
+                        desiredTemp = ((DecimalType) command).floatValue();
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode,
-                                FhtProperty.DESIRED_TEMP, ((DecimalType) command).floatValue());
+                                FhtProperty.DESIRED_TEMP, desiredTemp);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 } else if (command instanceof RefreshType) {
+                       desiredTemp = 17.0f;
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
                 break;
@@ -224,7 +229,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     toDateTime = LocalDateTime.of(toDateTime.getYear(), toDateTime.getMonth(), toDateTime.getDayOfMonth(), toTime.getHour(), toTime.getMinute());
 
                     try {
-                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtPartyMessage(housecode, (float) 27.0, toDateTime);
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtPartyMessage(housecode, desiredTemp, toDateTime);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -233,13 +238,13 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
                 break;
-            case CHANNEL_HOLLYDAY_END_DATE:
+            case CHANNEL_HOLYDAY_END_DATE:
                 if (command instanceof DateTimeType) {
                     final ZonedDateTime value = ((DateTimeType) command).getZonedDateTime();
 
                     final LocalDate toDate = LocalDate.of(value.getYear(), value.getMonth(), value.getDayOfMonth());
                     try {
-                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtHolidayMessage(housecode, (float) 17.0, toDate);
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtHolidayMessage(housecode, desiredTemp, toDate);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -312,11 +317,31 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         return housecode;
     }
 
+    private void updateMode(FhtModeMessage modeMsg) {
+        updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE), new StringType(modeMsg.mode.name()));
+        switch (modeMsg.mode) {
+            case AUTO:
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
+                break;
+            case MANUAL:
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
+                break;
+            case PARTY:
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
+                break;
+            case HOLIDAY:
+                updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
+                break;
+            default:;
+        }
+    }
+
     public void updateFromMsg(FhtMessage fhtMsg) {
         switch (fhtMsg.command) {
             case MODE:
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE),
-                        new StringType(((FhtModeMessage) fhtMsg).mode.name()));
+                updateMode((FhtModeMessage) fhtMsg);
                 break;
             case MONDAY_TIMES:
                 update_FROM_TO(CHANNEL_MONDAY, (FhtTimesMessage) fhtMsg);
@@ -382,8 +407,9 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                         new DecimalType((((FhtTempMessage) fhtMsg).temp)));
                 break;
             case DESIRED_TEMP:
+                desiredTemp = ((FhtTempMessage) fhtMsg).temp;
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
-                        new DecimalType((((FhtTempMessage) fhtMsg).temp)));
+                        new DecimalType(desiredTemp));
                 break;
 
             default:
@@ -397,10 +423,9 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         if (result.isBefore(now)) {
             result = result.plusYears(1);
         }
-        updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLLYDAY_END_DATE), new DateTimeType(result));
+        updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new DateTimeType(result));
     }
 
-    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM");
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private final static String TIME_NOT_SET = "XX:XX";
 

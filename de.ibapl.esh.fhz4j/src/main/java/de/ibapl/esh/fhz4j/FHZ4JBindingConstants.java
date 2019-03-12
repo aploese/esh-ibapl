@@ -54,7 +54,7 @@ public class FHZ4JBindingConstants {
     public static final String CHANNEL_VALVE_POSITION = "valvePos";
     public static final String CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP = "valveAllowLowBattBeep";
 
-    public static final String CHANNEL_HOLLYDAY_END_DATE = "hollydayEndDate";
+    public static final String CHANNEL_HOLYDAY_END_DATE = "holydayEndDate";
     public static final String CHANNEL_PARTY_END_TIME = "partyEndTime";
 
     public static final String CHANNEL_MONDAY = "mondaySwitchTimes";
