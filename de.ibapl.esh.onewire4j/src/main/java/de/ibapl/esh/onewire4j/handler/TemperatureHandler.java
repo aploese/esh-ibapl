@@ -49,7 +49,6 @@ import de.ibapl.onewire4j.container.TemperatureContainer;
  * @author aploese@gmx.de - Initial contribution
  */
 public class TemperatureHandler extends BaseThingHandler {
-    protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     public TemperatureContainer temperatureContainer;
 
@@ -69,10 +68,6 @@ public class TemperatureHandler extends BaseThingHandler {
 
     public void updateMaxTemperature(double temperature) {
         updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMPERATURE), new DecimalType(temperature));
-    }
-
-    public void tempReadFailed() {
-        updateStatus(ThingStatus.OFFLINE);
     }
 
     @Override
@@ -117,12 +112,10 @@ public class TemperatureHandler extends BaseThingHandler {
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
-            owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
             return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
-                updateStatus(ThingStatus.ONLINE);
-                owHandlerStatus = ThingStatusDetail.NONE;
+                updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
             } else {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             }
@@ -139,12 +132,14 @@ public class TemperatureHandler extends BaseThingHandler {
             temperatureContainer.readScratchpad(oneWireAdapter, request);
             final double temp = temperatureContainer.getTemperature(request);
             updateTemperature(temp);
+            updateStatus(ThingStatus.ONLINE);
         } catch (ENotProperlyConvertedException e) {
             try {
                 final double temp = temperatureContainer.convertAndReadTemperature(oneWireAdapter);
                 updateTemperature(temp);
+                updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
             } catch (ENotProperlyConvertedException e1) {
-                tempReadFailed();
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
             }
         }
     }
