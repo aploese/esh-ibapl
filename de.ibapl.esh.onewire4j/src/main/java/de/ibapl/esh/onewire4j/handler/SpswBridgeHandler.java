@@ -102,7 +102,15 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             oneWireAdapter = new AdapterFactory().open(serialPortSocket);
         } catch (Exception e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+            logger.log(Level.SEVERE, "Could not open Onewire adapter", e);
             serialPortSocket = null;
+                    try {
+                        oneWireAdapter.close();
+                        oneWireAdapter = null;
+                    } catch (Exception ex) {
+                        oneWireAdapter = null;
+                        logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", ex);
+                    }
             return;
         }
         boolean ppN;
@@ -156,7 +164,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             try {
                 oneWireAdapter.close();
             } catch (Exception e) {
-                // TODO: handle exception
+                        logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", e);
             }
             oneWireAdapter = null;
         }
@@ -164,7 +172,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             try {
                 serialPortSocket.close();
             } catch (Exception e) {
-                // TODO: handle exception
+                        logger.log(Level.SEVERE, "Could not shutdown serial port", e);
             }
             serialPortSocket = null;
         }

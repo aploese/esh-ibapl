@@ -169,6 +169,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
             try {
                 fhzAdapter.close();
             } catch (Exception e1) {
+                        logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
             }
             fhzAdapter = null;
             return;
@@ -178,8 +179,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
             try {
                 fhzAdapter.initFhtReporting(fhtThingHandler.keySet());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                        logger.log(Level.SEVERE, "Could not inti fht reporting", e);
             }
         }, 0, refreshRate, TimeUnit.DAYS);
 
@@ -198,7 +198,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
             try {
                 cp.close();
             } catch (Exception e) {
-                // TODO: handle exception
+                logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
                 cp = null;
                 //Trigger gc to get rid of current cp ...
                 System.gc();
