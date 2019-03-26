@@ -18,7 +18,6 @@ package de.ibapl.esh.onewire4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 import static de.ibapl.esh.onewire4j.OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE;
 
 import java.io.IOException;
@@ -49,6 +48,7 @@ import de.ibapl.onewire4j.container.OneWireContainer;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 
 /**
  *
@@ -86,7 +86,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
 
     @Override
     public void initialize() {
-        logger.fine("Initializing SpswBridgeHandler.");
+        logger.info("Initializing SpswBridgeHandler.");
 
         Configuration config = getThing().getConfiguration();
 
@@ -99,20 +99,25 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
 
         serialPortSocket = serialPortSocketFactory.createSerialPortSocket(port);
         try {
-            oneWireAdapter = new AdapterFactory().open(serialPortSocket);
+            oneWireAdapter = new AdapterFactory().open(serialPortSocket, 3);
+            logger.info("Onewire adapter opend");
         } catch (Exception e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             logger.log(Level.SEVERE, "Could not open Onewire adapter", e);
             serialPortSocket = null;
-                    try {
-                        oneWireAdapter.close();
-                        oneWireAdapter = null;
-                    } catch (Exception ex) {
-                        oneWireAdapter = null;
-                        logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", ex);
-                    }
+            if (oneWireAdapter != null) {
+                try {
+                    oneWireAdapter.close();
+                    oneWireAdapter = null;
+                } catch (Exception ex) {
+                    oneWireAdapter = null;
+                    logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", ex);
+                }
+            }
             return;
         }
+
+        //TODO
         boolean ppN;
         try {
             ppN = TemperatureContainer.isParasitePower(oneWireAdapter);
@@ -126,37 +131,35 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         refreshJob = scheduler.scheduleWithFixedDelay(this, 0, refreshRate.intValue(), TimeUnit.SECONDS);
 
         updateStatus(ThingStatus.ONLINE);
-
+        logger.info("Onewire adapter ONLINE");
     }
 
     @Override
     public void run() {
         final boolean parasitePowerNeeded = true;
         try {
-            try {
-                TemperatureContainer.sendDoConvertRequestToAll(oneWireAdapter, parasitePowerNeeded);
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
+            TemperatureContainer.sendDoConvertRequestToAll(oneWireAdapter, parasitePowerNeeded);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
 
-            for (Thing thing : getThing().getThings()) {
+        for (Thing thing : getThing().getThings()) {
+            try {
                 final ThingHandler thingHandler = thing.getHandler();
                 if (thingHandler instanceof TemperatureHandler) {
                     final TemperatureHandler tempHandler = (TemperatureHandler) thingHandler;
                     tempHandler.readDevice(oneWireAdapter);
-                    // tempH.updateMinTemperature(0);
-                    // tempH.updateMaxTemperature(100);
                 }
+            } catch (Throwable t) {
+                logger.log(Level.SEVERE, "uncaughth exception(!) in handler for thing: " + thing, t);
             }
-
-        } catch (Exception e) {
-            logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
         }
     }
 
     @Override
     public void dispose() {
+        logger.info("Close Onewire adapter");
+
         if (refreshJob != null) {
             refreshJob.cancel(true);
         }
@@ -164,7 +167,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             try {
                 oneWireAdapter.close();
             } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", e);
+                logger.log(Level.SEVERE, "Could not shutdown Onewire adapter", e);
             }
             oneWireAdapter = null;
         }
@@ -172,10 +175,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             try {
                 serialPortSocket.close();
             } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Could not shutdown serial port", e);
+                logger.log(Level.SEVERE, "Could not shutdown serial port", e);
             }
             serialPortSocket = null;
         }
+        logger.info("Onewire adapter closed");
     }
 
     public void discover(Consumer<OneWireContainer> consumer) throws IOException {

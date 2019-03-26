@@ -49,7 +49,6 @@ import de.ibapl.fhz4j.api.FhzAdapter;
 import de.ibapl.fhz4j.api.FhzDataListener;
 import de.ibapl.fhz4j.parser.cul.CulMessage;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
-import de.ibapl.fhz4j.protocol.fht.Fht80bMode;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
@@ -64,7 +63,80 @@ import java.time.LocalDateTime;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListener {
+public class SpswBridgeHandler extends BaseBridgeHandler {
+
+    private class Listener implements FhzDataListener {
+
+        @Override
+        public void emDataParsed(EmMessage emMsg) {
+            final Em1000EmHandler emh = emThingHandler.get(emMsg.address);
+            if (emh == null) {
+                // Discovery
+                if (discoveryListener != null) {
+                    discoveryListener.emDataParsed(emMsg);
+                }
+                return;
+            }
+            emh.updateFromMsg(emMsg);
+        }
+
+        @Override
+        public void failed(Throwable arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void fhtDataParsed(FhtMessage fhtMsg) {
+            final RadiatorFht80bHandler rfh = fhtThingHandler.get(fhtMsg.housecode);
+            if (rfh == null) {
+                // Discovery
+                if (discoveryListener != null) {
+                    discoveryListener.fhtDataParsed(fhtMsg);
+                }
+                return;
+            }
+            rfh.updateFromMsg(fhtMsg);
+        }
+
+        @Override
+        public void fhtPartialDataParsed(FhtMessage fhtMsg) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void fs20DataParsed(FS20Message arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void hmsDataParsed(HmsMessage hmsMsg) {
+            final Hms100TfHandler hmsh = hmsThingHandler.get(hmsMsg.housecode);
+            if (hmsh == null) {
+                // Discovery
+                if (discoveryListener != null) {
+                    discoveryListener.hmsDataParsed(hmsMsg);
+                }
+                return;
+            }
+            hmsh.updateFromMsg(hmsMsg);
+        }
+
+        @Override
+        public void laCrosseTxParsed(LaCrosseTx2Message arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void culMessageParsed(CulMessage arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+    }
 
     private final SerialPortSocketFactory serialPortSocketFactory;
 
@@ -162,14 +234,14 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
         hmsThingHandler.clear();
 
         try {
-            fhzAdapter = FhzAdapter.open(serialPortSocket, this);
+            fhzAdapter = FhzAdapter.open(serialPortSocket, new Listener());
             fhzAdapter.initFhz(housecode);
         } catch (Exception e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             try {
                 fhzAdapter.close();
             } catch (Exception e1) {
-                        logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
+                logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
             }
             fhzAdapter = null;
             return;
@@ -179,7 +251,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
             try {
                 fhzAdapter.initFhtReporting(fhtThingHandler.keySet());
             } catch (IOException e) {
-                        logger.log(Level.SEVERE, "Could not inti fht reporting", e);
+                logger.log(Level.SEVERE, "Could not inti fht reporting", e);
             }
         }, 0, refreshRate, TimeUnit.DAYS);
 
@@ -191,85 +263,26 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
     public void dispose() {
         if (refreshJob != null) {
             refreshJob.cancel(true);
+            refreshJob = null;
         }
-        FhzAdapter cp = fhzAdapter;
-        fhzAdapter = null;
-        if (cp != null) {
-            try {
-                cp.close();
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
-                cp = null;
-                //Trigger gc to get rid of current cp ...
-                System.gc();
+
+        if (fhzAdapter != null) {
+            FhzAdapter cp = fhzAdapter;
+            fhzAdapter = null;
+            if (cp != null) {
+                try {
+                    cp.close();
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
+                    cp = null;
+                    //Trigger gc to get rid of current cp ...
+                    System.gc();
+                }
             }
         }
         fhtThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
-    }
-
-    @Override
-    public void emDataParsed(EmMessage emMsg) {
-        final Em1000EmHandler emh = emThingHandler.get(emMsg.address);
-        if (emh == null) {
-            // Discovery
-            if (discoveryListener != null) {
-                discoveryListener.emDataParsed(emMsg);
-            }
-            return;
-        }
-        emh.updateFromMsg(emMsg);
-    }
-
-    @Override
-    public void failed(Throwable arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void fhtDataParsed(FhtMessage fhtMsg) {
-        final RadiatorFht80bHandler rfh = fhtThingHandler.get(fhtMsg.housecode);
-        if (rfh == null) {
-            // Discovery
-            if (discoveryListener != null) {
-                discoveryListener.fhtDataParsed(fhtMsg);
-            }
-            return;
-        }
-        rfh.updateFromMsg(fhtMsg);
-    }
-
-    @Override
-    public void fhtPartialDataParsed(FhtMessage fhtMsg) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void fs20DataParsed(FS20Message arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void hmsDataParsed(HmsMessage hmsMsg) {
-        final Hms100TfHandler hmsh = hmsThingHandler.get(hmsMsg.housecode);
-        if (hmsh == null) {
-            // Discovery
-            if (discoveryListener != null) {
-                discoveryListener.hmsDataParsed(hmsMsg);
-            }
-            return;
-        }
-        hmsh.updateFromMsg(hmsMsg);
-    }
-
-    @Override
-    public void laCrosseTxParsed(LaCrosseTx2Message arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     public FhzDataListener getDiscoveryListener() {
@@ -303,12 +316,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements FhzDataListe
 
     public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException {
         fhzAdapter.writeFhtModeHoliday(housecode, temp, to);
-    }
-
-    @Override
-    public void culMessageParsed(CulMessage arg0) {
-        // TODO Auto-generated method stub
-
     }
 
 }

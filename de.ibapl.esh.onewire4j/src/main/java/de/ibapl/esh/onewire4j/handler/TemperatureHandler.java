@@ -18,7 +18,6 @@ package de.ibapl.esh.onewire4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 import static de.ibapl.esh.onewire4j.OneWire4JBindingConstants.*;
 
 import java.io.IOException;
@@ -43,8 +42,8 @@ import de.ibapl.onewire4j.container.ReadScratchpadRequest;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 
 /**
- * The {@link TemperatureHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link TemperatureHandler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
@@ -126,7 +125,7 @@ public class TemperatureHandler extends BaseThingHandler {
     public void dispose() {
     }
 
-    public void readDevice(OneWireAdapter oneWireAdapter) throws IOException {
+    public void readDevice(OneWireAdapter oneWireAdapter) {
         try {
             ReadScratchpadRequest request = new ReadScratchpadRequest();
             temperatureContainer.readScratchpad(oneWireAdapter, request);
@@ -139,8 +138,15 @@ public class TemperatureHandler extends BaseThingHandler {
                 updateTemperature(temp);
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
             } catch (ENotProperlyConvertedException e1) {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+                logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+            } catch (Exception e1) {
+                logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e1);
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             }
+        } catch (Exception e) {
+            logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
         }
     }
 
