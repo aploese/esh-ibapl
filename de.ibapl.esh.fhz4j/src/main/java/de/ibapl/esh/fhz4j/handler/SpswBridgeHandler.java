@@ -277,6 +277,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                     cp = null;
                     //Trigger gc to get rid of current cp ...
                     System.gc();
+                    Runtime.getRuntime().runFinalization();
+                    System.gc();
                 }
             }
         }
@@ -318,4 +320,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         fhzAdapter.writeFhtModeHoliday(housecode, temp, to);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        refreshJob = null;
+        fhzAdapter = null;
+        
+        super.finalize();
+    }
 }

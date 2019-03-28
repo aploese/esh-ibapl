@@ -18,7 +18,6 @@ package de.ibapl.esh.fhz4j.handler;
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-import com.google.common.collect.HashBiMap;
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.*;
 
 import java.io.IOException;
@@ -56,7 +55,6 @@ import de.ibapl.fhz4j.protocol.fht.FhtValvePosMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtWarningMessage;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZonedDateTime;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 
