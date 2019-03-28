@@ -251,7 +251,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             try {
                 fhzAdapter.initFhtReporting(fhtThingHandler.keySet());
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Could not inti fht reporting", e);
+                logger.log(Level.SEVERE, "Could not init fht reporting", e);
             }
         }, 0, refreshRate, TimeUnit.DAYS);
 
@@ -285,6 +285,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         fhtThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
+        logger.log(Level.SEVERE, "FhzAdapter disposed");
     }
 
     public FhzDataListener getDiscoveryListener() {
@@ -320,11 +321,4 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         fhzAdapter.writeFhtModeHoliday(housecode, temp, to);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        refreshJob = null;
-        fhzAdapter = null;
-        
-        super.finalize();
-    }
 }
