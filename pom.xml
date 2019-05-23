@@ -36,7 +36,7 @@
 		<esh.fhz4j.version>1.0.0-SNAPSHOT</esh.fhz4j.version>
 		<!-- TODO update before/during release -->
 		<esh.onewire4j.version>1.0.0-SNAPSHOT</esh.onewire4j.version>
-        <onewire4j.version>1.0.0-SNAPSHOT</onewire4j.version>
+        <onewire4j.version>1.0.0</onewire4j.version>
         <esh.version>0.10.0</esh.version>
         <osgi.version>6.0.0</osgi.version>
         <license.licenseName>epl_2_0</license.licenseName>
@@ -233,7 +233,12 @@
             <dependency>
                 <groupId>de.ibapl.spsw</groupId>
                 <artifactId>de.ibapl.spsw.jniprovider</artifactId>
-                <version>${spsw.version}</version>
+                <version>[1.0.0,2.0.0)</version>
+            </dependency>
+            <dependency>
+                <groupId>de.ibapl.spsw</groupId>
+                <artifactId>de.ibapl.spsw.jnhwprovider</artifactId>
+                <version>[1.0.0,2.0.0)</version>
             </dependency>
             <dependency>
                 <groupId>de.ibapl.fhz4j</groupId>
@@ -243,7 +248,7 @@
             <dependency>
                 <groupId>de.ibapl.onewire4j</groupId>
                 <artifactId>de.ibapl.onewire4j</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>[1.0.0,2.0.0)</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jdt</groupId>
