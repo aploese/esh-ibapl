@@ -15,10 +15,6 @@
 	<name>ESH:IbApl:Kar</name>
 	<packaging>kar</packaging>
 
-	<properties>
-        <license.licenseResolver>${project.baseUri}/../src/license</license.licenseResolver>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
