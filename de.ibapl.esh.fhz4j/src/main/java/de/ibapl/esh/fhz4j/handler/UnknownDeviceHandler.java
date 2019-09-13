@@ -1,23 +1,25 @@
-package de.ibapl.esh.fhz4j.handler;
-
-/*-
- * #%L
- * FHZ4J Binding
- * %%
- * Copyright (C) 2017 - 2018 Arne Plöse
- * %%
- * Eclipse Smarthome Features (https://www.eclipse.org/smarthome/) and bundles see https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017 - 2018, Arne Pl\u00f6se and individual contributors as indicated
+/*
+ * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
+ * Copyright (C) 2017-2019, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *  
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0
- * 
- * SPDX-License-Identifier: EPL-2.0
- * #L%
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package de.ibapl.esh.fhz4j.handler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

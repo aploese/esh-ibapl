@@ -1,101 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-<parent>
-	<groupId>de.ibapl.esh</groupId>
-	<artifactId>ibapl-esh</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-</parent>
-	<artifactId>de.ibapl.esh.onewire4j</artifactId>
+    <parent>
+        <groupId>de.ibapl.esh</groupId>
+        <artifactId>ibapl-esh</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>de.ibapl.esh.onewire4j</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
 
-	<name>OneWire4J Binding</name>
-	<packaging>jar</packaging>
+    <name>OneWire4J Binding</name>
+    <packaging>jar</packaging>
 
-	<properties>
+    <properties>
         <license.licenseResolver>${project.baseUri}/../src/license</license.licenseResolver>
-	</properties>
+    </properties>
 
-<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>biz.aQute.bnd</groupId>
-				<artifactId>bnd-maven-plugin</artifactId><configuration>
-        <bnd><![CDATA[
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <configuration>
+                    <bnd><![CDATA[
 -exportcontents:\
  ESH-INF.*
         ]]></bnd>
-    </configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>de.ibapl.onewire4j</groupId>
-			<artifactId>de.ibapl.onewire4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jdt</groupId>
-			<artifactId>org.eclipse.jdt.annotation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.smarthome.core</groupId>
-  			<artifactId>org.eclipse.smarthome.core.thing</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.smarthome.core</groupId>
-  			<artifactId>org.eclipse.smarthome.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.smarthome.config</groupId>
-  			<artifactId>org.eclipse.smarthome.config.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.smarthome.config</groupId>
-  			<artifactId>org.eclipse.smarthome.config.discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.annotation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>de.ibapl.onewire4j</groupId>
+            <artifactId>de.ibapl.onewire4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openhab.core.bom</groupId>
+            <artifactId>org.openhab.core.bom.compile</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openhab.core.bom</groupId>
+            <artifactId>org.openhab.core.bom.openhab-core</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openhab.core.bom</groupId>
+            <artifactId>org.openhab.core.bom.test</artifactId>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
 </project>

@@ -44,14 +44,14 @@
     </feature>
 
     <feature name="esh-fhz4j-binding" version="${esh.fhz4j.version}">
-		<feature>esh-base</feature>
+		<feature>openhab-runtime-base</feature>
 		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
 		<bundle >mvn:de.ibapl.fhz4j/de.ibapl.fhz4j.parser.cul/${fhz4j.version}</bundle>
 		<bundle>mvn:de.ibapl.esh/de.ibapl.esh.fhz4j/${esh.fhz4j.version}</bundle>
     </feature>
 
     <feature name="esh-onewire4j-binding" version="${esh.onewire4j.version}">
-		<feature>esh-base</feature>
+		<feature>openhab-runtime-base</feature>
 		<bundle >mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
 		<bundle >mvn:de.ibapl.onewire4j/de.ibapl.onewire4j/${onewire4j.version}</bundle>
 		<bundle>mvn:de.ibapl.esh/de.ibapl.esh.onewire4j/${esh.onewire4j.version}</bundle>

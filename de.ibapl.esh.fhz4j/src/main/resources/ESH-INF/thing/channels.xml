@@ -32,6 +32,14 @@ SPDX-License-Identifier: EPL-2.0
         </state>
     </channel-type>
 
+    <channel-type id="heatDemand">
+        <item-type>Number</item-type>
+        <label>Heat Demand</label>
+        <description>Heat demand of radiator</description>
+        <state readOnly="true" >
+        </state>
+    </channel-type>
+
     <channel-type id="powerMeasured">
         <item-type>Number</item-type>
         <label>Power</label>

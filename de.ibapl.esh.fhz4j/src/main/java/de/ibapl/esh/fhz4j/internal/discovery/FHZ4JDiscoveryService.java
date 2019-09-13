@@ -1,23 +1,25 @@
-package de.ibapl.esh.fhz4j.internal.discovery;
-
-/*-
- * #%L
- * FHZ4J Binding
- * %%
- * Copyright (C) 2017 - 2018 Arne Plöse
- * %%
- * Eclipse Smarthome Features (https://www.eclipse.org/smarthome/) and bundles see https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017 - 2018, Arne Pl\u00f6se and individual contributors as indicated
+/*
+ * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
+ * Copyright (C) 2017-2019, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *  
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0
- * 
- * SPDX-License-Identifier: EPL-2.0
- * #L%
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package de.ibapl.esh.fhz4j.internal.discovery;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -32,9 +34,12 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 
 import de.ibapl.esh.fhz4j.FHZ4JBindingConstants;
 import de.ibapl.esh.fhz4j.handler.SpswBridgeHandler;
-import de.ibapl.fhz4j.api.FhzDataListener;
-import de.ibapl.fhz4j.parser.cul.CulMessage;
+import de.ibapl.fhz4j.cul.CulMessage;
+import de.ibapl.fhz4j.cul.CulMessageListener;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
+import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
+import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
+import de.ibapl.fhz4j.protocol.evohome.EvoHomeProperty;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
@@ -45,7 +50,7 @@ import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
  * @author aploese@gmx.de - Initial contribution
  */
 @NonNullByDefault
-public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements FhzDataListener {
+public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements CulMessageListener {
 
     private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
 
@@ -104,6 +109,48 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements F
                 .withThingType(FHZ4JBindingConstants.THING_TYPE_FHZ4J_EM_1000_EM).withProperty("address", address)
                 .withBridge(bridgeUID).withRepresentationProperty(Short.toString(address))
                 .withLabel("EM 1000 EM " + address).build();
+
+        thingDiscovered(discoveryResult);
+    }
+
+    private void addRadiatorEvoHomeDevice(int deviceId) {
+        final String hexDeviceId = String.format("%06x", deviceId);
+        final ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
+        final ThingUID thingUID = getThingUID(hexDeviceId, bridgeUID,
+                FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME);
+
+        DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID)
+                .withThingType(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME)
+                .withProperty("deviceId", deviceId).withBridge(bridgeUID)
+                .withRepresentationProperty(hexDeviceId).withLabel("EvoHome Radiator 0x" + hexDeviceId).build();
+
+        thingDiscovered(discoveryResult);
+    }
+
+    private void addSingleZoneThermostatEvoHomeDevice(int deviceId) {
+        final String hexDeviceId = String.format("%06x", deviceId);
+        final ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
+        final ThingUID thingUID = getThingUID(hexDeviceId, bridgeUID,
+                FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME);
+
+        DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID)
+                .withThingType(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME)
+                .withProperty("deviceId", deviceId).withBridge(bridgeUID)
+                .withRepresentationProperty(hexDeviceId).withLabel("EvoHome Single Zone Thermostat 0x" + hexDeviceId).build();
+
+        thingDiscovered(discoveryResult);
+    }
+
+    private void addMultiZoneControllerEvoHomeDevice(int deviceId) {
+        final String hexDeviceId = String.format("%06x", deviceId);
+        final ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
+        final ThingUID thingUID = getThingUID(hexDeviceId, bridgeUID,
+                FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
+
+        DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID)
+                .withThingType(FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME)
+                .withProperty("deviceId", deviceId).withBridge(bridgeUID)
+                .withRepresentationProperty(hexDeviceId).withLabel("EvoHome Multi Zone Controller 0x" + hexDeviceId).build();
 
         thingDiscovered(discoveryResult);
     }
@@ -181,6 +228,31 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements F
     public void culMessageParsed(@Nullable CulMessage arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void evoHomeParsed(EvoHomeMessage evoHomeMsg) {
+        if (evoHomeMsg instanceof EvoHomeDeviceMessage) {
+            final EvoHomeDeviceMessage devMsg = (EvoHomeDeviceMessage) evoHomeMsg;
+            switch (devMsg.deviceId1.type) {
+                case MULTI_ZONE_CONTROLLER:
+                    addMultiZoneControllerEvoHomeDevice(devMsg.deviceId1.id);
+                    break;
+                case SINGLE_ZONE_THERMOSTAT:
+                    addSingleZoneThermostatEvoHomeDevice(devMsg.deviceId1.id);
+                    break;
+                case RADIATOR_CONTROLLER:
+                    addRadiatorEvoHomeDevice(devMsg.deviceId1.id);
+                    break;
+                default:
+                    logger.severe("Cant handle EvoHomeDeviceMessage: " + devMsg);
+            }
+        }
+    }
+
+    @Override
+    public void signalStrength(float signalStrength) {
+        // TODO Auto-generated method stub
     }
 
 }

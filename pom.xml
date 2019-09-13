@@ -7,7 +7,7 @@
 
     <groupId>de.ibapl.esh</groupId>
     <artifactId>ibapl-esh</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>ESH-IbAPl</name>
     <packaging>pom</packaging>
@@ -16,31 +16,31 @@
     </organization>
     <description>Features and bindings for Eclipse Smart Home, see  https://www.eclipse.org/smarthome/.</description>
     <inceptionYear>2017</inceptionYear>
+    <!-- Licenses -->
     <licenses>
         <license>
-            <name>Eclipse Public License 2.0</name>
-            <url>https://www.eclipse.org/legal/epl-2.0/EPL-2.0.txt</url>
+            <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
+
 
     <properties>
         <compile.source>1.8</compile.source>
         <compile.target>1.8</compile.target>
         <sourceEncoding>UTF-8</sourceEncoding>
-        <karaf.version>4.2.2</karaf.version>
-        <jnhw.version>1.0.0</jnhw.version>
-        <spsw.version>2.1.0</spsw.version>
-        <fhz4j.version>1.0.0</fhz4j.version>
-		<!-- TODO update before/during release -->
-		<esh.fhz4j.version>1.0.0-SNAPSHOT</esh.fhz4j.version>
-		<!-- TODO update before/during release -->
-		<esh.onewire4j.version>1.0.0-SNAPSHOT</esh.onewire4j.version>
-        <onewire4j.version>1.0.0</onewire4j.version>
-        <esh.version>0.10.0</esh.version>
+        <karaf.version>4.2.6</karaf.version>
+        <jnhw.version>1.0.1-SNAPSHOT</jnhw.version>
+        <spsw.version>2.1.1-SNAPSHOT</spsw.version>
+        <fhz4j.version>2.0.0-SNAPSHOT</fhz4j.version>
+        <!-- TODO update before/during release -->
+        <esh.fhz4j.version>2.0.0-SNAPSHOT</esh.fhz4j.version>
+        <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
+        <!-- TODO update before/during release -->
+        <esh.onewire4j.version>1.0.1-SNAPSHOT</esh.onewire4j.version>
+        <ohc.version>2.5.0-SNAPSHOT</ohc.version>
         <osgi.version>6.0.0</osgi.version>
-        <license.licenseName>epl_2_0</license.licenseName>
-        <license.licenseResolver>${project.baseUri}/src/license</license.licenseResolver>
     </properties>
 
     <modules>
@@ -97,12 +97,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>${compile.source}</source>
                         <target>${compile.target}</target>
                         <encoding>${sourceEncoding}</encoding>
-                        <compilerId>eclipse</compilerId>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -121,23 +120,15 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                    <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>1.16</version>
-                    <configuration>
-                        <licenseName>epl_2_0</licenseName>
-                        <excludes>
-                            <exclude>**/*.txt</exclude>
-                            <exclude>**/*.js</exclude>
-                            <exclude>**/*.json</exclude>
-                        </excludes>
-                    </configuration>
+                    <version>3.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.2</version>
                     <configuration>
                         <archive>
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -167,12 +158,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
@@ -189,7 +180,7 @@
 
 
                 </plugin>
-             </plugins>
+            </plugins>
         </pluginManagement>
 
         <plugins>
@@ -225,6 +216,39 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <properties>
+                        <copyright-range>${project.inceptionYear}-2019</copyright-range>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-java-headers</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <header>header-template-lgpl-java.txt</header>
+                            <mapping>
+                                <java>SLASHSTAR_STYLE</java>
+                            </mapping>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                            <excludes>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -233,51 +257,22 @@
             <dependency>
                 <groupId>de.ibapl.spsw</groupId>
                 <artifactId>de.ibapl.spsw.jniprovider</artifactId>
-                <version>[1.0.0,2.0.0)</version>
+                <version>${spsw.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.ibapl.spsw</groupId>
                 <artifactId>de.ibapl.spsw.jnhwprovider</artifactId>
-                <version>[1.0.0,2.0.0)</version>
+                <version>${spsw.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.ibapl.fhz4j</groupId>
                 <artifactId>de.ibapl.fhz4j.parser.cul</artifactId>
-                <version>[1.0.0,2.0.0)</version>
+                <version>${fhz4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.ibapl.onewire4j</groupId>
                 <artifactId>de.ibapl.onewire4j</artifactId>
-                <version>[1.0.0,2.0.0)</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jdt</groupId>
-                <artifactId>org.eclipse.jdt.annotation</artifactId>
-                <version>2.2.100</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.smarthome.core</groupId>
-                <artifactId>org.eclipse.smarthome.core.thing</artifactId>
-                <version>${esh.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.smarthome.core</groupId>
-                <artifactId>org.eclipse.smarthome.core</artifactId>
-                <version>${esh.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.smarthome.config</groupId>
-                <artifactId>org.eclipse.smarthome.config.core</artifactId>
-                <version>${esh.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.smarthome.config</groupId>
-                <artifactId>org.eclipse.smarthome.config.discovery</artifactId>
-                <version>${esh.version}</version>
-                <scope>provided</scope>
+                <version>${onewire4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -290,6 +285,27 @@
                 <artifactId>org.osgi.core</artifactId>
                 <version>${osgi.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bom</groupId>
+                <artifactId>org.openhab.core.bom.compile</artifactId>
+                <version>2.5.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bom</groupId>
+                <artifactId>org.openhab.core.bom.openhab-core</artifactId>
+                <version>2.5.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bom</groupId>
+                <artifactId>org.openhab.core.bom.test</artifactId>
+                <version>2.5.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.collections</groupId>
