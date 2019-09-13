@@ -26,7 +26,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -88,7 +87,7 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
         }
     }
 
-    private synchronized void registerDiscoveryService(@NonNull SpswBridgeHandler spswBridgeHandler) {
+    private synchronized void registerDiscoveryService(SpswBridgeHandler spswBridgeHandler) {
         OneWire4JDiscoveryService discoveryService = new OneWire4JDiscoveryService(spswBridgeHandler);
         this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(), bundleContext
                 .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));

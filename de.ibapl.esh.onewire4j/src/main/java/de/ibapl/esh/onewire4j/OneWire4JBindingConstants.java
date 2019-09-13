@@ -21,7 +21,6 @@
  */
 package de.ibapl.esh.onewire4j;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 
 /**
@@ -30,7 +29,6 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@NonNullByDefault
 public class OneWire4JBindingConstants {
 
     public static final String BINDING_ID = "onewire4j";

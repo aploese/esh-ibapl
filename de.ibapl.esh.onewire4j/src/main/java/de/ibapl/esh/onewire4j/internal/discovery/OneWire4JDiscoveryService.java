@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
@@ -43,7 +41,6 @@ import de.ibapl.onewire4j.container.TemperatureContainer;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@NonNullByDefault
 public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
 
     private final Logger logger = Logger.getLogger("esh.binding.onewire4j");
@@ -81,7 +78,7 @@ public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
         removeOlderResults(getTimestampOfLastScan());
     }
 
-    private String devIdStr(@Nullable String devidStr) {
+    private String devIdStr(String devidStr) {
         if (devidStr == null) {
             throw new RuntimeException();
         } else {

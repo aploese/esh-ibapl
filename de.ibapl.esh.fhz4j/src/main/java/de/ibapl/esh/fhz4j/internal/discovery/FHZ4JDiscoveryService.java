@@ -24,8 +24,6 @@ package de.ibapl.esh.fhz4j.internal.discovery;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
@@ -39,7 +37,6 @@ import de.ibapl.fhz4j.cul.CulMessageListener;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
-import de.ibapl.fhz4j.protocol.evohome.EvoHomeProperty;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
@@ -49,7 +46,6 @@ import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@NonNullByDefault
 public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements CulMessageListener {
 
     private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
@@ -174,7 +170,7 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
     }
 
     @Override
-    public void emDataParsed(@Nullable EmMessage emMsg) {
+    public void emDataParsed(EmMessage emMsg) {
         switch (emMsg.emDeviceType) {
             case EM_1000_EM:
                 addEm1000EmDevice(emMsg.address);
@@ -185,30 +181,30 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
     }
 
     @Override
-    public void failed(@Nullable Throwable arg0) {
+    public void failed(Throwable arg0) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void fhtDataParsed(@Nullable FhtMessage fhtMsg) {
+    public void fhtDataParsed(FhtMessage fhtMsg) {
         addFhtDevice(fhtMsg.housecode);
     }
 
     @Override
-    public void fhtPartialDataParsed(@Nullable FhtMessage arg0) {
+    public void fhtPartialDataParsed(FhtMessage arg0) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void fs20DataParsed(@Nullable FS20Message arg0) {
+    public void fs20DataParsed(FS20Message arg0) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void hmsDataParsed(@Nullable HmsMessage hmsMsg) {
+    public void hmsDataParsed(HmsMessage hmsMsg) {
         switch (hmsMsg.hmsDeviceType) {
             case HMS_100_TF:
                 addHms100TfDevice(hmsMsg.housecode);
@@ -219,13 +215,13 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
     }
 
     @Override
-    public void laCrosseTxParsed(@Nullable LaCrosseTx2Message arg0) {
+    public void laCrosseTxParsed(LaCrosseTx2Message arg0) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void culMessageParsed(@Nullable CulMessage arg0) {
+    public void culMessageParsed(CulMessage arg0) {
         // TODO Auto-generated method stub
 
     }

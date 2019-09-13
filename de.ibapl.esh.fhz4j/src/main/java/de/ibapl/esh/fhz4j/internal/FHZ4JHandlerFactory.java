@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -123,7 +122,7 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
         }
     }
 
-    private synchronized void registerDiscoveryService(@NonNull SpswBridgeHandler spswBridgeHandler) {
+    private synchronized void registerDiscoveryService(SpswBridgeHandler spswBridgeHandler) {
         FHZ4JDiscoveryService discoveryService = new FHZ4JDiscoveryService(spswBridgeHandler);
         this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(), bundleContext
                 .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));

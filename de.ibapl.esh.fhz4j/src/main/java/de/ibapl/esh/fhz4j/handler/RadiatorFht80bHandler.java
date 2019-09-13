@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
@@ -259,7 +258,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         }
     }
 
-    private void sendCycle(DayOfWeek dayOfWeek, @NonNull StringType command) {
+    private void sendCycle(DayOfWeek dayOfWeek, StringType command) {
         String value = command.toString();
 
         // TIME_FORMATTER.parse("12:00-13:00 15:00-18:00", new ParsePosition(0)).query(LocalTime::from);
@@ -430,7 +429,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private final static String TIME_NOT_SET = "XX:XX";
 
-    private void update_FROM_TO(@NonNull String channelFromTo, FhtTimesMessage timesMessage) {
+    private void update_FROM_TO(String channelFromTo, FhtTimesMessage timesMessage) {
         StringBuilder sb = new StringBuilder();
         if (timesMessage.timeFrom1 != null) {
             TIME_FORMATTER.formatTo(timesMessage.timeFrom1, sb);
