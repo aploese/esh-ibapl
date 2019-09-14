@@ -39,8 +39,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableSet;
-
 import de.ibapl.esh.fhz4j.FHZ4JBindingConstants;
 import de.ibapl.esh.fhz4j.handler.Em1000EmHandler;
 import de.ibapl.esh.fhz4j.handler.EvoHomeHandler;

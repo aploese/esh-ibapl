@@ -23,6 +23,7 @@ package de.ibapl.esh.onewire4j.internal;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,8 +38,6 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.ImmutableSet;
 
 import de.ibapl.esh.onewire4j.OneWire4JBindingConstants;
 import de.ibapl.esh.onewire4j.handler.SpswBridgeHandler;
@@ -56,9 +55,13 @@ import de.ibapl.spsw.api.SerialPortSocketFactory;
 @Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.onewire4j")
 public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(
-            OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE,
-            OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
+    
+    static {
+        SUPPORTED_THING_TYPES_UIDS = new HashSet<>();    
+        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE);
+        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
+    }
 
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory;// = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
@@ -90,7 +93,7 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
     private synchronized void registerDiscoveryService(SpswBridgeHandler spswBridgeHandler) {
         OneWire4JDiscoveryService discoveryService = new OneWire4JDiscoveryService(spswBridgeHandler);
         this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(), bundleContext
-                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));
+                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
     }
 
     @Override

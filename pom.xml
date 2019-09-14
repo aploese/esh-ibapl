@@ -27,8 +27,8 @@
 
 
     <properties>
-        <compile.source>1.8</compile.source>
-        <compile.target>1.8</compile.target>
+        <compile.source>11</compile.source>
+        <compile.target>11</compile.target>
         <sourceEncoding>UTF-8</sourceEncoding>
         <karaf.version>4.2.6</karaf.version>
         <jnhw.version>1.0.1-SNAPSHOT</jnhw.version>
