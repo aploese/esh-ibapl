@@ -135,7 +135,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void culMessageParsed(CulMessage arg0) {
-            // TODO Auto-generated method stub
+            //no-op
 
         }
 
@@ -159,7 +159,17 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void signalStrength(float signalStrength) {
-            // TODO Auto-generated method stub
+            //no-op
+        }
+
+        @Override
+        public void receiveEnabled(Protocol protocol) {
+            //no-op
+        }
+
+        @Override
+        public void helpParsed(String helpMessages) {
+            //no-op
         }
 
     }
@@ -340,7 +350,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }, 0, refreshRate, TimeUnit.DAYS);
 
         updateStatus(ThingStatus.ONLINE);
-
+        LOGGER.log(Level.INFO, "FhzAdapter initialized");
     }
 
     @Override
@@ -369,7 +379,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         fhtThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
-        LOGGER.log(Level.SEVERE, "FhzAdapter disposed");
+        LOGGER.log(Level.INFO, "FhzAdapter disposed");
     }
 
     public CulMessageListener getDiscoveryListener() {

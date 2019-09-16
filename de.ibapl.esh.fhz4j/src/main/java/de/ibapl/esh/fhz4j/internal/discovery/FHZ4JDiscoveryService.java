@@ -32,6 +32,7 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 
 import de.ibapl.esh.fhz4j.FHZ4JBindingConstants;
 import de.ibapl.esh.fhz4j.handler.SpswBridgeHandler;
+import de.ibapl.fhz4j.api.Protocol;
 import de.ibapl.fhz4j.cul.CulMessage;
 import de.ibapl.fhz4j.cul.CulMessageListener;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
@@ -248,7 +249,17 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
 
     @Override
     public void signalStrength(float signalStrength) {
-        // TODO Auto-generated method stub
+        //no-op
+    }
+
+    @Override
+    public void receiveEnabled(Protocol protocol) {
+        //no-op
+    }
+
+    @Override
+    public void helpParsed(String helpMessages) {
+        //no-op
     }
 
 }

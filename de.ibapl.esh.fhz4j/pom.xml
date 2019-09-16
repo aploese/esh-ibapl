@@ -75,10 +75,6 @@
             <artifactId>org.osgi.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.openhab.core.bom</groupId>
             <artifactId>org.openhab.core.bom.compile</artifactId>
             <type>pom</type>
