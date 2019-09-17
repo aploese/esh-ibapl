@@ -47,7 +47,7 @@ import de.ibapl.fhz4j.protocol.em.EmMessage;
 public class Em1000EmHandler extends BaseThingHandler {
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.Em1000EmHandler");
 
     private short address;
 

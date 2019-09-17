@@ -70,7 +70,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     protected ThingStatusDetail fht80HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.RadiatorFht80bHandler");
     
     private float desiredTemp;
 

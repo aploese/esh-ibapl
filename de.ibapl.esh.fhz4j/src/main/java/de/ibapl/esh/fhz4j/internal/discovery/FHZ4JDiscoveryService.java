@@ -42,6 +42,7 @@ import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
+import java.io.IOException;
 
 /**
  *
@@ -49,7 +50,7 @@ import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
  */
 public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements CulMessageListener {
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JDiscoveryService");
 
     private final static int SEARCH_TIME = 15 * 60; // 15 minutes FHT80 sends all 120 sec, HMS 100 TF all 10 min.
 
@@ -259,6 +260,11 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
 
     @Override
     public void helpParsed(String helpMessages) {
+        //no-op
+    }
+
+    @Override
+    public void onIOException(IOException ioe) {
         //no-op
     }
 

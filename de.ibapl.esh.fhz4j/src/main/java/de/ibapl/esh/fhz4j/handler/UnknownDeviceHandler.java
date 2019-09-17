@@ -41,7 +41,7 @@ import org.eclipse.smarthome.core.types.Command;
 public class UnknownDeviceHandler extends BaseThingHandler {
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.UnknownDeviceHandler");
 
     public UnknownDeviceHandler(Thing thing) {
         super(thing);

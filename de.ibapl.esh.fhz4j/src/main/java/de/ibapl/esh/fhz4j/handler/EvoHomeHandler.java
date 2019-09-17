@@ -53,7 +53,7 @@ public class EvoHomeHandler extends BaseThingHandler {
 
     protected ThingStatusDetail evoHomeRadiatorHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger LOGGER = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger LOGGER = Logger.getLogger("d.i.e.f.h.EvoHomeHandler");
 
     private int deviceId;
 

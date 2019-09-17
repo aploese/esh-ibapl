@@ -59,7 +59,7 @@ import java.util.HashSet;
 @Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.fhz4j")
 public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JHandlerFactory");
 
     //TODO ImmutableSet.of(Elements .. e) does not exist???
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;

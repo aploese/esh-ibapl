@@ -65,7 +65,6 @@ import de.ibapl.fhz4j.api.FhzHandler;
 import de.ibapl.fhz4j.api.Protocol;
 import de.ibapl.fhz4j.cul.CulMessageListener;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
-import java.util.EnumSet;
 
 /**
  *
@@ -172,6 +171,24 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             //no-op
         }
 
+        @Override
+        public void onIOException(IOException ioe) {
+            try {
+                culAdapter.close();
+            } catch (Exception e) {
+            }
+            try {
+                Thread.sleep(10000);//try to recover => 10 s rest
+            } catch (InterruptedException ex) {
+                //nothing to do
+            }
+            try {
+                culAdapter.open();
+            } catch (Exception e) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
+            }
+        }
+
     }
 
     private final SerialPortSocketFactory serialPortSocketFactory;
@@ -185,7 +202,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private static final String PROTOCOL_FHT_PARAM = "protocolFHT";
     private static final String PROTOCOL_EVO_HOME_PARAM = "protocolEvoHome";
 
-    private static final Logger LOGGER = Logger.getLogger("esh.binding.fhz4j");
+    private static final Logger LOGGER = Logger.getLogger("d.i.e.f.h.SpswBridgeHandler");
 
     private String port;
     private short housecode;

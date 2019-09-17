@@ -50,7 +50,7 @@ import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 public class Hms100TfHandler extends BaseThingHandler {
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger logger = Logger.getLogger("d.i.e.f.h.Hms100TfHandler");
 
     private short housecode;
 
