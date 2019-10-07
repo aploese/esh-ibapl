@@ -11,7 +11,7 @@
     </parent>
     <artifactId>de.ibapl.esh.fhz4j</artifactId>
 
-    <name>FHZ4J Binding</name>
+    <name>ESH IbAPl :: FHZ4J Binding</name>
     <packaging>jar</packaging>
 	
     <properties>

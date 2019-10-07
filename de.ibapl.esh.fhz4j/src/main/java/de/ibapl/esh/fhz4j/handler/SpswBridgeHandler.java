@@ -22,11 +22,34 @@
 package de.ibapl.esh.fhz4j.handler;
 
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B;
-
+import de.ibapl.fhz4j.api.FhzHandler;
+import de.ibapl.fhz4j.api.Protocol;
+import de.ibapl.fhz4j.cul.CulAdapter;
+import de.ibapl.fhz4j.cul.CulMessage;
+import de.ibapl.fhz4j.cul.CulMessageListener;
+import de.ibapl.fhz4j.protocol.em.EmMessage;
+import de.ibapl.fhz4j.protocol.evohome.DeviceId;
+import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
+import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
+import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
+import de.ibapl.fhz4j.protocol.fht.FhtMessage;
+import de.ibapl.fhz4j.protocol.fht.FhtProperty;
+import de.ibapl.fhz4j.protocol.fs20.FS20Message;
+import de.ibapl.fhz4j.protocol.hms.HmsMessage;
+import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
+import de.ibapl.spsw.api.SerialPortSocket;
+import de.ibapl.spsw.api.SerialPortSocketFactory;
+import de.ibapl.spsw.logging.LoggingSerialPortSocket;
+import de.ibapl.spsw.logging.TimeStampLogging;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +59,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -47,24 +69,6 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
-
-import de.ibapl.fhz4j.cul.CulAdapter;
-import de.ibapl.fhz4j.cul.CulMessage;
-import de.ibapl.fhz4j.protocol.em.EmMessage;
-import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
-import de.ibapl.fhz4j.protocol.fht.FhtMessage;
-import de.ibapl.fhz4j.protocol.fht.FhtProperty;
-import de.ibapl.fhz4j.protocol.fs20.FS20Message;
-import de.ibapl.fhz4j.protocol.hms.HmsMessage;
-import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
-import de.ibapl.spsw.api.SerialPortSocket;
-import de.ibapl.spsw.api.SerialPortSocketFactory;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import de.ibapl.fhz4j.api.FhzHandler;
-import de.ibapl.fhz4j.api.Protocol;
-import de.ibapl.fhz4j.cul.CulMessageListener;
-import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 
 /**
  *
@@ -152,7 +156,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 reh.updateFromMsg(edm);
             } else {
-                LOGGER.severe("EvoHome unhandled MSG:  " + evoHomeMsg);
+                LOGGER.log(Level.SEVERE, "EvoHome unhandled MSG:  {0}", evoHomeMsg);
             }
         }
 
@@ -173,19 +177,21 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void onIOException(IOException ioe) {
+            LOGGER.log(Level.WARNING, "Got IOE in CUL Adapter", ioe);
             try {
                 culAdapter.close();
             } catch (Exception e) {
             }
             try {
-                Thread.sleep(10000);//try to recover => 10 s rest
+                Thread.sleep(5000);//try to recover => 5 s rest
             } catch (InterruptedException ex) {
                 //nothing to do
             }
             try {
-                culAdapter.open();
+                culAdapter = new CulAdapter(getSerialPortSocket(), this);
             } catch (Exception e) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
+                LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
             }
         }
 
@@ -201,6 +207,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private static final String HOUSE_CODE_PARAM = "housecode";
     private static final String PROTOCOL_FHT_PARAM = "protocolFHT";
     private static final String PROTOCOL_EVO_HOME_PARAM = "protocolEvoHome";
+    private static final String LOG_SERIAL_PORT = "logSerialPort";
 
     private static final Logger LOGGER = Logger.getLogger("d.i.e.f.h.SpswBridgeHandler");
 
@@ -209,9 +216,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private int refreshRate;
     private boolean protocolEvoHome;
     private boolean protocolFHT;
+    private boolean logSerialPort;
 
     private ScheduledFuture<?> refreshJob;
     private CulAdapter culAdapter;
+    private final Object writeLock = new Object();
     private final Map<Short, RadiatorFht80bHandler> fhtThingHandler = new HashMap<>();
     private final Map<Integer, EvoHomeHandler> evoHomeThingHandler = new HashMap<>();
     private final Map<Short, Hms100TfHandler> hmsThingHandler = new HashMap<>();
@@ -222,6 +231,19 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         super(bridge);
         this.serialPortSocketFactory = serialPortSocketFactory;
         protocolFHT = true;
+    }
+
+    private SerialPortSocket getSerialPortSocket() throws IOException {
+        String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+        final SerialPortSocket sps = serialPortSocketFactory.open(port);
+        if (logSerialPort) {
+            return LoggingSerialPortSocket.wrapWithAsciiOutputStream(sps,
+                    new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
+                    false,
+                    TimeStampLogging.UTC.UTC);
+        } else {
+            return sps;
+        }
     }
 
     @Override
@@ -236,39 +258,28 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         if (childHandler instanceof RadiatorFht80bHandler) {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.put(rfh.getHousecode(), rfh);
-            LOGGER.info("Added FHT 80B " + rfh.getHousecode());
+            LOGGER.log(Level.INFO, "Added FHT 80B {0}", rfh.getHousecode());
             try {
                 if ((culAdapter != null) & protocolFHT) {
-                    culAdapter.initFhtReporting(rfh.getHousecode());
+                    synchronized(writeLock) {
+                        culAdapter.initFhtReporting(rfh.getHousecode());
+                    }
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Failed to inti FHT reporting", e);
             }
-            return;
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.put(((EvoHomeHandler) childHandler).getDeviceId(), reh);
-            LOGGER.info("Added Evo Home device " + reh.getDeviceId());
-            try {
-                if ((culAdapter != null) & protocolEvoHome) {
-                    culAdapter.initEvoHome();
-                }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return;
+            LOGGER.log(Level.INFO, "Added Evo Home device {0}", reh.getDeviceId());
         } else if (childHandler instanceof Em1000EmHandler) {
             final Em1000EmHandler emh = (Em1000EmHandler) childHandler;
             emThingHandler.put(emh.getAddress(), emh);
-            LOGGER.info("Added EM 1000 EM " + emh.getAddress());
-            return;
+            LOGGER.log(Level.INFO, "Added EM 1000 EM {0}", emh.getAddress());
         } else if (childHandler instanceof Hms100TfHandler) {
             final Hms100TfHandler hmsh = (Hms100TfHandler) childHandler;
             hmsThingHandler.put(hmsh.getHousecode(), hmsh);
-            LOGGER.info("Added HMS 100 TF " + hmsh.getHousecode());
-            return;
+            LOGGER.log(Level.INFO, "Added HMS 100 TF {0}", hmsh.getHousecode());
         } else {
             // TODO
         }
@@ -280,19 +291,15 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         if (childHandler instanceof RadiatorFht80bHandler) {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.remove(rfh.getHousecode());
-            return;
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.remove(reh.getDeviceId());
-            return;
         } else if (childHandler instanceof Em1000EmHandler) {
             final Em1000EmHandler emh = (Em1000EmHandler) childHandler;
             emThingHandler.remove(emh.getAddress());
-            return;
         } else if (childHandler instanceof Hms100TfHandler) {
             final Hms100TfHandler hmsh = (Hms100TfHandler) childHandler;
             hmsThingHandler.remove(hmsh.getHousecode());
-            return;
         } else {
             // TODO
         }
@@ -310,44 +317,53 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         refreshRate = ((BigDecimal) config.get(REFRESH_RATE_PARAM)).intValue();
 
-        Object protocol = config.get(PROTOCOL_FHT_PARAM);
-        LOGGER.severe("Read protocolFHT from config: " + protocol);
-        if (protocol instanceof Boolean) {
-            this.protocolFHT = ((Boolean) protocol).booleanValue();
+        if (!config.containsKey(LOG_SERIAL_PORT)) {
+            logSerialPort = false;
         } else {
-            LOGGER.severe("Throw away stored protocolFHT configuration: " + protocol);
+            logSerialPort = ((Boolean) config.get(LOG_SERIAL_PORT));
+        }
+
+        Object protocol = config.get(PROTOCOL_FHT_PARAM);
+        LOGGER.log(Level.SEVERE, "Read protocolFHT from config: {0}", protocol);
+        if (protocol instanceof Boolean) {
+            this.protocolFHT = ((Boolean) protocol);
+        } else {
+            LOGGER.log(Level.SEVERE, "Throw away stored protocolFHT configuration: {0}", protocol);
         }
 
         protocol = config.get(PROTOCOL_EVO_HOME_PARAM);
-        LOGGER.severe("Read protocolEvoHome from config: " + protocol);
+        LOGGER.log(Level.SEVERE, "Read protocolEvoHome from config: {0}", protocol);
         if (protocol instanceof Boolean) {
-            this.protocolEvoHome = ((Boolean) protocol).booleanValue();
-            if (!((Boolean) protocol).booleanValue()) {
+            this.protocolEvoHome = ((Boolean) protocol);
+            if (!((Boolean) protocol)) {
                 this.protocolFHT = true;
             }
         } else {
-            LOGGER.severe("Throw away stored protocolEvoHome configuration: " + protocol);
+            LOGGER.log(Level.SEVERE, "Throw away stored protocolEvoHome configuration: {0}", protocol);
             this.protocolFHT = true;
         }
-
-        SerialPortSocket serialPortSocket = serialPortSocketFactory.createSerialPortSocket(port);
 
         fhtThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
 
         try {
-            culAdapter = new CulAdapter(serialPortSocket, new Listener());
-            culAdapter.open();
+            culAdapter = new CulAdapter(getSerialPortSocket(), new Listener());
             if (protocolEvoHome) {
-                culAdapter.initEvoHome();
+                synchronized(writeLock) {
+                    culAdapter.initEvoHome();
+                }
             } else if (protocolFHT) {
-                culAdapter.initFhz(housecode);
+                synchronized(writeLock) {
+                    culAdapter.initFhz(housecode);
+                }
             } else {
-                //TODO Fal back
-                culAdapter.initFhz(housecode);
+                //TODO fall back
+                synchronized(writeLock) {
+                    culAdapter.initFhz(housecode);
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             try {
                 culAdapter.close();
@@ -360,7 +376,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         refreshJob = scheduler.scheduleWithFixedDelay(() -> {
             try {
-                culAdapter.initFhtReporting(fhtThingHandler.keySet());
+                synchronized(writeLock) {
+                    culAdapter.initFhtReporting(fhtThingHandler.keySet());
+                }
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Could not init fht reporting", e);
             }
@@ -385,6 +403,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                     cp.close();
                 } catch (Exception e) {
                     LOGGER.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
+//TODO How to suppress warning??                    @SuppressWarnings("Unused Assignment")
+//Set cp to null, so the gc can collect it.
                     cp = null;
                     //Trigger gc to get rid of current cp ...
                     System.gc();
@@ -408,28 +428,52 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     }
 
     public void sendFhtModeAutoMessage(short housecode) throws IOException {
-        culAdapter.writeFhtModeAuto(housecode);
+        synchronized(writeLock) {
+            culAdapter.writeFhtModeAuto(housecode);
+        }
     }
 
     public void sendFhtModeManuMessage(short housecode) throws IOException {
-        culAdapter.writeFhtModeManu(housecode);
+        synchronized(writeLock) {
+            culAdapter.writeFhtModeManu(housecode);
+        }
     }
 
     public void sendFhtMessage(short housecode, FhtProperty fhtProperty, float value) throws IOException {
-        culAdapter.writeFht(housecode, fhtProperty, value);
+        synchronized(writeLock) {
+            culAdapter.writeFht(housecode, fhtProperty, value);
+        }
     }
 
     public void sendFhtMessage(short housecode, DayOfWeek dayOfWeek, LocalTime from1, LocalTime to1, LocalTime from2,
             LocalTime to2) throws IOException {
-        culAdapter.writeFhtCycle(housecode, dayOfWeek, from1, to1, from2, to2);
+        synchronized(writeLock) {
+            culAdapter.writeFhtCycle(housecode, dayOfWeek, from1, to1, from2, to2);
+        }
     }
 
     public void sendFhtPartyMessage(short housecode, float temp, LocalDateTime to) throws IOException {
-        culAdapter.writeFhtModeParty(housecode, temp, to);
+        synchronized(writeLock) {
+            culAdapter.writeFhtModeParty(housecode, temp, to);
+        }
     }
 
     public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException {
-        culAdapter.writeFhtModeHoliday(housecode, temp, to);
+        synchronized(writeLock) {
+            culAdapter.writeFhtModeHoliday(housecode, temp, to);
+        }
+    }
+
+    public void sendEvoHomeZoneSetpointPermanent(DeviceId deviceId, ZoneTemperature temperature) throws IOException {
+        synchronized(writeLock) {
+            culAdapter.writeEvoHomeZoneSetpointPermanent(deviceId, temperature);
+        }
+    }
+
+    public void sendEvoHomeZoneSetpointUntil(DeviceId deviceId, ZoneTemperature temperature, LocalDateTime localDateTime) throws IOException {
+        synchronized(writeLock) {
+            culAdapter.writeEvoHomeZoneSetpointUntil(deviceId, temperature, localDateTime);
+        }
     }
 
 }

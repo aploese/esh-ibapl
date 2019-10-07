@@ -12,7 +12,7 @@
 	</parent>
 	<artifactId>esh-ibapl-kar</artifactId>
 
-	<name>ESH:IbApl:Kar</name>
+	<name>ESH IbAPl :: Kar</name>
 	<packaging>kar</packaging>
 
 	<build>

@@ -41,7 +41,6 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import de.ibapl.onewire4j.OneWireAdapter;
 import de.ibapl.onewire4j.container.ENotProperlyConvertedException;
 import de.ibapl.onewire4j.container.OneWireDevice;
-import de.ibapl.onewire4j.container.ReadScratchpadRequest;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 
 /**
@@ -130,7 +129,7 @@ public class TemperatureHandler extends BaseThingHandler {
 
     public void readDevice(OneWireAdapter oneWireAdapter) {
         try {
-            ReadScratchpadRequest request = new ReadScratchpadRequest();
+            TemperatureContainer.ReadScratchpadRequest request = new TemperatureContainer.ReadScratchpadRequest();
             temperatureContainer.readScratchpad(oneWireAdapter, request);
             final double temp = temperatureContainer.getTemperature(request);
             updateTemperature(temp);

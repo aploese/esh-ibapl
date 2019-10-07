@@ -70,7 +70,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     protected ThingStatusDetail fht80HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("d.i.e.f.h.RadiatorFht80bHandler");
+    private final static Logger LOGGER = Logger.getLogger("d.i.e.f.h.RadiatorFht80bHandler");
     
     private float desiredTemp;
 
@@ -254,7 +254,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                 }
                 break;
             default:
-                logger.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}", channelUID.getId());
+                LOGGER.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}", channelUID.getId());
         }
     }
 
@@ -284,7 +284,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        logger.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
+        LOGGER.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
         Configuration configuration = getConfig();
         try {
             housecode = ((Number) configuration.get("housecode")).shortValue();

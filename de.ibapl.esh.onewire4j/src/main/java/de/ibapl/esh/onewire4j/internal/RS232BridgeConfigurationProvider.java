@@ -38,6 +38,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,10 +47,13 @@ import de.ibapl.spsw.api.SerialPortSocketFactory;
 @Component(service = ConfigDescriptionProvider.class, immediate = true, configurationPid = "config.rs232-bridge")
 public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvider {
 
+    private static final Logger LOGGER = Logger.getLogger("d.i.e.o.RS232BridgeConfigurationProvider");
+
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
 
     private static final URI RS_232_URI;
+
     static {
         try {
             RS_232_URI = new URI("bridge-type:rs-232");
@@ -70,6 +74,16 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
             ConfigDescriptionParameter refreshrate = new ConfigDescriptionParameter("refreshrate", Type.INTEGER) {
 
                 @Override
+                public String getLabel() {
+                    return "Refresh Rate";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "The refreshrate in s.";
+                }
+
+                @Override
                 public String getDefault() {
                     return "60";
                 }
@@ -87,8 +101,14 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
                 public List<ParameterOption> getOptions() {
                     List<ParameterOption> result = new LinkedList<>();
                     // TODO Filter used ports or not ???
-                    for (String name : serialPortSocketFactory.getPortNames(true)) {
-                        result.add(new ParameterOption(name, name));
+                    if (serialPortSocketFactory == null) {
+                        LOGGER.severe("serialPortSocketFactory == null");
+                        //TODO
+                    } else {
+
+                        for (String name : serialPortSocketFactory.getPortNames(false)) {
+                            result.add(new ParameterOption(name, name));
+                        }
                     }
                     return result;
                 }
@@ -98,8 +118,43 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
                     return true;
                 }
 
+                @Override
+                public String getLabel() {
+                    return "serial port";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "The serial port to use";
+                }
             };
             parameters.add(port);
+
+            ConfigDescriptionParameter logSerialPort = new ConfigDescriptionParameter("logSerialPort", Type.BOOLEAN) {
+
+                @Override
+                public String getDefault() {
+                    return String.valueOf(false);
+                }
+
+                @Override
+                public boolean isRequired() {
+                    return true;
+                }
+
+                @Override
+                public String getLabel() {
+                    return "Log Serial Port Data";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Log IO and settings on the serial port";
+                }
+
+            };
+            parameters.add(logSerialPort);
+
         }
         return new ConfigDescription(uri, parameters);
     }

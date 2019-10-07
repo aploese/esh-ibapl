@@ -50,7 +50,7 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
 
-    private final Logger logger = Logger.getLogger("esh.binding.fhz4j");
+    private final Logger LOGGER = Logger.getLogger("d.i.e.f.RS232BridgeConfigurationProvider");
 
     private static final URI RS_232_URI;
     static {
@@ -126,7 +126,7 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
                     List<ParameterOption> result = new LinkedList<>();
                     // TODO Filter used ports or not ???
                 	if (serialPortSocketFactory == null) {
-                		logger.severe("serialPortSocketFactory == null");
+                		LOGGER.severe("serialPortSocketFactory == null");
                 		//TODO
                 	} else {
 
@@ -157,6 +157,11 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
             ConfigDescriptionParameter protocolEvoHome = new ConfigDescriptionParameter("protocolEvoHome", Type.BOOLEAN) {
 
                 @Override
+                public String getDefault() {
+                    return String.valueOf(false);
+                }
+
+                @Override
                 public boolean isRequired() {
                     return true;
                 }
@@ -177,6 +182,11 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
             ConfigDescriptionParameter protocolFHT = new ConfigDescriptionParameter("protocolFHT", Type.BOOLEAN) {
 
                 @Override
+                public String getDefault() {
+                    return String.valueOf(false);
+                }
+
+                @Override
                 public boolean isRequired() {
                     return true;
                 }
@@ -193,6 +203,31 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
 
             };
             parameters.add(protocolFHT);
+
+            ConfigDescriptionParameter logSerialPort = new ConfigDescriptionParameter("logSerialPort", Type.BOOLEAN) {
+
+                @Override
+                public String getDefault() {
+                    return String.valueOf(false);
+                }
+
+                @Override
+                public boolean isRequired() {
+                    return true;
+                }
+
+                @Override
+                public String getLabel() {
+                    return "Log Serial Port Data";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Log IO and settings on the serial port";
+                }
+
+            };
+            parameters.add(logSerialPort);
 
         }
         return new ConfigDescription(uri, parameters);

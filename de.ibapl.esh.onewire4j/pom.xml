@@ -12,7 +12,7 @@
     <artifactId>de.ibapl.esh.onewire4j</artifactId>
     <version>1.0.1-SNAPSHOT</version>
 
-    <name>OneWire4J Binding</name>
+    <name>ESH IbAPl :: OneWire4J Binding</name>
     <packaging>jar</packaging>
 
     <build>

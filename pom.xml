@@ -9,7 +9,7 @@
     <artifactId>ibapl-esh</artifactId>
     <version>2.0.0-SNAPSHOT</version>
 
-    <name>ESH-IbAPl</name>
+    <name>ESH IbAPl</name>
     <packaging>pom</packaging>
     <organization>
         <name>Arne Plöse</name>
@@ -32,7 +32,7 @@
         <sourceEncoding>UTF-8</sourceEncoding>
         <karaf.version>4.2.6</karaf.version>
         <jnhw.version>1.0.1-SNAPSHOT</jnhw.version>
-        <spsw.version>2.1.1-SNAPSHOT</spsw.version>
+        <spsw.version>3.0.0-SNAPSHOT</spsw.version>
         <fhz4j.version>2.0.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->
         <esh.fhz4j.version>2.0.0-SNAPSHOT</esh.fhz4j.version>

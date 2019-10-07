@@ -22,6 +22,7 @@
 package de.ibapl.esh.fhz4j.handler;
 
 import static de.ibapl.esh.fhz4j.FHZ4JBindingConstants.*;
+import de.ibapl.fhz4j.protocol.evohome.DeviceId;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x2309_0xXX_ROOM_DESIRED_TEMP_Message;
 import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x30C9_0xXX_ROOM_MEASURED_TEMP_Message;
@@ -32,6 +33,7 @@ import java.math.BigDecimal;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.IOException;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
@@ -42,6 +44,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 
 /**
  * The {@link RadiatorFht80bHandler} is responsible for handling commands, which
@@ -53,7 +56,7 @@ public class EvoHomeHandler extends BaseThingHandler {
 
     protected ThingStatusDetail evoHomeRadiatorHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger LOGGER = Logger.getLogger("d.i.e.f.h.EvoHomeHandler");
+    private final static Logger LOGGER = Logger.getLogger("d.i.e.f.h.EvoHomeHandler");
 
     private int deviceId;
 
@@ -63,7 +66,111 @@ public class EvoHomeHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        LOGGER.log(Level.SEVERE, "Unknown EvoHome Radiator (" + deviceId + ") channel: {0}", channelUID.getId());
+        try {
+            switch (channelUID.getId()) {
+                case CHANNEL_DESIRED_TEMPERATURE_00:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 0, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_01:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 1, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_02:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 2, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_03:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 3, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_04:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 4, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_05:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 5, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_06:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 6, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_07:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 7, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_08:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 8, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_09:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 9, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_10:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 10, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                case CHANNEL_DESIRED_TEMPERATURE_11:
+                    if (command instanceof DecimalType) {
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
+                                new DeviceId(deviceId),
+                                new ZoneTemperature((byte) 11, ((DecimalType) command).toBigDecimal()));
+                    } else if (command instanceof RefreshType) {
+                    }
+                    break;
+                default:
+                    LOGGER.log(Level.SEVERE, "Handle command {0} for unknown EvoHome settable channelUID: {1} ", new Object[]{command, channelUID});
+            }
+        } catch (IOException ioe) {
+            LOGGER.log(Level.SEVERE, "IO EX: command {0} channelUID {1}", new Object[]{command, channelUID});
+            //TODO set state ???
+        }
     }
 
     @Override
@@ -110,6 +217,7 @@ public class EvoHomeHandler extends BaseThingHandler {
                 final short heatDeamnd = ((EvoHome_0x18_0x3150_0x02_HEAT_DEMAND_Message) msg).heatDemand;
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_RADIATOR_HEAT_DEMAND),
                         new DecimalType(heatDeamnd));
+                LOGGER.severe("EvoHome handled MSG:  " + msg);
             }
             break;
             case _18_30C9_ROOM_MEASURED_TEMP: {
@@ -121,14 +229,17 @@ public class EvoHomeHandler extends BaseThingHandler {
                         //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
                                 new DecimalType(m.zoneTemperatures.get(0).temperature));
+                        LOGGER.severe("EvoHome handled MSG:  " + msg);
                         break;
                     case MULTI_ZONE_CONTROLLER:
                         for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
                             updateState(new ChannelUID(getThing().getUID(), String.format(CHANNEL_TEMPERATURE_MEASURED_XX__TEMPLATE, zoneTemperature.zone)),
                                     new DecimalType(zoneTemperature.temperature));
                         }
+                        LOGGER.severe("EvoHome handled MSG:  " + msg);
                         break;
                     default:
+                        LOGGER.severe("EvoHome unhandled MSG:  " + msg);
                 }
             }
             break;
@@ -140,14 +251,17 @@ public class EvoHomeHandler extends BaseThingHandler {
                         //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
                                 new DecimalType(m.zoneTemperatures.get(0).temperature));
+                        LOGGER.severe("EvoHome handled MSG:  " + msg);
                         break;
                     case MULTI_ZONE_CONTROLLER:
                         for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
                             updateState(new ChannelUID(getThing().getUID(), String.format(CHANNEL_DESIRED_TEMPERATURE_XX__TEMPLATE, zoneTemperature.zone)),
                                     new DecimalType(zoneTemperature.temperature));
                         }
+                        LOGGER.severe("EvoHome handled MSG:  " + msg);
                         break;
                     default:
+                        LOGGER.severe("EvoHome unhandled MSG:  " + msg);
                 }
             }
             break;
@@ -157,10 +271,11 @@ public class EvoHomeHandler extends BaseThingHandler {
                 final BigDecimal desiredTemp = ((EvoHome_0x2C_0x2309_0xXX_ROOM_DESIRED_TEMP_Message) msg).zoneTemperatures.get(0).temperature;
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
                         new DecimalType(desiredTemp));
+                LOGGER.severe("EvoHome handled MSG:  " + msg);
             }
             break;
             default:
-                LOGGER.severe("EvoHome:  " + msg);
+                LOGGER.severe("EvoHome unhandled DeviceMessage:  " + msg);
                 break;
         }
     }
