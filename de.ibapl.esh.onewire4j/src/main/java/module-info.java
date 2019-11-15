@@ -21,7 +21,7 @@
  */
 module de.ibapl.esh.onewire4j {
 	requires java.logging;
-	requires osgi.annotation;
+	//requires osgi.annotation;
 	requires osgi.core;
 	requires org.osgi.service.component.annotations;
 	

@@ -41,6 +41,9 @@ import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
 import de.ibapl.spsw.logging.TimeStampLogging;
+import de.ibapl.spsw.logging.LogExplainRead;
+import de.ibapl.spsw.logging.LogExplainWrite;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -89,13 +92,17 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 return;
             }
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("EM Message: %s", emMsg);
+            }
             emh.updateFromMsg(emMsg);
         }
 
         @Override
-        public void failed(Throwable arg0) {
-            // TODO Auto-generated method stub
-
+        public void failed(Throwable t) {
+            if (logExplainRead != null) {
+                logExplainRead.explainRead(t);
+            }
         }
 
         @Override
@@ -108,13 +115,17 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 return;
             }
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("FHT Message: %s", fhtMsg);
+            }
             rfh.updateFromMsg(fhtMsg);
         }
 
         @Override
-        public void fs20DataParsed(FS20Message arg0) {
-            // TODO Auto-generated method stub
-
+        public void fs20DataParsed(FS20Message fs20Msg) {
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("FS20 Message: %s", fs20Msg);
+            }
         }
 
         @Override
@@ -127,19 +138,24 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 return;
             }
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("HMS Message: %s", hmsMsg);
+            }
             hmsh.updateFromMsg(hmsMsg);
         }
 
         @Override
-        public void laCrosseTxParsed(LaCrosseTx2Message arg0) {
-            // TODO Auto-generated method stub
-
+        public void laCrosseTxParsed(LaCrosseTx2Message msg) {
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("LaCrosseTx2Msg Message: %s", msg);
+            }
         }
 
         @Override
-        public void culMessageParsed(CulMessage arg0) {
-            //no-op
-
+        public void culMessageParsed(CulMessage msg) {
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("CUL Message: %s", msg);
+            }
         }
 
         @Override
@@ -154,9 +170,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                     }
                     return;
                 }
+                if (logExplainRead != null) {
+                    logExplainRead.explainRead("EvoHome Message: %s", evoHomeMsg);
+                }
+
                 reh.updateFromMsg(edm);
-            } else {
-                LOGGER.log(Level.SEVERE, "EvoHome unhandled MSG:  {0}", evoHomeMsg);
             }
         }
 
@@ -203,7 +221,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             .collect(Collectors.toSet());
 
     private static final String PORT_PARAM = "port";
-    private static final String REFRESH_RATE_PARAM = "refreshrate";
     private static final String HOUSE_CODE_PARAM = "housecode";
     private static final String PROTOCOL_FHT_PARAM = "protocolFHT";
     private static final String PROTOCOL_EVO_HOME_PARAM = "protocolEvoHome";
@@ -213,12 +230,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
     private String port;
     private short housecode;
-    private int refreshRate;
     private boolean protocolEvoHome;
     private boolean protocolFHT;
     private boolean logSerialPort;
 
-    private ScheduledFuture<?> refreshJob;
     private CulAdapter culAdapter;
     private final Object writeLock = new Object();
     private final Map<Short, RadiatorFht80bHandler> fhtThingHandler = new HashMap<>();
@@ -226,6 +241,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private final Map<Short, Hms100TfHandler> hmsThingHandler = new HashMap<>();
     private final Map<Short, Em1000EmHandler> emThingHandler = new HashMap<>();
     private CulMessageListener discoveryListener;
+    private LogExplainRead logExplainRead;
+    private LogExplainWrite logExplainWrite;
 
     public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory) {
         super(bridge);
@@ -237,10 +254,13 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         final SerialPortSocket sps = serialPortSocketFactory.open(port);
         if (logSerialPort) {
-            return LoggingSerialPortSocket.wrapWithAsciiOutputStream(sps,
+            LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithAsciiOutputStream(sps,
                     new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
                     false,
                     TimeStampLogging.UTC.UTC);
+            logExplainRead = result;
+            logExplainWrite = result;
+            return result;
         } else {
             return sps;
         }
@@ -261,7 +281,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             LOGGER.log(Level.INFO, "Added FHT 80B {0}", rfh.getHousecode());
             try {
                 if ((culAdapter != null) & protocolFHT) {
-                    synchronized(writeLock) {
+                    synchronized (writeLock) {
                         culAdapter.initFhtReporting(rfh.getHousecode());
                     }
                 }
@@ -315,8 +335,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         housecode = ((BigDecimal) config.get(HOUSE_CODE_PARAM)).shortValue();
 
-        refreshRate = ((BigDecimal) config.get(REFRESH_RATE_PARAM)).intValue();
-
         if (!config.containsKey(LOG_SERIAL_PORT)) {
             logSerialPort = false;
         } else {
@@ -350,16 +368,16 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         try {
             culAdapter = new CulAdapter(getSerialPortSocket(), new Listener());
             if (protocolEvoHome) {
-                synchronized(writeLock) {
+                synchronized (writeLock) {
                     culAdapter.initEvoHome();
                 }
             } else if (protocolFHT) {
-                synchronized(writeLock) {
+                synchronized (writeLock) {
                     culAdapter.initFhz(housecode);
                 }
             } else {
                 //TODO fall back
-                synchronized(writeLock) {
+                synchronized (writeLock) {
                     culAdapter.initFhz(housecode);
                 }
             }
@@ -374,27 +392,12 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             return;
         }
 
-        refreshJob = scheduler.scheduleWithFixedDelay(() -> {
-            try {
-                synchronized(writeLock) {
-                    culAdapter.initFhtReporting(fhtThingHandler.keySet());
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Could not init fht reporting", e);
-            }
-        }, 0, refreshRate, TimeUnit.DAYS);
-
         updateStatus(ThingStatus.ONLINE);
         LOGGER.log(Level.INFO, "FhzAdapter initialized");
     }
 
     @Override
     public void dispose() {
-        if (refreshJob != null) {
-            refreshJob.cancel(true);
-            refreshJob = null;
-        }
-
         if (culAdapter != null) {
             FhzHandler cp = culAdapter;
             culAdapter = null;
@@ -428,52 +431,67 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     }
 
     public void sendFhtModeAutoMessage(short housecode) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
+            if (logExplainWrite != null) {
+                logExplainWrite.explainWrite("Set mode to auto of: %d", housecode);
+            }
             culAdapter.writeFhtModeAuto(housecode);
         }
     }
 
     public void sendFhtModeManuMessage(short housecode) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeFhtModeManu(housecode);
         }
     }
 
     public void sendFhtMessage(short housecode, FhtProperty fhtProperty, float value) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeFht(housecode, fhtProperty, value);
         }
     }
 
     public void sendFhtMessage(short housecode, DayOfWeek dayOfWeek, LocalTime from1, LocalTime to1, LocalTime from2,
             LocalTime to2) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeFhtCycle(housecode, dayOfWeek, from1, to1, from2, to2);
         }
     }
 
     public void sendFhtPartyMessage(short housecode, float temp, LocalDateTime to) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeFhtModeParty(housecode, temp, to);
         }
     }
 
     public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeFhtModeHoliday(housecode, temp, to);
         }
     }
 
     public void sendEvoHomeZoneSetpointPermanent(DeviceId deviceId, ZoneTemperature temperature) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeEvoHomeZoneSetpointPermanent(deviceId, temperature);
         }
     }
 
     public void sendEvoHomeZoneSetpointUntil(DeviceId deviceId, ZoneTemperature temperature, LocalDateTime localDateTime) throws IOException {
-        synchronized(writeLock) {
+        synchronized (writeLock) {
             culAdapter.writeEvoHomeZoneSetpointUntil(deviceId, temperature, localDateTime);
         }
+    }
+
+	public void initFhtReporting(short housecode) throws IOException {
+		synchronized (writeLock) {
+			culAdapter.initFhtReporting(housecode);
+		}
+	}
+
+    void setClock(short housecode, LocalDateTime localDateTime) throws IOException {
+		synchronized (writeLock) {
+			culAdapter.writeFhtTimeAndDate(housecode, localDateTime);
+		}
     }
 
 }

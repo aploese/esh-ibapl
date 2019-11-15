@@ -31,7 +31,7 @@
         <compile.target>11</compile.target>
         <sourceEncoding>UTF-8</sourceEncoding>
         <karaf.version>4.2.6</karaf.version>
-        <jnhw.version>1.0.1-SNAPSHOT</jnhw.version>
+        <jnhw.version>2.0.0-SNAPSHOT</jnhw.version>
         <spsw.version>3.0.0-SNAPSHOT</spsw.version>
         <fhz4j.version>2.0.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->

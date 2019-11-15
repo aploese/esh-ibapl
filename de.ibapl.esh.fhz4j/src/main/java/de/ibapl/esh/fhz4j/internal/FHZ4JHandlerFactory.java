@@ -38,6 +38,7 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.eclipse.smarthome.core.scheduler.CronScheduler;
 
 import de.ibapl.esh.fhz4j.FHZ4JBindingConstants;
 import de.ibapl.esh.fhz4j.handler.Em1000EmHandler;
@@ -78,6 +79,9 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
 
+    @Reference
+    private CronScheduler cronScheduler;
+
     private final Map<ThingUID, ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     @Override
@@ -90,7 +94,7 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
         final ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B)) {
-            return new RadiatorFht80bHandler(thing);
+            return new RadiatorFht80bHandler(thing, cronScheduler);
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME)) {
             return new EvoHomeHandler(thing);
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME)) {

@@ -70,29 +70,6 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
     public ConfigDescription getConfigDescription(URI uri, Locale locale) {
         final List<ConfigDescriptionParameter> parameters = new LinkedList<>();
         if (RS_232_URI.equals(uri)) {
-            ConfigDescriptionParameter refreshrate = new ConfigDescriptionParameter("refreshrate", Type.INTEGER) {
-
-                @Override
-                public String getDefault() {
-                    return "1";
-                }
-
-                @Override
-                public boolean isRequired() {
-                    return true;
-                }
-
-                @Override
-                public String getLabel() {
-                    return "refreshrate";
-                }
-
-                @Override
-                public String getDescription() {
-                    return "The refreshrate in days";
-                }
-            };
-            parameters.add(refreshrate);
 
             ConfigDescriptionParameter housecode = new ConfigDescriptionParameter("housecode", Type.INTEGER) {
 

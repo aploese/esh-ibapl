@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,8 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.scheduler.CronScheduler;
+import org.eclipse.smarthome.core.scheduler.ScheduledCompletableFuture;
 
 import de.ibapl.fhz4j.protocol.fht.Fht80bMode;
 import de.ibapl.fhz4j.protocol.fht.Fht80bWarning;
@@ -58,6 +61,7 @@ import de.ibapl.fhz4j.protocol.fht.FhtWarningMessage;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.concurrent.ScheduledFuture;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 
 /**
@@ -71,15 +75,33 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     protected ThingStatusDetail fht80HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final static Logger LOGGER = Logger.getLogger("d.i.e.f.h.RadiatorFht80bHandler");
+    private static final String CRON_PATTERN_DEVICE_PING = "cronPatternDevicePing";
     
     private float desiredTemp;
 
     private short housecode;
+    
+    private String cronPatternDevicePing = "0 0 0 ? * SUN *";
+    
+    private CronScheduler cronScheduler;
+    
+    private ScheduledCompletableFuture refreshJob;
 
-    public RadiatorFht80bHandler(Thing thing) {
+    public RadiatorFht80bHandler(Thing thing, CronScheduler cronScheduler) {
         super(thing);
+        this.cronScheduler = cronScheduler;
     }
 
+    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+    	//HAndle this here....
+        if (configurationParameters.containsKey(CRON_PATTERN_DEVICE_PING)) {
+        LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " + configurationParameters.get(CRON_PATTERN_DEVICE_PING));
+        } else {
+            LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " );
+        }
+    	super.handleConfigurationUpdate(configurationParameters);
+    }
+    
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         switch (channelUID.getId()) {
@@ -293,6 +315,10 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             fht80HandlerStatus = ThingStatusDetail.HANDLER_INITIALIZING_ERROR;
             return;
         }
+        if (configuration.containsKey(CRON_PATTERN_DEVICE_PING)) {
+            cronPatternDevicePing = configuration.get(CRON_PATTERN_DEVICE_PING).toString();
+        }
+
 
         Bridge bridge = getBridge();
         if (bridge == null) {
@@ -307,11 +333,26 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             }
         }
+        refreshJob = cronScheduler.schedule(() -> {
+            try {
+                final Bridge myBridge = getBridge();
+                if (myBridge instanceof SpswBridgeHandler) {
+                    ((SpswBridgeHandler)myBridge).setClock(housecode, LocalDateTime.now());
+                    ((SpswBridgeHandler)myBridge).initFhtReporting(housecode);
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Could not init fht reporting", e);
+            }
+        }, cronPatternDevicePing);
+//TODO Error schedule ???
     }
 
     @Override
     public void dispose() {
-    }
+    	if (refreshJob != null) {
+    		refreshJob.cancel(false);
+    	}
+   }
 
     public short getHousecode() {
         return housecode;

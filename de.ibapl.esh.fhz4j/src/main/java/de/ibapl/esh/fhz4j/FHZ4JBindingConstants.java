@@ -50,27 +50,32 @@ public class FHZ4JBindingConstants {
     public static final String CHANNEL_BATT_LOW = "low-battery";
     public static final String CHANNEL_TEMPERATURE_MEASURED = "temperatureMeasured";
     /**
-     * For channels evo home multi zone controller
+     * For channels evo home multi zone controller Templates
      */
-    public static final String CHANNEL_TEMPERATURE_MEASURED_XX__TEMPLATE = "temperatureMeasured_%02d"; 
+    public static final String _XX_TEMPLATE = "%s_%02d";
+    public static final String _00 = "_00";
+    public static final String _01 = "_01";
+    public static final String _02 = "_02";
+    public static final String _03 = "_03";
+    public static final String _04 = "_04";
+    public static final String _05 = "_05";
+    public static final String _06 = "_06";
+    public static final String _07 = "_07";
+    public static final String _08 = "_08";
+    public static final String _09 = "_09";
+    public static final String _10 = "_10";
+    public static final String _11 = "_11";
+    public static final String _12 = "_12";
+    public static final String CHANNEL_WINDOW_FUNCTION = "windowFunction";
+    public static final String CHANNEL_OPERATION_LOCK = "operationLock";
+    public static final String CHANNEL_MIN_TEMP = "minTemp";
+    public static final String CHANNEL_MAX_TEMP = "maxTemp";
+    
     public static final String CHANNEL_HUMIDITY_MEASURED = "humidityMeasured";
     public static final String CHANNEL_DESIRED_TEMPERATURE = "desiredTemperature";
     /**
      * For channels evo home multi zone controller
      */
-    public static final String CHANNEL_DESIRED_TEMPERATURE_XX__TEMPLATE = "desiredTemperature_%02d"; 
-    public static final String CHANNEL_DESIRED_TEMPERATURE_00 = "desiredTemperature_00";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_01 = "desiredTemperature_01";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_02 = "desiredTemperature_02";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_03 = "desiredTemperature_03";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_04 = "desiredTemperature_04";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_05 = "desiredTemperature_05";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_06 = "desiredTemperature_06";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_07 = "desiredTemperature_07";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_08 = "desiredTemperature_08";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_09 = "desiredTemperature_09";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_10 = "desiredTemperature_10";
-    public static final String CHANNEL_DESIRED_TEMPERATURE_11 = "desiredTemperature_11";
     public static final String CHANNEL_TEMPERATURE_DAY = "dayTemperature";
     public static final String CHANNEL_TEMPERATURE_NIGHT = "nightTemperature";
     public static final String CHANNEL_TEMPERATURE_WINDOW_OPEN = "windowOpenTemperature";
