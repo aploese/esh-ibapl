@@ -5,11 +5,11 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.ibapl.esh</groupId>
-    <artifactId>ibapl-esh</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <groupId>de.ibapl.openhab</groupId>
+    <artifactId>ibapl-oh</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
 
-    <name>ESH IbAPl</name>
+    <name>OH IbAPl</name>
     <packaging>pom</packaging>
     <organization>
         <name>Arne Plöse</name>
@@ -30,23 +30,25 @@
         <compile.source>11</compile.source>
         <compile.target>11</compile.target>
         <sourceEncoding>UTF-8</sourceEncoding>
-        <karaf.version>4.2.6</karaf.version>
+        <karaf.version>4.3.0</karaf.version>
         <jnhw.version>2.0.0-SNAPSHOT</jnhw.version>
         <spsw.version>3.0.0-SNAPSHOT</spsw.version>
         <fhz4j.version>2.0.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->
-        <esh.fhz4j.version>2.0.0-SNAPSHOT</esh.fhz4j.version>
+        <openhab.fhz4j.version>3.0.0-SNAPSHOT</openhab.fhz4j.version>
         <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
         <!-- TODO update before/during release -->
-        <esh.onewire4j.version>1.0.1-SNAPSHOT</esh.onewire4j.version>
-        <ohc.version>2.5.0-SNAPSHOT</ohc.version>
+        <openhab.onewire4j.version>3.0.0-SNAPSHOT</openhab.onewire4j.version>
+        <ohc.version>3.0.1</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
+        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release</oh.repo.releaseBaseUrl>
+        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot</oh.repo.snapshotBaseUrl>
     </properties>
 
     <modules>
-        <module>de.ibapl.esh.fhz4j</module>
-        <module>de.ibapl.esh.onewire4j</module>
-        <module>esh-ibapl-kar</module>
+        <module>de.ibapl.openhab.fhz4j</module>
+        <module>de.ibapl.openhab.onewire4j</module>
+        <module>oh-ibapl-kar</module>
     </modules>
 
     <repositories>
@@ -59,6 +61,30 @@
             <id>sonatype</id>
             <name>Sonatype Maven Repository</name>
             <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>openhab-release</id>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <name>openHAB Release Repository</name>
+            <url>${oh.repo.releaseBaseUrl}</url>
+        </repository>
+        <repository>
+            <id>openhab-snapshots</id>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <name>openHAB Snapshot Repository</name>
+            <url>${oh.repo.snapshotBaseUrl}</url>
         </repository>
     </repositories>
 
@@ -82,7 +108,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -97,7 +123,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <encoding>${sourceEncoding}</encoding>
                     </configuration>
@@ -105,13 +131,13 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>3.0</version>
+                    <version>4.0.rc2</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <archive>
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -121,7 +147,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -141,17 +167,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <version>4.2.0</version>
+                    <version>5.2.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -160,8 +186,11 @@
                         </execution>
                     </executions>
                     <configuration />
-
-
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>4.3.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -237,6 +266,39 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.10.5</version>
+            </dependency-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-base</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+
+
+
             <dependency>
                 <groupId>de.ibapl.spsw</groupId>
                 <artifactId>de.ibapl.spsw.jniprovider</artifactId>
@@ -257,6 +319,7 @@
                 <artifactId>de.ibapl.onewire4j</artifactId>
                 <version>${onewire4j.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.annotation</artifactId>
@@ -265,28 +328,42 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
+                <artifactId>osgi.core</artifactId>
                 <version>${osgi.version.range}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.compile</artifactId>
-                <version>2.5.0-SNAPSHOT</version>
+                <version>${ohc.version}</version>
+                <type>pom</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bom</groupId>
+                <artifactId>org.openhab.core.bom.compile-model</artifactId>
+                <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.openhab-core</artifactId>
-                <version>2.5.0-SNAPSHOT</version>
+                <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.openhab.core.bom</groupId>
+                <artifactId>org.openhab.core.bom.runtime</artifactId>
+                <version>${ohc.version}</version>
+                <type>pom</type>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.test</artifactId>
-                <version>2.5.0-SNAPSHOT</version>
+                <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>test</scope>
             </dependency>

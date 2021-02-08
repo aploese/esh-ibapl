@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="oh-ibapl-features-${project.version}"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.5.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.5.0 http://karaf.apache.org/xmlns/features/v1.5.0">
+
+    <feature name="de.ibapl.jnhw.jnhw" version="${jnhw.version}" description="JNHW">
+        <bundle>mvn:de.ibapl.jnhw/de.ibapl.jnhw.libloader/${jnhw.version}</bundle>
+        <bundle>mvn:de.ibapl.jnhw/de.ibapl.jnhw.common/${jnhw.version}</bundle>
+        <bundle>mvn:de.ibapl.jnhw/de.ibapl.jnhw.posix/${jnhw.version}</bundle>
+        <bundle>mvn:de.ibapl.jnhw/de.ibapl.jnhw.winapi/${jnhw.version}</bundle>
+    </feature>
+
+    <feature name="de.ibapl.spsw.jniprovider" version="${spsw.version}" description="JNI provider for serial port" install="manual" >
+        <bundle>mvn:de.ibapl.jnhw/de.ibapl.jnhw.libloader/${jnhw.version}</bundle>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.jniprovider/${spsw.version}</bundle>
+    </feature>
+
+    <feature name="de.ibapl.spsw.jnhwprovider" version="${spsw.version}" description="JNHW provider for serial port">
+        <feature>de.ibapl.jnhw.jnhw</feature>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.jnhwprovider/${spsw.version}</bundle>
+    </feature>
+
+    <feature name="openhab-fhz4j-binding" version="${openhab.fhz4j.version}" description="Fhz4J OH Binding">
+        <feature>openhab-runtime-base</feature>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.fhz4j/de.ibapl.fhz4j.parser.cul/${fhz4j.version}</bundle>
+        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.fhz4j/${openhab.fhz4j.version}</bundle>
+    </feature>
+
+    <feature name="openhab-onewire4j-binding" version="${openhab.onewire4j.version}" description="OneWire4J OH Binding">
+        <feature>openhab-runtime-base</feature>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.onewire4j/de.ibapl.onewire4j/${onewire4j.version}</bundle>
+        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.onewire4j/${openhab.onewire4j.version}</bundle>
+    </feature>
+</features>
