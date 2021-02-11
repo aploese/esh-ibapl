@@ -38,6 +38,7 @@ import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
 import de.ibapl.fhz4j.protocol.fht.Fht8bMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
+import de.ibapl.fhz4j.protocol.fht.FhtValvePosMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
@@ -113,6 +114,13 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void fhtDataParsed(FhtMessage fhtMsg) {
+            if (logExplainRead != null) {
+                if (Float.isNaN(lastSignalStrength)) {
+                    logExplainRead.explainRead("FHT Message: %s", fhtMsg);
+                } else {
+                    logExplainRead.explainRead("FHT Message: %s, signal strength: %f", fhtMsg, lastSignalStrength);
+                }
+            }
             final RadiatorFht80bHandler rfh = fhtThingHandler.get(fhtMsg.housecode);
             if (rfh == null) {
                 // Discovery
@@ -121,32 +129,25 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 return;
             }
-            if (logExplainRead != null) {
-                if (Float.isNaN(lastSignalStrength)) {
-                    logExplainRead.explainRead("FHT Message: %s", fhtMsg);
-                } else {
-                    logExplainRead.explainRead("FHT Message: %s, signal strength: %f", fhtMsg, lastSignalStrength);
-                }
-            }
-            if (fhtMsg instanceof Fht8bMessage) {
-                if (((Fht8bMessage) fhtMsg).fromFht_8B) {
-                    rfh.updateFromMsg(fhtMsg);
-                }
+            if (fhtMsg instanceof Fht8bMessage && !((Fht8bMessage) fhtMsg).fromFht_8B) {
+                //no-op Its a message to the Fht8b, not from
+            } else {
+                rfh.updateFromFhtMsg(fhtMsg);
             }
         }
 
         @Override
         public void fhtPartialDataParsed(FhtMessage fhtMsg) {
-            if (discoveryListener != null) {
-                // Discovery
-                discoveryListener.fhtDataParsed(fhtMsg);
-            }
             if (logExplainRead != null) {
                 if (Float.isNaN(lastSignalStrength)) {
                     logExplainRead.explainRead("FHT Message: %s", fhtMsg);
                 } else {
                     logExplainRead.explainRead("FHT Message: %s, signal strength: %f", fhtMsg, lastSignalStrength);
                 }
+            }
+            if (discoveryListener != null) {
+                // Discovery
+                discoveryListener.fhtDataParsed(fhtMsg);
             }
         }
 
@@ -163,6 +164,13 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void hmsDataParsed(HmsMessage hmsMsg) {
+            if (logExplainRead != null) {
+                if (Float.isNaN(lastSignalStrength)) {
+                    logExplainRead.explainRead("HMS Message: %s", hmsMsg);
+                } else {
+                    logExplainRead.explainRead("HMS Message: %s, signal strength: %f", hmsMsg, lastSignalStrength);
+                }
+            }
             final Hms100TfHandler hmsh = hmsThingHandler.get(hmsMsg.housecode);
             if (hmsh == null) {
                 // Discovery
@@ -170,13 +178,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                     discoveryListener.hmsDataParsed(hmsMsg);
                 }
                 return;
-            }
-            if (logExplainRead != null) {
-                if (Float.isNaN(lastSignalStrength)) {
-                    logExplainRead.explainRead("HMS Message: %s", hmsMsg);
-                } else {
-                    logExplainRead.explainRead("HMS Message: %s, signal strength: %f", hmsMsg, lastSignalStrength);
-                }
             }
             hmsh.updateFromMsg(hmsMsg);
         }
@@ -204,6 +205,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void evoHomeParsed(EvoHomeMessage evoHomeMsg) {
+            if (logExplainRead != null) {
+                logExplainRead.explainRead("EvoHome Message: %s", evoHomeMsg);
+            }
             if (evoHomeMsg instanceof EvoHomeDeviceMessage) {
                 final EvoHomeDeviceMessage edm = (EvoHomeDeviceMessage) evoHomeMsg;
                 final EvoHomeHandler reh = evoHomeThingHandler.get(edm.deviceId1.id);
@@ -213,9 +217,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                         discoveryListener.evoHomeParsed(edm);
                     }
                     return;
-                }
-                if (logExplainRead != null) {
-                    logExplainRead.explainRead("EvoHome Message: %s", evoHomeMsg);
                 }
 
                 reh.updateFromMsg(edm);
@@ -293,7 +294,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     //DEBUG
     private CronScheduler cronScheduler;
     private ScheduledCompletableFuture refreshJob;
-
 
     public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory, CronScheduler cronScheduler) {
         super(bridge);
@@ -438,11 +438,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         if (protocolFHT && logSerialPort) {
             refreshJob = cronScheduler.schedule(() -> {
                 try {
-                	culAdapter.gatherCulDebugInfos();
+                    culAdapter.gatherCulDebugInfos();
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode, e);
                 }
-                }, "0 0 * * * ? *");
+            }, "0 0 * * * ? *");
 
         }
         updateStatus(ThingStatus.ONLINE);
@@ -451,11 +451,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
     @Override
     public void dispose() {
-    	if (refreshJob != null) {
-    		refreshJob.cancel(true);
-    		refreshJob = null;
-    	}
-    	
+        if (refreshJob != null) {
+            refreshJob.cancel(true);
+            refreshJob = null;
+        }
+
         if (culAdapter != null) {
             FhzHandler cp = culAdapter;
             culAdapter = null;

@@ -73,15 +73,15 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     private final static Logger LOGGER = Logger.getLogger("d.i.e.f.h.RadiatorFht80bHandler");
     private static final String CRON_PATTERN_DEVICE_PING = "cronPatternDevicePing";
-    
+
     private float desiredTemp;
 
     private short housecode;
-    
+
     private String cronPatternDevicePing = "0 0 0 ? * SUN *";
-    
+
     private CronScheduler cronScheduler;
-    
+
     private ScheduledCompletableFuture refreshJob;
 
     public RadiatorFht80bHandler(Thing thing, CronScheduler cronScheduler) {
@@ -90,15 +90,15 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     }
 
     public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
-    	//HAndle this here....
+        //HAndle this here....
         if (configurationParameters.containsKey(CRON_PATTERN_DEVICE_PING)) {
-        LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " + configurationParameters.get(CRON_PATTERN_DEVICE_PING));
+            LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " + configurationParameters.get(CRON_PATTERN_DEVICE_PING));
         } else {
-            LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " );
+            LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = ");
         }
-    	super.handleConfigurationUpdate(configurationParameters);
+        super.handleConfigurationUpdate(configurationParameters);
     }
-    
+
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         switch (channelUID.getId()) {
@@ -113,7 +113,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                         e.printStackTrace();
                     }
                 } else if (command instanceof RefreshType) {
-                       desiredTemp = 17.0f;
+                    desiredTemp = 17.0f;
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
                 break;
@@ -316,7 +316,6 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             cronPatternDevicePing = configuration.get(CRON_PATTERN_DEVICE_PING).toString();
         }
 
-
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
@@ -331,20 +330,20 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             }
         }
         try {
-        refreshJob = cronScheduler.schedule(() -> {
-            LOGGER.log(Level.FINE, "Try run trigger reporting for {0}", housecode);
-            try {
-                final BridgeHandler myBridge = getBridge().getHandler();
-                if (myBridge instanceof SpswBridgeHandler) {
-                    ((SpswBridgeHandler)myBridge).setClock(housecode, LocalDateTime.now());
-                    ((SpswBridgeHandler)myBridge).initFhtReporting(housecode);
-                    LOGGER.log(Level.INFO, "Did run update clock and trigger reporting of {0} succesfully", housecode);
-                } else {
-                    LOGGER.log(Level.SEVERE, "Reporting for {0} not triggerd, can't get bridge.", housecode);
+            refreshJob = cronScheduler.schedule(() -> {
+                LOGGER.log(Level.FINE, "Try run trigger reporting for {0}", housecode);
+                try {
+                    final BridgeHandler myBridge = getBridge().getHandler();
+                    if (myBridge instanceof SpswBridgeHandler) {
+                        ((SpswBridgeHandler) myBridge).setClock(housecode, LocalDateTime.now());
+                        ((SpswBridgeHandler) myBridge).initFhtReporting(housecode);
+                        LOGGER.log(Level.INFO, "Did run update clock and trigger reporting of {0} succesfully", housecode);
+                    } else {
+                        LOGGER.log(Level.SEVERE, "Reporting for {0} not triggerd, can't get bridge.", housecode);
+                    }
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode, e);
                 }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode, e);
-            }
             }, cronPatternDevicePing);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Could not schedule fht reporting for:" + housecode, ex);
@@ -355,10 +354,10 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     @Override
     public void dispose() {
-    	if (refreshJob != null) {
-    		refreshJob.cancel(false);
-    	}
-   }
+        if (refreshJob != null) {
+            refreshJob.cancel(false);
+        }
+    }
 
     public short getHousecode() {
         return housecode;
@@ -385,7 +384,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         }
     }
 
-    public void updateFromMsg(FhtMessage fhtMsg) {
+    public void updateFromFhtMsg(FhtMessage fhtMsg) {
         switch (fhtMsg.command) {
             case MODE:
                 updateMode((FhtModeMessage) fhtMsg);
