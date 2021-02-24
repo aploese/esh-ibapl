@@ -24,11 +24,15 @@ package de.ibapl.openhab.fhz4j.handler;
 import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B;
 import de.ibapl.fhz4j.api.FhzHandler;
 import de.ibapl.fhz4j.api.Protocol;
+import de.ibapl.fhz4j.api.Request;
+import de.ibapl.fhz4j.api.Response;
 import de.ibapl.fhz4j.cul.CulAdapter;
 import de.ibapl.fhz4j.cul.CulEobMessage;
 import de.ibapl.fhz4j.cul.CulLovfMessage;
 import de.ibapl.fhz4j.cul.CulMessage;
 import de.ibapl.fhz4j.cul.CulMessageListener;
+import de.ibapl.fhz4j.cul.CulRequest;
+import de.ibapl.fhz4j.cul.CulResponse;
 import de.ibapl.fhz4j.cul.SlowRfFlag;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
 import de.ibapl.fhz4j.protocol.evohome.DeviceId;
@@ -38,7 +42,6 @@ import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
 import de.ibapl.fhz4j.protocol.fht.Fht8bMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
-import de.ibapl.fhz4j.protocol.fht.FhtValvePosMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
@@ -61,6 +64,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -368,6 +372,23 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
+    private void initCulAdapter() throws IOException {
+        if (protocolEvoHome) {
+            synchronized (writeLock) {
+                culAdapter.initEvoHome();
+            }
+        } else if (protocolFHT) {
+            synchronized (writeLock) {
+                culAdapter.initFhz(housecode, EnumSet.of(SlowRfFlag.REPORT_PACKAGE, SlowRfFlag.REPORT_FHT_PROTOCOL_MESSAGES, SlowRfFlag.WITH_RSSI));
+            }
+        } else {
+            //TODO fall back
+            synchronized (writeLock) {
+                culAdapter.initFhz(housecode);
+            }
+        }
+    }
+
     @Override
     public void initialize() {
         LOGGER.log(Level.FINE, "Initializing SpswBridgeHandler.");
@@ -410,20 +431,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         try {
             culAdapter = new CulAdapter(getSerialPortSocket(), new Listener());
-            if (protocolEvoHome) {
-                synchronized (writeLock) {
-                    culAdapter.initEvoHome();
-                }
-            } else if (protocolFHT) {
-                synchronized (writeLock) {
-                    culAdapter.initFhz(housecode, EnumSet.of(SlowRfFlag.REPORT_PACKAGE, SlowRfFlag.REPORT_FHT_PROTOCOL_MESSAGES, SlowRfFlag.WITH_RSSI));
-                }
-            } else {
-                //TODO fall back
-                synchronized (writeLock) {
-                    culAdapter.initFhz(housecode);
-                }
-            }
+            initCulAdapter();
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             try {
@@ -566,6 +574,16 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             culAdapter.writeFhtTimeAndDate(housecode, localDateTime);
             culAdapter.gatherCulDebugInfos();
         }
+    }
+
+    public Future<Response> sendRequest(Request request) throws IOException {
+        synchronized (writeLock) {
+            return culAdapter.sendRequest(request);
+        }
+    }
+
+    public void clearFht8bBuffer() throws IOException {
+        initCulAdapter();
     }
 
 }

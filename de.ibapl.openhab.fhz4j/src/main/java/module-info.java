@@ -28,6 +28,9 @@ module de.ibapl.esh.fhz4j {
     requires org.openhab.core;
     requires org.openhab.core.config.core;
     requires org.openhab.core.config.discovery;
+
+    requires org.openhab.core.io.console;
+
     requires org.openhab.core.thing;
 
     requires de.ibapl.fhz4j.parser.cul;

@@ -33,7 +33,7 @@
         <karaf.version>4.3.0</karaf.version>
         <jnhw.version>2.0.1</jnhw.version>
         <spsw.version>3.0.1</spsw.version>
-        <fhz4j.version>2.0.0</fhz4j.version>
+        <fhz4j.version>2.1.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->
         <openhab.fhz4j.version>3.0.0-SNAPSHOT</openhab.fhz4j.version>
         <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
@@ -351,6 +351,12 @@
                 <artifactId>org.openhab.core.bom.openhab-core</artifactId>
                 <version>${ohc.version}</version>
                 <type>pom</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bundles</groupId>
+                <artifactId>org.openhab.core.io.console</artifactId>
+                <version>${ohc.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
