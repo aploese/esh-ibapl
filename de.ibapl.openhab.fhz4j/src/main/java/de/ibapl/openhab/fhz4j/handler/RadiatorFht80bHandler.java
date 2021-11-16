@@ -443,10 +443,13 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE), new StringType(Fht80bMode.PARTY.name()));
                 break;
             case VALVE:
+                //Do ignore FhtValveSynhcMessage
+                if (fhtMsg instanceof FhtValvePosMessage) {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
                         new DecimalType((((FhtValvePosMessage) fhtMsg).position)));
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP),
                         ((FhtValvePosMessage) fhtMsg).allowLowBatteryBeep ? OnOffType.ON : OnOffType.OFF);
+                }
                 break;
             case MEASURED_TEMP:
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
@@ -500,7 +503,6 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         } else {
             sb.append(TIME_NOT_SET);
         }
-
         updateState(new ChannelUID(getThing().getUID(), channelFromTo), new StringType(sb.toString()));
     }
 

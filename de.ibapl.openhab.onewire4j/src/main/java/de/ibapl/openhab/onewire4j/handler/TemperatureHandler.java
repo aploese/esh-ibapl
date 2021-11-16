@@ -23,7 +23,6 @@ package de.ibapl.openhab.onewire4j.handler;
 
 import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.*;
 import de.ibapl.onewire4j.OneWireAdapter;
-import de.ibapl.onewire4j.container.ENotProperlyConvertedException;
 import de.ibapl.onewire4j.container.OneWireDevice;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 import java.util.logging.Level;
@@ -130,21 +129,17 @@ public class TemperatureHandler extends BaseThingHandler {
             final double temp = temperatureContainer.getTemperature(request);
             updateTemperature(temp);
             updateStatus(ThingStatus.ONLINE);
-        } catch (ENotProperlyConvertedException e) {
+        } catch (Exception e) {
             try {
-                final double temp = temperatureContainer.convertAndReadTemperature(oneWireAdapter);
+                TemperatureContainer.ReadScratchpadRequest request = new TemperatureContainer.ReadScratchpadRequest();
+                temperatureContainer.readScratchpad(oneWireAdapter, request);
+                final double temp = temperatureContainer.getTemperature(request);
                 updateTemperature(temp);
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
-            } catch (ENotProperlyConvertedException e1) {
+            } catch (Exception e1) {
                 logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
-            } catch (Exception e1) {
-                logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e1);
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             }
-        } catch (Exception e) {
-            logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
         }
     }
 

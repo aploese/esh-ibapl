@@ -26,6 +26,7 @@ import de.ibapl.onewire4j.AdapterFactory;
 import de.ibapl.onewire4j.OneWireAdapter;
 import de.ibapl.onewire4j.container.OneWireContainer;
 import de.ibapl.onewire4j.container.TemperatureContainer;
+import de.ibapl.onewire4j.request.data.SearchCommand;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
@@ -142,7 +143,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         //TODO
         boolean ppN;
         try {
-            ppN = TemperatureContainer.isParasitePower(oneWireAdapter);
+            ppN = TemperatureContainer.isAnyTempDeviceUsingParasitePower(oneWireAdapter);
         } catch (Exception e) {
             // TODO: handle exception
             ppN = true;
@@ -208,7 +209,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
     }
 
     public void discover(Consumer<OneWireContainer> consumer) throws IOException {
-        oneWireAdapter.searchDevices(consumer);
+        oneWireAdapter.searchDevices(SearchCommand.SEARCH_ROM, consumer);
     }
 
 }
