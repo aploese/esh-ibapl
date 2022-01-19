@@ -35,6 +35,7 @@ public class FHZ4JBindingConstants {
 
     // List of all Thing Type UIDs
     public static final ThingTypeUID THING_TYPE_FHZ4J_RADIATOR_FHT80B = new ThingTypeUID(BINDING_ID, "fht80b");
+    public static final ThingTypeUID THING_TYPE_FHZ4J_FHT_TF = new ThingTypeUID(BINDING_ID, "fht-tf");
     public static final ThingTypeUID THING_TYPE_FHZ4J_UNKNOWN = new ThingTypeUID(BINDING_ID, "unknown");
     public static final ThingTypeUID THING_TYPE_FHZ4J_EM_1000_EM = new ThingTypeUID(BINDING_ID, "em-1000-em");
     public static final ThingTypeUID THING_TYPE_FHZ4J_HMS_100_TF = new ThingTypeUID(BINDING_ID, "hms-100-tf");
@@ -49,6 +50,10 @@ public class FHZ4JBindingConstants {
     public static final String CHANNEL_MODE = "mode";
     public static final String CHANNEL_BATT_LOW = "low-battery";
     public static final String CHANNEL_TEMPERATURE_MEASURED = "temperatureMeasured";
+
+    public static final String CHANNEL_WINDOW_INTERNAL = "window-internal";
+    public static final String CHANNEL_WINDOW_EXTERNAL = "window-external";
+
     /**
      * For channels evo home multi zone controller Templates
      */
@@ -70,7 +75,7 @@ public class FHZ4JBindingConstants {
     public static final String CHANNEL_OPERATION_LOCK = "operationLock";
     public static final String CHANNEL_MIN_TEMP = "minTemp";
     public static final String CHANNEL_MAX_TEMP = "maxTemp";
-    
+
     public static final String CHANNEL_HUMIDITY_MEASURED = "humidityMeasured";
     public static final String CHANNEL_DESIRED_TEMPERATURE = "desiredTemperature";
     /**

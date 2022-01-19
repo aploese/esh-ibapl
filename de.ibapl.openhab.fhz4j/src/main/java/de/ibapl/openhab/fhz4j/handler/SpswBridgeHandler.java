@@ -42,6 +42,7 @@ import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
 import de.ibapl.fhz4j.protocol.fht.Fht8bMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
+import de.ibapl.fhz4j.protocol.fht.FhtTfMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
@@ -138,6 +139,26 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             } else {
                 rfh.updateFromFhtMsg(fhtMsg);
             }
+        }
+
+        @Override
+        public void fhtTfDataParsed(FhtTfMessage fhtTfMsg) {
+            if (logExplainRead != null) {
+                if (Float.isNaN(lastSignalStrength)) {
+                    logExplainRead.explainRead("FHT TF Message: %s", fhtTfMsg);
+                } else {
+                    logExplainRead.explainRead("FHT TF Message: %s, signal strength: %f", fhtTfMsg, lastSignalStrength);
+                }
+            }
+            final FhtTfHandler fhtTfHandler = fhtTfThingHandler.get(fhtTfMsg.address);
+            if (fhtTfHandler == null) {
+                // Discovery
+                if (discoveryListener != null) {
+                    discoveryListener.fhtTfDataParsed(fhtTfMsg);
+                }
+                return;
+            }
+            fhtTfHandler.updateFromFhtTfMsg(fhtTfMsg);
         }
 
         @Override
@@ -288,6 +309,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private CulAdapter culAdapter;
     private final Object writeLock = new Object();
     private final Map<Short, RadiatorFht80bHandler> fhtThingHandler = new HashMap<>();
+    private final Map<Integer, FhtTfHandler> fhtTfThingHandler = new HashMap<>();
     private final Map<Integer, EvoHomeHandler> evoHomeThingHandler = new HashMap<>();
     private final Map<Short, Hms100TfHandler> hmsThingHandler = new HashMap<>();
     private final Map<Short, Em1000EmHandler> emThingHandler = new HashMap<>();
@@ -335,6 +357,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.put(rfh.getHousecode(), rfh);
             LOGGER.log(Level.INFO, "Added FHT 80B {0}", rfh.getHousecode());
+        } else if (childHandler instanceof FhtTfHandler) {
+            final FhtTfHandler fth = (FhtTfHandler) childHandler;
+            fhtTfThingHandler.put(fth.getAddress(), fth);
+            LOGGER.log(Level.INFO, "Added FHT TF {0}", fth.getAddress());
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.put(((EvoHomeHandler) childHandler).getDeviceId(), reh);
@@ -358,6 +384,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         if (childHandler instanceof RadiatorFht80bHandler) {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.remove(rfh.getHousecode());
+        } else if (childHandler instanceof FhtTfHandler) {
+            final FhtTfHandler fth = (FhtTfHandler) childHandler;
+            fhtTfThingHandler.remove(fth.getAddress());
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.remove(reh.getDeviceId());
@@ -426,8 +455,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
 
         fhtThingHandler.clear();
+        fhtTfThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
+        evoHomeThingHandler.clear();
 
         try {
             culAdapter = new CulAdapter(getSerialPortSocket(), new Listener());
@@ -485,6 +516,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         fhtThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
+        evoHomeThingHandler.clear();
+
         LOGGER.log(Level.INFO, "FhzAdapter disposed");
     }
 

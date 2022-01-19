@@ -90,7 +90,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     }
 
     public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
-        //HAndle this here....
+        //Handle this here....
         if (configurationParameters.containsKey(CRON_PATTERN_DEVICE_PING)) {
             LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " + configurationParameters.get(CRON_PATTERN_DEVICE_PING));
         } else {

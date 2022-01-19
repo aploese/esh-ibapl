@@ -30,6 +30,7 @@ import de.ibapl.fhz4j.protocol.em.EmMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
+import de.ibapl.fhz4j.protocol.fht.FhtTfMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
@@ -48,7 +49,7 @@ import org.openhab.core.thing.ThingUID;
  */
 public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements CulMessageListener {
 
-    private final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JDiscoveryService");
+    private final static Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JDiscoveryService");
 
     private final static int SEARCH_TIME = 15 * 60; // 15 minutes FHT80 sends all 120 sec, HMS 100 TF all 10 min.
 
@@ -165,6 +166,20 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
         thingDiscovered(discoveryResult);
     }
 
+    private void addFhtTfDevice(int address) {
+        final ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
+        final String deviceIdStr = Integer.toString(address);
+        final ThingUID thingUID = getThingUID(deviceIdStr, bridgeUID,
+                FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT_TF);
+
+        DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID)
+                .withThingType(FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT_TF)
+                .withProperty("address", address).withBridge(bridgeUID)
+                .withRepresentationProperty(Integer.toString(address)).withLabel("FHT TF " + address).build();
+
+        thingDiscovered(discoveryResult);
+    }
+
     private ThingUID getThingUID(String deviceId, ThingUID bridgeUID, ThingTypeUID thingTypeUID) {
         return new ThingUID(thingTypeUID, bridgeUID, deviceId);
     }
@@ -189,6 +204,11 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
     @Override
     public void fhtDataParsed(FhtMessage fhtMsg) {
         addFhtDevice(fhtMsg.housecode);
+    }
+
+    @Override
+    public void fhtTfDataParsed(FhtTfMessage fhtTfMsg) {
+        addFhtTfDevice(fhtTfMsg.address);
     }
 
     @Override

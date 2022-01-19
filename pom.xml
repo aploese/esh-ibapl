@@ -7,7 +7,7 @@
 
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>ibapl-oh</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
@@ -35,11 +35,11 @@
         <spsw.version>3.1.0</spsw.version>
         <fhz4j.version>2.1.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->
-        <openhab.fhz4j.version>3.0.0-SNAPSHOT</openhab.fhz4j.version>
+        <openhab.fhz4j.version>3.2.0-SNAPSHOT</openhab.fhz4j.version>
         <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
         <!-- TODO update before/during release -->
-        <openhab.onewire4j.version>3.0.0-SNAPSHOT</openhab.onewire4j.version>
-        <ohc.version>3.1.0</ohc.version>
+        <openhab.onewire4j.version>3.2.0-SNAPSHOT</openhab.onewire4j.version>
+        <ohc.version>3.2.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
         <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release</oh.repo.releaseBaseUrl>
         <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot</oh.repo.snapshotBaseUrl>
@@ -113,7 +113,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.9.0</version>
                     <configuration>
                         <source>${compile.source}</source>
                         <target>${compile.target}</target>
@@ -131,13 +131,13 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.0.rc2</version>
+                    <version>4.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.2</version>
                     <configuration>
                         <archive>
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -147,7 +147,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -167,7 +167,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -177,7 +177,7 @@
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <version>5.2.0</version>
+                    <version>6.1.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -190,7 +190,7 @@
                 <plugin>
                     <groupId>org.apache.karaf.tooling</groupId>
                     <artifactId>karaf-maven-plugin</artifactId>
-                    <version>4.3.0</version>
+                    <version>4.3.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -274,27 +274,27 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.10.5</version>
+                <version>2.13.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>2.10.5</version>
+                <version>2.13.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.10.5</version>
+                <version>2.13.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>2.10.5</version>
+                <version>2.13.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-base</artifactId>
-                <version>2.10.5</version>
+                <version>2.13.1</version>
             </dependency>
 
 
@@ -333,8 +333,8 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.openhab.core.bom</groupId>
-                <artifactId>org.openhab.core.bom.compile</artifactId>
+                <groupId>org.openhab.core.bundles</groupId>
+                <artifactId>org.openhab.core</artifactId>
                 <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>provided</scope>
