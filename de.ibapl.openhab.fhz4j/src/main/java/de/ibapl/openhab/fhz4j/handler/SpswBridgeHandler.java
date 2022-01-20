@@ -21,7 +21,6 @@
  */
 package de.ibapl.openhab.fhz4j.handler;
 
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B;
 import de.ibapl.fhz4j.api.FhzHandler;
 import de.ibapl.fhz4j.api.Protocol;
 import de.ibapl.fhz4j.api.Request;
@@ -31,18 +30,16 @@ import de.ibapl.fhz4j.cul.CulEobMessage;
 import de.ibapl.fhz4j.cul.CulLovfMessage;
 import de.ibapl.fhz4j.cul.CulMessage;
 import de.ibapl.fhz4j.cul.CulMessageListener;
-import de.ibapl.fhz4j.cul.CulRequest;
-import de.ibapl.fhz4j.cul.CulResponse;
 import de.ibapl.fhz4j.cul.SlowRfFlag;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
 import de.ibapl.fhz4j.protocol.evohome.DeviceId;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeMessage;
 import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
+import de.ibapl.fhz4j.protocol.fht.Fht80TfMessage;
 import de.ibapl.fhz4j.protocol.fht.Fht8bMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtProperty;
-import de.ibapl.fhz4j.protocol.fht.FhtTfMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
@@ -64,12 +61,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.scheduler.CronScheduler;
 import org.openhab.core.scheduler.ScheduledCompletableFuture;
@@ -78,7 +72,6 @@ import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
-import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.types.Command;
@@ -142,23 +135,23 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
 
         @Override
-        public void fhtTfDataParsed(FhtTfMessage fhtTfMsg) {
+        public void fht80TfDataParsed(Fht80TfMessage fht80TfMsg) {
             if (logExplainRead != null) {
                 if (Float.isNaN(lastSignalStrength)) {
-                    logExplainRead.explainRead("FHT TF Message: %s", fhtTfMsg);
+                    logExplainRead.explainRead("FHT80 TF Message: %s", fht80TfMsg);
                 } else {
-                    logExplainRead.explainRead("FHT TF Message: %s, signal strength: %f", fhtTfMsg, lastSignalStrength);
+                    logExplainRead.explainRead("FHT80 TF Message: %s, signal strength: %f", fht80TfMsg, lastSignalStrength);
                 }
             }
-            final FhtTfHandler fhtTfHandler = fhtTfThingHandler.get(fhtTfMsg.address);
-            if (fhtTfHandler == null) {
+            final Fht80TfHandler fht80TfHandler = fht80TfThingHandler.get(fht80TfMsg.address);
+            if (fht80TfHandler == null) {
                 // Discovery
                 if (discoveryListener != null) {
-                    discoveryListener.fhtTfDataParsed(fhtTfMsg);
+                    discoveryListener.fht80TfDataParsed(fht80TfMsg);
                 }
                 return;
             }
-            fhtTfHandler.updateFromFhtTfMsg(fhtTfMsg);
+            fht80TfHandler.updateFromFht80TfMsg(fht80TfMsg);
         }
 
         @Override
@@ -289,9 +282,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
     private final SerialPortSocketFactory serialPortSocketFactory;
 
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Stream.of(THING_TYPE_FHZ4J_RADIATOR_FHT80B, THING_TYPE_FHZ4J_RADIATOR_FHT80B)
-            .collect(Collectors.toSet());
-
     private static final String PORT_PARAM = "port";
     private static final String HOUSE_CODE_PARAM = "housecode";
     private static final String PROTOCOL_FHT_PARAM = "protocolFHT";
@@ -309,7 +299,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private CulAdapter culAdapter;
     private final Object writeLock = new Object();
     private final Map<Short, RadiatorFht80bHandler> fhtThingHandler = new HashMap<>();
-    private final Map<Integer, FhtTfHandler> fhtTfThingHandler = new HashMap<>();
+    private final Map<Integer, Fht80TfHandler> fht80TfThingHandler = new HashMap<>();
     private final Map<Integer, EvoHomeHandler> evoHomeThingHandler = new HashMap<>();
     private final Map<Short, Hms100TfHandler> hmsThingHandler = new HashMap<>();
     private final Map<Short, Em1000EmHandler> emThingHandler = new HashMap<>();
@@ -318,7 +308,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private LogExplainWrite logExplainWrite;
 
     //DEBUG
-    private CronScheduler cronScheduler;
+    private final CronScheduler cronScheduler;
     private ScheduledCompletableFuture refreshJob;
 
     public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory, CronScheduler cronScheduler) {
@@ -357,10 +347,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.put(rfh.getHousecode(), rfh);
             LOGGER.log(Level.INFO, "Added FHT 80B {0}", rfh.getHousecode());
-        } else if (childHandler instanceof FhtTfHandler) {
-            final FhtTfHandler fth = (FhtTfHandler) childHandler;
-            fhtTfThingHandler.put(fth.getAddress(), fth);
-            LOGGER.log(Level.INFO, "Added FHT TF {0}", fth.getAddress());
+        } else if (childHandler instanceof Fht80TfHandler) {
+            final Fht80TfHandler fth = (Fht80TfHandler) childHandler;
+            fht80TfThingHandler.put(fth.getAddress(), fth);
+            LOGGER.log(Level.INFO, "Added FHT80 TF {0}", fth.getAddress());
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.put(((EvoHomeHandler) childHandler).getDeviceId(), reh);
@@ -384,9 +374,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         if (childHandler instanceof RadiatorFht80bHandler) {
             final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
             fhtThingHandler.remove(rfh.getHousecode());
-        } else if (childHandler instanceof FhtTfHandler) {
-            final FhtTfHandler fth = (FhtTfHandler) childHandler;
-            fhtTfThingHandler.remove(fth.getAddress());
+        } else if (childHandler instanceof Fht80TfHandler) {
+            final Fht80TfHandler fth = (Fht80TfHandler) childHandler;
+            fht80TfThingHandler.remove(fth.getAddress());
         } else if (childHandler instanceof EvoHomeHandler) {
             final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
             evoHomeThingHandler.remove(reh.getDeviceId());
@@ -455,7 +445,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
 
         fhtThingHandler.clear();
-        fhtTfThingHandler.clear();
+        fht80TfThingHandler.clear();
         emThingHandler.clear();
         hmsThingHandler.clear();
         evoHomeThingHandler.clear();

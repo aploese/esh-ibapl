@@ -22,26 +22,24 @@ SPDX-License-Identifier: EPL-2.0
 		xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 		xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
     
-     <thing-type id="fht-tf">
+     <thing-type id="fht80-tf">
         <supported-bridge-type-refs>
             <bridge-type-ref id="rs232-bridge-cul" />
         </supported-bridge-type-refs>
 
-        <label>FHZ4J FHT TF Binding Thing</label>
+        <label>FHZ4J FHT80 TF Binding Thing</label>
         <description>Fht80TF binding</description>
 
         <channels>
-            <channel id="window-internal" typeId="system.rawbutton" readOnly="true"/>
-            <channel id="window-external" typeId="system.rawbutton" readOnly="true"/>
-            <channel id="low-battery" typeId="system.low-battery" readOnly="true"/>
-
-
+            <channel id="window-internal" typeId="sensor_window"/>
+            <channel id="window-external" typeId="sensor_window"/>
+            <channel id="low-battery" typeId="system.low-battery" />
         </channels>
 
         <config-description>
-            <parameter name="address" type="integer">
+            <parameter name="address" type="text">
                 <label>Address</label>
-                <description>The address.</description>
+                <description>The address as hex.</description>
             </parameter>
         </config-description>
     </thing-type>

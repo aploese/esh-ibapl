@@ -35,7 +35,7 @@ public class FHZ4JBindingConstants {
 
     // List of all Thing Type UIDs
     public static final ThingTypeUID THING_TYPE_FHZ4J_RADIATOR_FHT80B = new ThingTypeUID(BINDING_ID, "fht80b");
-    public static final ThingTypeUID THING_TYPE_FHZ4J_FHT_TF = new ThingTypeUID(BINDING_ID, "fht-tf");
+    public static final ThingTypeUID THING_TYPE_FHZ4J_FHT80_TF = new ThingTypeUID(BINDING_ID, "fht80-tf");
     public static final ThingTypeUID THING_TYPE_FHZ4J_UNKNOWN = new ThingTypeUID(BINDING_ID, "unknown");
     public static final ThingTypeUID THING_TYPE_FHZ4J_EM_1000_EM = new ThingTypeUID(BINDING_ID, "em-1000-em");
     public static final ThingTypeUID THING_TYPE_FHZ4J_HMS_100_TF = new ThingTypeUID(BINDING_ID, "hms-100-tf");

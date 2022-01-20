@@ -24,12 +24,14 @@ package de.ibapl.openhab.fhz4j.internal;
 import de.ibapl.openhab.fhz4j.FHZ4JBindingConstants;
 import de.ibapl.openhab.fhz4j.handler.Em1000EmHandler;
 import de.ibapl.openhab.fhz4j.handler.EvoHomeHandler;
+import de.ibapl.openhab.fhz4j.handler.Fht80TfHandler;
 import de.ibapl.openhab.fhz4j.handler.Hms100TfHandler;
 import de.ibapl.openhab.fhz4j.handler.RadiatorFht80bHandler;
 import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
 import de.ibapl.openhab.fhz4j.handler.UnknownDeviceHandler;
 import de.ibapl.openhab.fhz4j.internal.discovery.FHZ4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -60,18 +62,20 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
     private final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JHandlerFactory");
 
-    //TODO ImmutableSet.of(Elements .. e) does not exist???
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
 
     static {
-        SUPPORTED_THING_TYPES_UIDS = new HashSet<>();
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_EM_1000_EM);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_HMS_100_TF);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME);
-        SUPPORTED_THING_TYPES_UIDS.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
+        Set<ThingTypeUID> s = new HashSet<>();
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT80_TF);
+        s.add(FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_EM_1000_EM);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_HMS_100_TF);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME);
+        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
+        SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(s);
+        s = null;
     }
 
     @Reference
@@ -93,6 +97,8 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
         if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B)) {
             return new RadiatorFht80bHandler(thing, cronScheduler);
+        } else if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT80_TF)) {
+            return new Fht80TfHandler(thing);
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME)) {
             return new EvoHomeHandler(thing);
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME)) {
@@ -108,7 +114,7 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232)) {
             if (serialPortSocketFactory == null) {
                 logger.severe("serialPortSocketFactory == null");
-                //TODO 
+                //TODO
                 return null;
             } else {
                 final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactory, cronScheduler);
@@ -124,8 +130,8 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
     private synchronized void registerDiscoveryService(SpswBridgeHandler spswBridgeHandler) {
         FHZ4JDiscoveryService discoveryService = new FHZ4JDiscoveryService(spswBridgeHandler);
-        this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(), bundleContext
-                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));
+        this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(),
+                bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
     }
 
     @Override

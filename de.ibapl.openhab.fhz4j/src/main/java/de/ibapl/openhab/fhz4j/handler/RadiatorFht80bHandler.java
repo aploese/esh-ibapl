@@ -445,10 +445,10 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             case VALVE:
                 //Do ignore FhtValveSynhcMessage
                 if (fhtMsg instanceof FhtValvePosMessage) {
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
-                        new DecimalType((((FhtValvePosMessage) fhtMsg).position)));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP),
-                        ((FhtValvePosMessage) fhtMsg).allowLowBatteryBeep ? OnOffType.ON : OnOffType.OFF);
+                    updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
+                            new DecimalType((((FhtValvePosMessage) fhtMsg).position)));
+                    updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP),
+                            ((FhtValvePosMessage) fhtMsg).allowLowBatteryBeep ? OnOffType.ON : OnOffType.OFF);
                 }
                 break;
             case MEASURED_TEMP:
