@@ -24,8 +24,8 @@ package de.ibapl.openhab.onewire4j;
 import org.openhab.core.thing.ThingTypeUID;
 
 /**
- * The {@link OneWire4JBindingConstants} class defines common constants, which are
- * used across the whole binding.
+ * The {@link OneWire4JBindingConstants} class defines common constants, which
+ * are used across the whole binding.
  *
  * @author aploese@gmx.de - Initial contribution
  */
@@ -35,6 +35,8 @@ public class OneWire4JBindingConstants {
 
     // List of all Thing Type UIDs
     public static final ThingTypeUID THING_TYPE_ONEWIRE_TEMPERATURE = new ThingTypeUID(BINDING_ID, "temperature");
+    public static final ThingTypeUID THING_TYPE_ONEWIRE_HUMIDITY = new ThingTypeUID(BINDING_ID, "humidity");
+    public static final ThingTypeUID THING_TYPE_ONEWIRE_SMART_BATTERY_MONITOR = new ThingTypeUID(BINDING_ID, "smart_battery_monitor");
     public static final ThingTypeUID THING_TYPE_ONEWIRE_UNKNOWN = new ThingTypeUID(BINDING_ID, "unknown");
 
     // List of all Bridge Type UIDs
@@ -42,6 +44,7 @@ public class OneWire4JBindingConstants {
 
     // List of all Channel ids
     public static final String CHANNEL_TEMPERATURE = "temperature";
+    public static final String CHANNEL_HUMIDITY = "humidity";
     public static final String CHANNEL_MIN_TEMPERATURE = "minTemperature";
     public static final String CHANNEL_MAX_TEMPERATURE = "maxTemperature";
 

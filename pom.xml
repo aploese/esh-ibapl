@@ -39,7 +39,7 @@
         <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
         <!-- TODO update before/during release -->
         <openhab.onewire4j.version>3.2.0-SNAPSHOT</openhab.onewire4j.version>
-        <ohc.version>3.2.0</ohc.version>
+        <ohc.version>3.3.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
         <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release</oh.repo.releaseBaseUrl>
         <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot</oh.repo.snapshotBaseUrl>
@@ -123,7 +123,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                     <configuration>
                         <encoding>${sourceEncoding}</encoding>
                     </configuration>
@@ -137,7 +137,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                     <configuration>
                         <archive>
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -147,12 +147,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.0.0-M6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>3.0.1</version>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -167,7 +167,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -177,7 +177,7 @@
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <version>6.1.0</version>
+                    <version>6.3.1</version>
                     <executions>
                         <execution>
                             <goals>
@@ -299,25 +299,42 @@
                 <version>${osgi.version.range}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+            
+            <!-- compile OH bom begin -->
+            <!--dependency>
                 <groupId>org.openhab.core.bundles</groupId>
                 <artifactId>org.openhab.core</artifactId>
                 <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
+            </dependency-->
+            <!--dependency>
                 <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.compile-model</artifactId>
                 <version>${ohc.version}</version>
                 <type>pom</type>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
+            </dependency-->
+            <!--dependency>
                 <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.openhab-core</artifactId>
                 <version>${ohc.version}</version>
                 <type>pom</type>
+                <scope>provided</scope>
+            </dependency-->
+            <!-- compile OH bom end -->
+            
+            <!-- compile OH no bom begin -->
+            <dependency>
+                <groupId>org.openhab.core.bundles</groupId>
+                <artifactId>org.openhab.core.thing</artifactId>
+                <version>${ohc.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openhab.core.bundles</groupId>
+                <artifactId>org.openhab.core.config.discovery</artifactId>
+                <version>${ohc.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -326,6 +343,8 @@
                 <version>${ohc.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- compile OH no bom end -->
+
             <dependency>
                 <groupId>org.openhab.core.bom</groupId>
                 <artifactId>org.openhab.core.bom.runtime</artifactId>

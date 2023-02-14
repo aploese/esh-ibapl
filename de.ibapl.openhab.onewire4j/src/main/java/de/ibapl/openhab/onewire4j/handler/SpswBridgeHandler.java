@@ -21,12 +21,12 @@
  */
 package de.ibapl.openhab.onewire4j.handler;
 
-import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE;
 import de.ibapl.onewire4j.AdapterFactory;
 import de.ibapl.onewire4j.OneWireAdapter;
 import de.ibapl.onewire4j.container.OneWireContainer;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 import de.ibapl.onewire4j.request.data.SearchCommand;
+import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
@@ -104,17 +104,17 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             refreshRate = BigDecimal.valueOf(60);
             config.put(REFRESH_RATE_PARAM, refreshRate);
         }
-        
+
         if (!config.containsKey(LOG_SERIAL_PORT)) {
             logSerialPort = false;
         } else {
-            logSerialPort = ((Boolean)config.get(LOG_SERIAL_PORT));
+            logSerialPort = ((Boolean) config.get(LOG_SERIAL_PORT));
         }
 
         try {
             serialPortSocket = serialPortSocketFactory.open(port);
             if (logSerialPort) {
-//Wrap socket with logger 
+//Wrap socket with logger
                 String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
                 serialPortSocket = LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
                         new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
@@ -163,18 +163,21 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         try {
             TemperatureContainer.sendDoConvertRequestToAll(oneWireAdapter, parasitePowerNeeded);
         } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Could not request parasite power needed", e);
+            LOGGER.log(Level.WARNING, "Could not request parasite power needed", e);
         }
 
         for (Thing thing : getThing().getThings()) {
             try {
                 if (ThingStatusDetail.DISABLED.equals(thing.getStatusInfo().getStatusDetail())) {
-                	continue; //just skip this thing
-                } 
+                    continue; //just skip this thing
+                }
                 final ThingHandler thingHandler = thing.getHandler();
                 if (thingHandler instanceof TemperatureHandler) {
-                        final TemperatureHandler tempHandler = (TemperatureHandler) thingHandler;
-                        tempHandler.readDevice(oneWireAdapter);
+                    final TemperatureHandler tempHandler = (TemperatureHandler) thingHandler;
+                    tempHandler.readDevice(oneWireAdapter);
+                } else if (thingHandler instanceof HumidityHandler) {
+                    final HumidityHandler humidityHandler = (HumidityHandler) thingHandler;
+                    humidityHandler.readDevice(oneWireAdapter);
                 }
             } catch (Throwable t) {
                 LOGGER.log(Level.SEVERE, "uncaughth exception(!) in handler for thing: " + thing, t);

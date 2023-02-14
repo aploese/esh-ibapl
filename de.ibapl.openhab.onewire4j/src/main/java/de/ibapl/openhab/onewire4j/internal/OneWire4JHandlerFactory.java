@@ -22,6 +22,7 @@
 package de.ibapl.openhab.onewire4j.internal;
 
 import de.ibapl.openhab.onewire4j.OneWire4JBindingConstants;
+import de.ibapl.openhab.onewire4j.handler.HumidityHandler;
 import de.ibapl.openhab.onewire4j.handler.SpswBridgeHandler;
 import de.ibapl.openhab.onewire4j.handler.TemperatureHandler;
 import de.ibapl.openhab.onewire4j.handler.UnknownDeviceHandler;
@@ -43,9 +44,10 @@ import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
 /**
- * The {@link OneWire4JHandlerFactory} is responsible for creating things and thing
- * handlers.
+ * The {@link OneWire4JHandlerFactory} is responsible for creating things and
+ * thing handlers.
  *
  * @author aploese@gmx.de - Initial contribution
  */
@@ -53,10 +55,11 @@ import org.osgi.service.component.annotations.Reference;
 public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
-    
+
     static {
-        SUPPORTED_THING_TYPES_UIDS = new HashSet<>();    
+        SUPPORTED_THING_TYPES_UIDS = new HashSet<>();
         SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE);
+        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY);
         SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
     }
 
@@ -76,6 +79,8 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
 
         if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE)) {
             return new TemperatureHandler(thing);
+        } else if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY)) {
+            return new HumidityHandler(thing);
         } else if (thingTypeUID.equals(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232)) {
             final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactory);
             registerDiscoveryService(spswBridgeHandler);

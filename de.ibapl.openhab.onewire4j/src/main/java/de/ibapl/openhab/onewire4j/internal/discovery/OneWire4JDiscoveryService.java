@@ -21,11 +21,12 @@
  */
 package de.ibapl.openhab.onewire4j.internal.discovery;
 
-import de.ibapl.openhab.onewire4j.OneWire4JBindingConstants;
-import de.ibapl.openhab.onewire4j.handler.SpswBridgeHandler;
 import de.ibapl.onewire4j.container.OneWireContainer;
 import de.ibapl.onewire4j.container.OneWireDevice;
+import de.ibapl.onewire4j.container.OneWireDevice26;
 import de.ibapl.onewire4j.container.TemperatureContainer;
+import de.ibapl.openhab.onewire4j.OneWire4JBindingConstants;
+import de.ibapl.openhab.onewire4j.handler.SpswBridgeHandler;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -76,14 +77,6 @@ public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
         removeOlderResults(getTimestampOfLastScan());
     }
 
-    private String devIdStr(String devidStr) {
-        if (devidStr == null) {
-            throw new RuntimeException();
-        } else {
-            return devidStr;
-        }
-    }
-
     @Override
     public void deactivate() {
         stopScan();
@@ -93,24 +86,40 @@ public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
         final String deviceIdStr = OneWireContainer.addressToString(deviceId);
         final ThingUID thingUID = getThingUID(deviceIdStr);
 
-        ThingTypeUID thingTypeUID = getThingTypeUID("unknown");
+        final ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
         try {
+            final DiscoveryResult discoveryResult;
             OneWireDevice owd = OneWireDevice.fromAdress(deviceId);
             if (owd instanceof TemperatureContainer) {
-                thingTypeUID = getThingTypeUID("temperature");
-
+                discoveryResult = DiscoveryResultBuilder.create(thingUID).withThingType(getThingTypeUID("temperature"))
+                        .withProperty("deviceId", deviceIdStr).withBridge(bridgeUID)
+                        .withRepresentationProperty("deviceId")
+                        .withLabel("Temp" + deviceIdStr)
+                        .build();
+                thingDiscovered(discoveryResult);
+            } else if (owd instanceof OneWireDevice26) {
+                //TODO humidity for now, but there are many other things battery moniotor ....
+                discoveryResult = DiscoveryResultBuilder.create(thingUID).withThingType(getThingTypeUID("humidity"))
+                        .withProperty("deviceId", deviceIdStr)
+                        .withRepresentationProperty("deviceId")
+                        .withBridge(bridgeUID)
+                        .withLabel("Humidity" + deviceIdStr)
+                        .build();
+                thingDiscovered(discoveryResult);
+            } else {
+                discoveryResult = DiscoveryResultBuilder.create(thingUID).withThingType(getThingTypeUID("unknown"))
+                        .withProperty("deviceId", deviceIdStr)
+                        .withBridge(bridgeUID)
+                        .withRepresentationProperty("deviceId")
+                        .withLabel("UNKNOWN" + deviceIdStr)
+                        .build();
+                thingDiscovered(discoveryResult);
             }
         } catch (Exception e) {
             // Unknown device
+            //TODO logging
+            e.printStackTrace();
         }
-
-        ThingUID bridgeUID = spswBridgeHandler.getThing().getUID();
-
-        DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID).withThingType(thingTypeUID)
-                .withProperty("deviceId", deviceIdStr).withBridge(bridgeUID).withRepresentationProperty(deviceIdStr)
-                .withLabel("Temp" + deviceIdStr).build();
-
-        thingDiscovered(discoveryResult);
     }
 
     private ThingUID getThingUID(String deviceId) {
