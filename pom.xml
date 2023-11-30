@@ -42,8 +42,7 @@
         <!-- TODO update before/during release -->
         <ohc.version>4.0.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
-        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release-local</oh.repo.releaseBaseUrl>
-        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot-local</oh.repo.snapshotBaseUrl>
+        <oh.repo.baseUrl>https://openhab.jfrog.io/openhab/</oh.repo.releaseBaseUrl>
     </properties>
 
     <modules>
@@ -55,7 +54,7 @@
     <scm>
         <url>https://github.com/aploese/esh-ibapl</url>
         <connection>scm:git:https://github.com/aploese/esh-ibapl.git</connection>
-        <developerConnection>scm:git:git@github.com:aploese/OneWire4J.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:aploese/esh-ibapl.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -80,7 +79,7 @@
                 <enabled>false</enabled>
             </snapshots>
             <name>openHAB Release Repository</name>
-            <url>${oh.repo.releaseBaseUrl}</url>
+            <url>${oh.repo.baseUrl}/libs-release-local</url>
         </repository>
         <repository>
             <id>openhab-snapshots</id>
@@ -92,7 +91,7 @@
                 <enabled>true</enabled>
             </snapshots>
             <name>openHAB Snapshot Repository</name>
-            <url>${oh.repo.snapshotBaseUrl}/libs-snapshot-local</url>
+            <url>${oh.repo.baseUrl}/libs-snapshot-local</url>
         </repository>
     </repositories>
 
