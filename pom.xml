@@ -51,6 +51,13 @@
         <module>oh-ibapl-kar</module>
     </modules>
 
+    <scm>
+        <url>https://github.com/aploese/esh-ibapl</url>
+        <connection>scm:git:https://github.com/aploese/esh-ibapl.git</connection>
+        <developerConnection>scm:git:git@github.com:aploese/OneWire4J.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <repositories>
         <repository>
             <id>sonatype-snapshots</id>
