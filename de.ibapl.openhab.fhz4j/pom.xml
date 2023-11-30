@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.ibapl.openhab</groupId>
         <artifactId>ibapl-oh</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
     <groupId>de.ibapl.openhab</groupId>

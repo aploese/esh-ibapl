@@ -5,7 +5,7 @@
 
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>ibapl-oh</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
@@ -53,7 +53,7 @@
         <url>https://github.com/aploese/esh-ibapl</url>
         <connection>scm:git:https://github.com/aploese/esh-ibapl.git</connection>
         <developerConnection>scm:git:git@github.com:aploese/esh-ibapl.git</developerConnection>
-        <tag>ibapl-oh-4.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <repositories>
