@@ -9,9 +9,25 @@
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
+    <url>https://github.com/aploese/esh-ibapl</url>
     <organization>
         <name>Arne Plöse</name>
     </organization>
+    <!-- Developers and Contributors -->
+    <developers>
+        <developer>
+            <id>apl</id>
+            <name>Arne Plöse</name>
+            <email>arnep@github.com</email>
+            <url>https://github.com/aploese</url>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
     <description>Features and bindings for Eclipse Smart Home, see  https://www.eclipse.org/smarthome/.</description>
     <inceptionYear>2017</inceptionYear>
     <!-- Licenses -->
