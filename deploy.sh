@@ -1,3 +1,3 @@
 #!/bin/bash
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-mvn clean compile javadoc:jar source:jar deploy
+#export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+mvn -P release clean deploy
