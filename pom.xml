@@ -55,7 +55,7 @@
     <scm>
         <url>https://github.com/aploese/esh-ibapl</url>
         <connection>scm:git:https://github.com/aploese/esh-ibapl.git</connection>
-        <developerConnection>scm:git:git@github.com:aploese/OneWire4J.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:aploese/esh-ibapl.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
