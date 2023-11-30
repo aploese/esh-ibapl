@@ -7,7 +7,7 @@
 
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>ibapl-oh</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
@@ -27,22 +27,22 @@
 
 
     <properties>
-        <compile.source>11</compile.source>
-        <compile.target>11</compile.target>
+        <compile.source>17</compile.source>
+        <compile.target>17</compile.target>
         <sourceEncoding>UTF-8</sourceEncoding>
-        <karaf.version>4.3.0</karaf.version>
+        <karaf.version>4.3.7</karaf.version>
         <jnhw.version>3.0.0</jnhw.version>
         <spsw.version>3.1.0</spsw.version>
         <fhz4j.version>2.1.0-SNAPSHOT</fhz4j.version>
         <!-- TODO update before/during release -->
-        <openhab.fhz4j.version>3.2.0-SNAPSHOT</openhab.fhz4j.version>
+        <openhab.fhz4j.version>4.0.0-SNAPSHOT</openhab.fhz4j.version>
         <onewire4j.version>1.1.0-SNAPSHOT</onewire4j.version>
         <!-- TODO update before/during release -->
-        <openhab.onewire4j.version>3.2.0-SNAPSHOT</openhab.onewire4j.version>
-        <ohc.version>3.3.0</ohc.version>
+        <openhab.onewire4j.version>4.0.0-SNAPSHOT</openhab.onewire4j.version>
+        <ohc.version>4.0.0-SNAPSHOT</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
-        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release</oh.repo.releaseBaseUrl>
-        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot</oh.repo.snapshotBaseUrl>
+        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.releaseBaseUrl>
+        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.snapshotBaseUrl>
     </properties>
 
     <modules>
@@ -84,7 +84,7 @@
                 <enabled>true</enabled>
             </snapshots>
             <name>openHAB Snapshot Repository</name>
-            <url>${oh.repo.snapshotBaseUrl}</url>
+            <url>${oh.repo.snapshotBaseUrl}/libs-snapshot-local</url>
         </repository>
     </repositories>
 
@@ -108,12 +108,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.0.0-M8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.1</version>
                     <configuration>
                         <source>${compile.source}</source>
                         <target>${compile.target}</target>
@@ -132,6 +132,35 @@
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>4.1</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <properties>
+                        <copyright-range>${project.inceptionYear}-2019</copyright-range>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-java-headers</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <header>header-template-lgpl-java.txt</header>
+                            <mapping>
+                                <java>SLASHSTAR_STYLE</java>
+                            </mapping>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                            <excludes>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
                 </plugin>
 
                 <plugin>
@@ -147,7 +176,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M6</version>
+                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -177,7 +206,7 @@
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <version>6.3.1</version>
+                    <version>6.4.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -190,7 +219,7 @@
                 <plugin>
                     <groupId>org.apache.karaf.tooling</groupId>
                     <artifactId>karaf-maven-plugin</artifactId>
-                    <version>4.3.6</version>
+                    <version>4.3.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -231,35 +260,6 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>true</aggregate>
-                    <strictCheck>true</strictCheck>
-                    <properties>
-                        <copyright-range>${project.inceptionYear}-2019</copyright-range>
-                    </properties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>check-java-headers</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <header>header-template-lgpl-java.txt</header>
-                            <mapping>
-                                <java>SLASHSTAR_STYLE</java>
-                            </mapping>
-                            <includes>
-                                <include>**/*.java</include>
-                            </includes>
-                            <excludes>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -21,19 +21,20 @@
  */
 package de.ibapl.openhab.fhz4j.handler;
 
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import de.ibapl.fhz4j.protocol.evohome.DeviceId;
+import static de.ibapl.fhz4j.protocol.evohome.DeviceType.MULTI_ZONE_CONTROLLER;
+import static de.ibapl.fhz4j.protocol.evohome.DeviceType.RADIATOR_CONTROLLER;
+import static de.ibapl.fhz4j.protocol.evohome.DeviceType.SINGLE_ZONE_THERMOSTAT;
+import static de.ibapl.fhz4j.protocol.evohome.EvoHomeCommand.ZONE_CONFIG;
+import static de.ibapl.fhz4j.protocol.evohome.EvoHomeCommand.ZONE_SETPOINT;
+import static de.ibapl.fhz4j.protocol.evohome.EvoHomeCommand.ZONE_TEMPERATURE;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x000A_0xXX_ZONES_PARAMS_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x2309_0xXX_ROOM_DESIRED_TEMP_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x30C9_0xXX_ROOM_MEASURED_TEMP_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x18_0x3150_0x02_HEAT_DEMAND_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x2C_0x2309_0xXX_ROOM_DESIRED_TEMP_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0x3C_0x000A_ZONE_PARAMS_Message;
-import de.ibapl.fhz4j.protocol.evohome.EvoHome_0xXX_0x000A_0xXX_ZONES_PARAMS_Message;
 import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
+import de.ibapl.fhz4j.protocol.evohome.messages.AbstractZoneSetpointPayloadMessage;
+import de.ibapl.fhz4j.protocol.evohome.messages.ZoneConfigPayloadMessage;
+import de.ibapl.fhz4j.protocol.evohome.messages.ZoneHeatDemandInformationMessage;
+import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -128,19 +129,19 @@ public class EvoHomeHandler extends BaseThingHandler {
     }
 
     public void updateFromMsg(EvoHomeDeviceMessage msg) {
-        switch (msg.property) {
-            case _18_3150_HEAT_DEMAND: {
-                final float valvePos = ((EvoHome_0x18_0x3150_0x02_HEAT_DEMAND_Message) msg).calcValvePosition();
+        switch (msg.command) {
+            case ZONE_HEAT_DEMAND: {
+                final float valvePos = ((ZoneHeatDemandInformationMessage) msg).calcValvePosition();
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
                         new DecimalType(valvePos));
-                final short heatDeamnd = ((EvoHome_0x18_0x3150_0x02_HEAT_DEMAND_Message) msg).heatDemand;
+                final short heatDeamnd = ((ZoneHeatDemandInformationMessage) msg).heatDemand;
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_RADIATOR_HEAT_DEMAND),
                         new DecimalType(heatDeamnd));
             }
             break;
-            case _18_30C9_ROOM_MEASURED_TEMP: {
+            case ZONE_TEMPERATURE: {
                 //From SingleZoneThermostat and RadiatorController and MultZoneController
-                final EvoHome_0x18_0x30C9_0xXX_ROOM_MEASURED_TEMP_Message m = (EvoHome_0x18_0x30C9_0xXX_ROOM_MEASURED_TEMP_Message) msg;
+                final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
                 switch (m.deviceId1.type) {
                     case RADIATOR_CONTROLLER:
                     case SINGLE_ZONE_THERMOSTAT:
@@ -158,11 +159,12 @@ public class EvoHomeHandler extends BaseThingHandler {
                 }
             }
             break;
-            case _18_2309_ROOM_DESIRED_TEMP: {
+            case ZONE_SETPOINT: {
                 //From RadiatorController and MultZoneController
-                final EvoHome_0x18_0x2309_0xXX_ROOM_DESIRED_TEMP_Message m = (EvoHome_0x18_0x2309_0xXX_ROOM_DESIRED_TEMP_Message) msg;
+                final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
                 switch (m.deviceId1.type) {
                     case RADIATOR_CONTROLLER:
+                    case SINGLE_ZONE_THERMOSTAT:
                         //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
                                 new DecimalType(m.zoneTemperatures.get(0).temperature));
@@ -177,38 +179,35 @@ public class EvoHomeHandler extends BaseThingHandler {
                 }
             }
             break;
-            case _2C_2309_ROOM_DESIRED_TEMP: {
-                //From SingleZoneThermostat
-                //TODO ZoneID ???
-                final BigDecimal desiredTemp = ((EvoHome_0x2C_0x2309_0xXX_ROOM_DESIRED_TEMP_Message) msg).zoneTemperatures.get(0).temperature;
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
-                        new DecimalType(desiredTemp));
-            }
-            break;
-            case _18_000A_ZONES_PARAMS: {
-                final EvoHome_0x18_0x000A_0xXX_ZONES_PARAMS_Message zpm = (EvoHome_0x18_0x000A_0xXX_ZONES_PARAMS_Message) msg;
-                for (EvoHome_0xXX_0x000A_0xXX_ZONES_PARAMS_Message.ZoneParams zoneParam : zpm.zones) {
-                    updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MIN_TEMP, zoneParam.zoneId)),
-                            new DecimalType(zoneParam.minTemperature));
-                    updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MAX_TEMP, zoneParam.zoneId)),
-                            new DecimalType(zoneParam.maxTemperature));
-                    updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_OPERATION_LOCK, zoneParam.zoneId)),
-                            zoneParam.operationLock ? OnOffType.ON : OnOffType.OFF);
-                    updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_WINDOW_FUNCTION, zoneParam.zoneId)),
-                            zoneParam.windowFunction ? OnOffType.ON : OnOffType.OFF);
+            case ZONE_CONFIG: {
+                final ZoneConfigPayloadMessage zpm = (ZoneConfigPayloadMessage) msg;
+                switch (zpm.deviceId1.type) {
+                    case RADIATOR_CONTROLLER:
+                    case SINGLE_ZONE_THERMOSTAT:
+                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_MIN_TEMP),
+                                new DecimalType(zpm.zones.get(0).minTemperature));
+                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMP),
+                                new DecimalType(zpm.zones.get(0).maxTemperature));
+                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_OPERATION_LOCK),
+                                zpm.zones.get(0).operationLock ? OnOffType.ON : OnOffType.OFF);
+                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_FUNCTION),
+                                zpm.zones.get(0).windowFunction ? OnOffType.ON : OnOffType.OFF);
+                        break;
+                    case MULTI_ZONE_CONTROLLER:
+
+                        for (ZoneConfigPayloadMessage.ZoneParams zoneParam : zpm.zones) {
+                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MIN_TEMP, zoneParam.zoneId)),
+                                    new DecimalType(zoneParam.minTemperature));
+                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MAX_TEMP, zoneParam.zoneId)),
+                                    new DecimalType(zoneParam.maxTemperature));
+                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_OPERATION_LOCK, zoneParam.zoneId)),
+                                    zoneParam.operationLock ? OnOffType.ON : OnOffType.OFF);
+                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_WINDOW_FUNCTION, zoneParam.zoneId)),
+                                    zoneParam.windowFunction ? OnOffType.ON : OnOffType.OFF);
+                        }
+                        break;
+                    default:
                 }
-            }
-            break;
-            case _3C_000A_ZONE_PARAMS: {
-                EvoHome_0x3C_0x000A_ZONE_PARAMS_Message zpm = (EvoHome_0x3C_0x000A_ZONE_PARAMS_Message) msg;
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_MIN_TEMP),
-                        new DecimalType(zpm.zones.get(0).minTemperature));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMP),
-                        new DecimalType(zpm.zones.get(0).maxTemperature));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_OPERATION_LOCK),
-                        zpm.zones.get(0).operationLock ? OnOffType.ON : OnOffType.OFF);
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_FUNCTION),
-                        zpm.zones.get(0).windowFunction ? OnOffType.ON : OnOffType.OFF);
             }
             break;
             default:
