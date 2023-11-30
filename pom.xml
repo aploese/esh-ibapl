@@ -35,11 +35,12 @@
         <spsw.version>3.1.0</spsw.version>
         <fhz4j.version>2.1.0</fhz4j.version>
         <!-- TODO update before/during release -->
-        <openhab.fhz4j.version>4.0.0-SNAPSHOT</openhab.fhz4j.version>
+        <openhab.fhz4j.version>4.0.0</openhab.fhz4j.version>
         <onewire4j.version>1.1.0</onewire4j.version>
         <!-- TODO update before/during release -->
-        <openhab.onewire4j.version>4.0.0-SNAPSHOT</openhab.onewire4j.version>
-        <ohc.version>4.0.0-SNAPSHOT</ohc.version>
+        <openhab.onewire4j.version>4.0.0</openhab.onewire4j.version>
+        <!-- TODO update before/during release -->
+        <ohc.version>4.0.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
         <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.releaseBaseUrl>
         <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.snapshotBaseUrl>
