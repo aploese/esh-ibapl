@@ -42,8 +42,8 @@
         <!-- TODO update before/during release -->
         <ohc.version>4.0.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
-        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.releaseBaseUrl>
-        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab</oh.repo.snapshotBaseUrl>
+        <oh.repo.releaseBaseUrl>https://openhab.jfrog.io/openhab/libs-release-local</oh.repo.releaseBaseUrl>
+        <oh.repo.snapshotBaseUrl>https://openhab.jfrog.io/openhab/libs-snapshot-local</oh.repo.snapshotBaseUrl>
     </properties>
 
     <modules>
