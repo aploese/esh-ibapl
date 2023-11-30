@@ -42,7 +42,7 @@
         <!-- TODO update before/during release -->
         <ohc.version>4.0.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
-        <oh.repo.baseUrl>https://openhab.jfrog.io/openhab/</oh.repo.releaseBaseUrl>
+        <oh.repo.baseUrl>https://openhab.jfrog.io/openhab</oh.repo.baseUrl>
     </properties>
 
     <modules>
