@@ -23,7 +23,6 @@ package de.ibapl.openhab.onewire4j.handler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -33,15 +32,16 @@ import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.types.Command;
 
 /**
- * The {@link UnknownDeviceHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link UnknownDeviceHandler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
 public class UnknownDeviceHandler extends BaseThingHandler {
+
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("esh.binding.onewire4j");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.UnknownDeviceHandler");
 
     public UnknownDeviceHandler(Thing thing) {
         super(thing);
@@ -53,7 +53,7 @@ public class UnknownDeviceHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        logger.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
+        LOGGER.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
 
         Bridge bridge = getBridge();
         if (bridge == null) {

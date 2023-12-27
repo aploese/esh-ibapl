@@ -6,8 +6,10 @@
     <parent>
         <groupId>de.ibapl.openhab</groupId>
         <artifactId>ibapl-oh</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.1.0.3-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
+    
     <artifactId>oh-ibapl-kar</artifactId>
 
     <name>OH IbAPl :: Kar</name>

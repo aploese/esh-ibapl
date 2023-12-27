@@ -51,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.onewire4j")
+@Component(service = ThingHandlerFactory.class)
 public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;

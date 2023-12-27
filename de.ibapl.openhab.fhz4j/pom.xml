@@ -6,8 +6,8 @@
     <parent>
         <groupId>de.ibapl.openhab</groupId>
         <artifactId>ibapl-oh</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <version>4.1.0.3-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>de.ibapl.openhab.fhz4j</artifactId>
@@ -32,13 +32,6 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
-                <configuration>
-                    <bnd><![CDATA[
--noimportjava: true
--exportcontents:\
- ESH-INF.*
-        ]]></bnd>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -70,11 +63,11 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.annotation</artifactId>
+            <artifactId>osgi.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
         
         <!-- compile OH bom begin -->

@@ -50,7 +50,7 @@ public class HumidityHandler extends BaseThingHandler {
 
     public DS2438WithHIH4031 device;
 
-    private static final Logger LOGGER = Logger.getLogger("esh.binding.onewire4j");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.HumidityHandler");
 
     public HumidityHandler(Thing thing) {
         super(thing);

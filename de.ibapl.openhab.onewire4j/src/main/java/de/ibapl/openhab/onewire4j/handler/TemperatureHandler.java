@@ -21,10 +21,10 @@
  */
 package de.ibapl.openhab.onewire4j.handler;
 
-import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.*;
 import de.ibapl.onewire4j.OneWireAdapter;
 import de.ibapl.onewire4j.container.OneWireDevice;
 import de.ibapl.onewire4j.container.TemperatureContainer;
+import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -48,7 +48,7 @@ public class TemperatureHandler extends BaseThingHandler {
 
     public TemperatureContainer temperatureContainer;
 
-    private final Logger logger = Logger.getLogger("esh.binding.onewire4j");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.TemperatureHandler");
 
     public TemperatureHandler(Thing thing) {
         super(thing);
@@ -91,7 +91,7 @@ public class TemperatureHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        logger.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
+        LOGGER.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
         Configuration configuration = getConfig();
         long deviceId;
         try {
@@ -137,7 +137,7 @@ public class TemperatureHandler extends BaseThingHandler {
                 updateTemperature(temp);
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
             } catch (Exception e1) {
-                logger.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
+                LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             }
         }

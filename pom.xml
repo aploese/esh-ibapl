@@ -5,7 +5,7 @@
 
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>ibapl-oh</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.1.0.3-SNAPSHOT</version>
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
@@ -46,15 +46,12 @@
         <sourceEncoding>UTF-8</sourceEncoding>
         <karaf.version>4.3.7</karaf.version>
         <jnhw.version>3.0.0</jnhw.version>
-        <spsw.version>3.1.0</spsw.version>
-        <fhz4j.version>2.1.0</fhz4j.version>
-        <!-- TODO update before/during release -->
-        <openhab.fhz4j.version>4.0.0</openhab.fhz4j.version>
-        <onewire4j.version>1.1.0</onewire4j.version>
-        <!-- TODO update before/during release -->
-        <openhab.onewire4j.version>4.0.0</openhab.onewire4j.version>
-        <!-- TODO update before/during release -->
-        <ohc.version>4.0.0</ohc.version>
+        <spsw.version>3.2.0-SNAPSHOT</spsw.version>
+        <fhz4j.version>2.1.1-SNAPSHOT</fhz4j.version>
+        <openhab.fhz4j.version>${project.version}</openhab.fhz4j.version>
+        <onewire4j.version>1.1.1-SNAPSHOT</onewire4j.version>
+        <openhab.onewire4j.version>${project.version}</openhab.onewire4j.version>
+        <ohc.version>4.1.0</ohc.version>
         <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
         <oh.repo.baseUrl>https://openhab.jfrog.io/openhab</oh.repo.baseUrl>
     </properties>
@@ -129,7 +126,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -157,7 +154,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.6.3</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -311,6 +308,12 @@
                 <version>${onewire4j.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.service.component.annotations</artifactId>
+                <version>1.5.1</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.annotation</artifactId>

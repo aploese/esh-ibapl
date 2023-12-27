@@ -42,7 +42,7 @@ import org.openhab.core.thing.ThingUID;
  */
 public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
 
-    private final Logger logger = Logger.getLogger("esh.binding.onewire4j");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.OneWire4JDiscoveryService");
 
     private final static int SEARCH_TIME = 60;
 

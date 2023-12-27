@@ -1,45 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  OneWire4J Binding
-  %%
-  Copyright (C) 2017 - 2018 Arne Plöse
-  %%
-  Eclipse Smarthome Features (https://www.eclipse.org/smarthome/) and bundles see https://github.com/aploese/esh-ibapl/
-  Copyright (C) 2017 - 2018, Arne Pl\u00f6se and individual contributors as indicated
-  by the @authors tag. See the copyright.txt in the distribution for a
-  full listing of individual contributors.
-   
-  This program and the accompanying materials are made available under the
-  terms of the Eclipse Public License 2.0 which is available at
-  http://www.eclipse.org/legal/epl-2.0
-  
-  SPDX-License-Identifier: EPL-2.0
-  #L%
-  -->
-
 <thing:thing-descriptions bindingId="onewire4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-		xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
     
-	<!-- Sample Thing Type -->
-	<thing-type id="smart_battery_monitor">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge" />
-		</supported-bridge-type-refs>
+    <thing-type id="smart_battery_monitor">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge" />
+        </supported-bridge-type-refs>
 
-		<label>OneWire4J DS2438 Smart Battery Monitor Thing</label>
-		<description>Smart battery monitor thing for OneWire4J binding</description>
+        <label>OneWire4J DS2438 Smart Battery Monitor Thing</label>
+        <description>Smart battery monitor thing for OneWire4J binding</description>
 
-		<channels>
-		</channels>
+        <channels>
+        </channels>
 
-		<config-description>
-			<parameter name="deviceId" type="text">
-				<label>Device Id</label>
-				<description>The one wire device id.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <config-description>
+            <parameter name="deviceId" type="text">
+                <label>Device Id</label>
+                <description>The one wire device id.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 
 </thing:thing-descriptions>
