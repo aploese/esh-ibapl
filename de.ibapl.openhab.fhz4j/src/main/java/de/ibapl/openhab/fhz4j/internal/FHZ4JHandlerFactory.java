@@ -57,7 +57,7 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@Component(service = ThingHandlerFactory.class)
+@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.fhz4j")
 public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JHandlerFactory");

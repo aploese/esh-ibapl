@@ -1,260 +1,260 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
-    
+<thing:thing-descriptions bindingId="fhz4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-    <thing-type id="evo-home-multi-zone-controller">
-        <supported-bridge-type-refs>
-            <bridge-type-ref id="rs232-bridge-cul" />
-        </supported-bridge-type-refs>
+	<thing-type id="evo-home-multi-zone-controller">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="rs232-bridge-cul"/>
+		</supported-bridge-type-refs>
 
-        <label>FHZ4J Evo Home Single Zone Thermostat Binding Thing</label>
-        <description>Evo Home single zone thermostat binding</description>
+		<label>FHZ4J Evo Home Single Zone Thermostat Binding Thing</label>
+		<description>Evo Home single zone thermostat binding</description>
 
-        <channels>
-            <channel id="temperatureMeasured_00" typeId="temperatureMeasured">
-                <label>temperatureMeasured Zone 00</label>
-            </channel>
-            <channel id="desiredTemperature_00" typeId="desiredTemperature">
-                <label>desiredTemperature Zone 00</label>
-            </channel>
-            <channel id="windowFunction_00" typeId="system.rawbutton" >
-                <label>Windows Function Zone 00</label>
-            </channel>
-            <channel id="operationLock_00" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 00</label>
-            </channel>
-            <channel id="minTemperature_00" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 00</label>
-            </channel>
-            <channel id="maxTemperature_00" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 00</label>
-            </channel>
-            <channel id="temperatureMeasured_01" typeId="temperatureMeasured">
-                <label>temperatureMeasured Zone 01</label>
-            </channel>
-            <channel id="desiredTemperature_01" typeId="desiredTemperature">
-                <label>desiredTemperature Zone 01</label>
-            </channel>
-            <channel id="windowFunction_01" typeId="system.rawbutton" >
-                <label>Windows Function Zone 01</label>
-            </channel>
-            <channel id="operationLock_01" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 01</label>
-            </channel>
-            <channel id="minTemperature_01" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 01</label>
-            </channel>
-            <channel id="maxTemperature_01" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 01</label>
-            </channel>
-            <channel id="temperatureMeasured_02" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 02</label>            
-            </channel>
-            <channel id="desiredTemperature_02" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 02</label>            
-            </channel>
-            <channel id="windowFunction_02" typeId="system.rawbutton" >
-                <label>Windows Function Zone 02</label>
-            </channel>
-            <channel id="operationLock_02" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 02</label>
-            </channel>
-            <channel id="minTemperature_02" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 02</label>
-            </channel>
-            <channel id="maxTemperature_02" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 02</label>
-            </channel>
-            <channel id="temperatureMeasured_03" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 03</label>            
-            </channel>
-            <channel id="desiredTemperature_03" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 03</label>            
-            </channel>
-            <channel id="windowFunction_03" typeId="system.rawbutton" >
-                <label>Windows Function Zone 03</label>
-            </channel>
-            <channel id="operationLock_03" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 03</label>
-            </channel>
-            <channel id="minTemperature_03" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 03</label>
-            </channel>
-            <channel id="maxTemperature_03" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 03</label>
-            </channel>
-            <channel id="temperatureMeasured_04" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 04</label>            
-            </channel>
-            <channel id="desiredTemperature_04" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 04</label>            
-            </channel>
-            <channel id="windowFunction_04" typeId="system.rawbutton" >
-                <label>Windows Function Zone 04</label>
-            </channel>
-            <channel id="operationLock_04" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 04</label>
-            </channel>
-            <channel id="minTemperature_04" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 04</label>
-            </channel>
-            <channel id="maxTemperature_04" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 04</label>
-            </channel>
-            <channel id="temperatureMeasured_05" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 05</label>            
-            </channel>
-            <channel id="desiredTemperature_05" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 05</label>            
-            </channel>
-            <channel id="windowFunction_05" typeId="system.rawbutton" >
-                <label>Windows Function Zone 05</label>
-            </channel>
-            <channel id="operationLock_05" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 05</label>
-            </channel>
-            <channel id="minTemperature_05" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 05</label>
-            </channel>
-            <channel id="maxTemperature_05" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 05</label>
-            </channel>
-            <channel id="temperatureMeasured_06" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 06</label>            
-            </channel>
-            <channel id="desiredTemperature_06" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 06</label>            
-            </channel>
-            <channel id="windowFunction_06" typeId="system.rawbutton" >
-                <label>Windows Function Zone 06</label>
-            </channel>
-            <channel id="operationLock_06" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 06</label>
-            </channel>
-            <channel id="minTemperature_06" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 06</label>
-            </channel>
-            <channel id="maxTemperature_06" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 06</label>
-            </channel>
-            <channel id="temperatureMeasured_07" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 07</label>            
-            </channel>
-            <channel id="desiredTemperature_07" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 07</label>            
-            </channel>
-            <channel id="windowFunction_07" typeId="system.rawbutton" >
-                <label>Windows Function Zone 07</label>
-            </channel>
-            <channel id="operationLock_07" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 07</label>
-            </channel>
-            <channel id="minTemperature_07" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 07</label>
-            </channel>
-            <channel id="maxTemperature_07" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 07</label>
-            </channel>
-            <channel id="temperatureMeasured_08" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 08</label>            
-            </channel>
-            <channel id="desiredTemperature_08" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 08</label>            
-            </channel>
-            <channel id="windowFunction_08" typeId="system.rawbutton" >
-                <label>Windows Function Zone 08</label>
-            </channel>
-            <channel id="operationLock_08" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 08</label>
-            </channel>
-            <channel id="minTemperature_08" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 08</label>
-            </channel>
-            <channel id="maxTemperature_08" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 08</label>
-            </channel>
-            <channel id="temperatureMeasured_09" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 09</label>            
-            </channel>
-            <channel id="desiredTemperature_09" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 09</label>            
-            </channel>
-            <channel id="windowFunction_09" typeId="system.rawbutton" >
-                <label>Windows Function Zone 09</label>
-            </channel>
-            <channel id="operationLock_09" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 09</label>
-            </channel>
-            <channel id="minTemperature_09" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 09</label>
-            </channel>
-            <channel id="maxTemperature_09" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 09</label>
-            </channel>
-            <channel id="temperatureMeasured_10" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 10</label>            
-            </channel>
-            <channel id="desiredTemperature_10" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 10</label>            
-            </channel>
-            <channel id="windowFunction_10" typeId="system.rawbutton" >
-                <label>Windows Function Zone 10</label>
-            </channel>
-            <channel id="operationLock_10" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 10</label>
-            </channel>
-            <channel id="minTemperature_10" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 10</label>
-            </channel>
-            <channel id="maxTemperature_10" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 10</label>
-            </channel>
-            <channel id="temperatureMeasured_11" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 11</label>            
-            </channel>
-            <channel id="desiredTemperature_11" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 11</label>            
-            </channel>
-            <channel id="windowFunction_11" typeId="system.rawbutton" >
-                <label>Windows Function Zone 11</label>
-            </channel>
-            <channel id="operationLock_11" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 11</label>
-            </channel>
-            <channel id="minTemperature_11" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 11</label>
-            </channel>
-            <channel id="maxTemperature_11" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 11</label>
-            </channel>
-            <channel id="temperatureMeasured_12" typeId="temperatureMeasured">                
-                <label>temperatureMeasured Zone 12</label>            
-            </channel>
-            <channel id="desiredTemperature_12" typeId="desiredTemperature">                
-                <label>desiredTemperature Zone 12</label>            
-            </channel>
-            <channel id="windowFunction_12" typeId="system.rawbutton" >
-                <label>Windows Function Zone 12</label>
-            </channel>
-            <channel id="operationLock_12" typeId="system.rawbutton" >
-                <label>Operation Lock Zone 12</label>
-            </channel>
-            <channel id="minTemperature_12" typeId="desiredTemperature" >
-                <label>Min Temperature Zone 12</label>
-            </channel>
-            <channel id="maxTemperature_12" typeId="desiredTemperature" >
-                <label>Max Temperature Zone 12</label>
-            </channel>
-        </channels>
+		<channels>
+			<channel id="temperatureMeasured_00" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 00</label>
+			</channel>
+			<channel id="desiredTemperature_00" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 00</label>
+			</channel>
+			<channel id="windowFunction_00" typeId="system.rawbutton">
+				<label>Windows Function Zone 00</label>
+			</channel>
+			<channel id="operationLock_00" typeId="system.rawbutton">
+				<label>Operation Lock Zone 00</label>
+			</channel>
+			<channel id="minTemperature_00" typeId="desiredTemperature">
+				<label>Min Temperature Zone 00</label>
+			</channel>
+			<channel id="maxTemperature_00" typeId="desiredTemperature">
+				<label>Max Temperature Zone 00</label>
+			</channel>
+			<channel id="temperatureMeasured_01" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 01</label>
+			</channel>
+			<channel id="desiredTemperature_01" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 01</label>
+			</channel>
+			<channel id="windowFunction_01" typeId="system.rawbutton">
+				<label>Windows Function Zone 01</label>
+			</channel>
+			<channel id="operationLock_01" typeId="system.rawbutton">
+				<label>Operation Lock Zone 01</label>
+			</channel>
+			<channel id="minTemperature_01" typeId="desiredTemperature">
+				<label>Min Temperature Zone 01</label>
+			</channel>
+			<channel id="maxTemperature_01" typeId="desiredTemperature">
+				<label>Max Temperature Zone 01</label>
+			</channel>
+			<channel id="temperatureMeasured_02" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 02</label>
+			</channel>
+			<channel id="desiredTemperature_02" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 02</label>
+			</channel>
+			<channel id="windowFunction_02" typeId="system.rawbutton">
+				<label>Windows Function Zone 02</label>
+			</channel>
+			<channel id="operationLock_02" typeId="system.rawbutton">
+				<label>Operation Lock Zone 02</label>
+			</channel>
+			<channel id="minTemperature_02" typeId="desiredTemperature">
+				<label>Min Temperature Zone 02</label>
+			</channel>
+			<channel id="maxTemperature_02" typeId="desiredTemperature">
+				<label>Max Temperature Zone 02</label>
+			</channel>
+			<channel id="temperatureMeasured_03" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 03</label>
+			</channel>
+			<channel id="desiredTemperature_03" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 03</label>
+			</channel>
+			<channel id="windowFunction_03" typeId="system.rawbutton">
+				<label>Windows Function Zone 03</label>
+			</channel>
+			<channel id="operationLock_03" typeId="system.rawbutton">
+				<label>Operation Lock Zone 03</label>
+			</channel>
+			<channel id="minTemperature_03" typeId="desiredTemperature">
+				<label>Min Temperature Zone 03</label>
+			</channel>
+			<channel id="maxTemperature_03" typeId="desiredTemperature">
+				<label>Max Temperature Zone 03</label>
+			</channel>
+			<channel id="temperatureMeasured_04" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 04</label>
+			</channel>
+			<channel id="desiredTemperature_04" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 04</label>
+			</channel>
+			<channel id="windowFunction_04" typeId="system.rawbutton">
+				<label>Windows Function Zone 04</label>
+			</channel>
+			<channel id="operationLock_04" typeId="system.rawbutton">
+				<label>Operation Lock Zone 04</label>
+			</channel>
+			<channel id="minTemperature_04" typeId="desiredTemperature">
+				<label>Min Temperature Zone 04</label>
+			</channel>
+			<channel id="maxTemperature_04" typeId="desiredTemperature">
+				<label>Max Temperature Zone 04</label>
+			</channel>
+			<channel id="temperatureMeasured_05" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 05</label>
+			</channel>
+			<channel id="desiredTemperature_05" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 05</label>
+			</channel>
+			<channel id="windowFunction_05" typeId="system.rawbutton">
+				<label>Windows Function Zone 05</label>
+			</channel>
+			<channel id="operationLock_05" typeId="system.rawbutton">
+				<label>Operation Lock Zone 05</label>
+			</channel>
+			<channel id="minTemperature_05" typeId="desiredTemperature">
+				<label>Min Temperature Zone 05</label>
+			</channel>
+			<channel id="maxTemperature_05" typeId="desiredTemperature">
+				<label>Max Temperature Zone 05</label>
+			</channel>
+			<channel id="temperatureMeasured_06" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 06</label>
+			</channel>
+			<channel id="desiredTemperature_06" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 06</label>
+			</channel>
+			<channel id="windowFunction_06" typeId="system.rawbutton">
+				<label>Windows Function Zone 06</label>
+			</channel>
+			<channel id="operationLock_06" typeId="system.rawbutton">
+				<label>Operation Lock Zone 06</label>
+			</channel>
+			<channel id="minTemperature_06" typeId="desiredTemperature">
+				<label>Min Temperature Zone 06</label>
+			</channel>
+			<channel id="maxTemperature_06" typeId="desiredTemperature">
+				<label>Max Temperature Zone 06</label>
+			</channel>
+			<channel id="temperatureMeasured_07" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 07</label>
+			</channel>
+			<channel id="desiredTemperature_07" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 07</label>
+			</channel>
+			<channel id="windowFunction_07" typeId="system.rawbutton">
+				<label>Windows Function Zone 07</label>
+			</channel>
+			<channel id="operationLock_07" typeId="system.rawbutton">
+				<label>Operation Lock Zone 07</label>
+			</channel>
+			<channel id="minTemperature_07" typeId="desiredTemperature">
+				<label>Min Temperature Zone 07</label>
+			</channel>
+			<channel id="maxTemperature_07" typeId="desiredTemperature">
+				<label>Max Temperature Zone 07</label>
+			</channel>
+			<channel id="temperatureMeasured_08" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 08</label>
+			</channel>
+			<channel id="desiredTemperature_08" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 08</label>
+			</channel>
+			<channel id="windowFunction_08" typeId="system.rawbutton">
+				<label>Windows Function Zone 08</label>
+			</channel>
+			<channel id="operationLock_08" typeId="system.rawbutton">
+				<label>Operation Lock Zone 08</label>
+			</channel>
+			<channel id="minTemperature_08" typeId="desiredTemperature">
+				<label>Min Temperature Zone 08</label>
+			</channel>
+			<channel id="maxTemperature_08" typeId="desiredTemperature">
+				<label>Max Temperature Zone 08</label>
+			</channel>
+			<channel id="temperatureMeasured_09" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 09</label>
+			</channel>
+			<channel id="desiredTemperature_09" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 09</label>
+			</channel>
+			<channel id="windowFunction_09" typeId="system.rawbutton">
+				<label>Windows Function Zone 09</label>
+			</channel>
+			<channel id="operationLock_09" typeId="system.rawbutton">
+				<label>Operation Lock Zone 09</label>
+			</channel>
+			<channel id="minTemperature_09" typeId="desiredTemperature">
+				<label>Min Temperature Zone 09</label>
+			</channel>
+			<channel id="maxTemperature_09" typeId="desiredTemperature">
+				<label>Max Temperature Zone 09</label>
+			</channel>
+			<channel id="temperatureMeasured_10" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 10</label>
+			</channel>
+			<channel id="desiredTemperature_10" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 10</label>
+			</channel>
+			<channel id="windowFunction_10" typeId="system.rawbutton">
+				<label>Windows Function Zone 10</label>
+			</channel>
+			<channel id="operationLock_10" typeId="system.rawbutton">
+				<label>Operation Lock Zone 10</label>
+			</channel>
+			<channel id="minTemperature_10" typeId="desiredTemperature">
+				<label>Min Temperature Zone 10</label>
+			</channel>
+			<channel id="maxTemperature_10" typeId="desiredTemperature">
+				<label>Max Temperature Zone 10</label>
+			</channel>
+			<channel id="temperatureMeasured_11" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 11</label>
+			</channel>
+			<channel id="desiredTemperature_11" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 11</label>
+			</channel>
+			<channel id="windowFunction_11" typeId="system.rawbutton">
+				<label>Windows Function Zone 11</label>
+			</channel>
+			<channel id="operationLock_11" typeId="system.rawbutton">
+				<label>Operation Lock Zone 11</label>
+			</channel>
+			<channel id="minTemperature_11" typeId="desiredTemperature">
+				<label>Min Temperature Zone 11</label>
+			</channel>
+			<channel id="maxTemperature_11" typeId="desiredTemperature">
+				<label>Max Temperature Zone 11</label>
+			</channel>
+			<channel id="temperatureMeasured_12" typeId="temperatureMeasured">
+				<label>temperatureMeasured Zone 12</label>
+			</channel>
+			<channel id="desiredTemperature_12" typeId="desiredTemperature">
+				<label>desiredTemperature Zone 12</label>
+			</channel>
+			<channel id="windowFunction_12" typeId="system.rawbutton">
+				<label>Windows Function Zone 12</label>
+			</channel>
+			<channel id="operationLock_12" typeId="system.rawbutton">
+				<label>Operation Lock Zone 12</label>
+			</channel>
+			<channel id="minTemperature_12" typeId="desiredTemperature">
+				<label>Min Temperature Zone 12</label>
+			</channel>
+			<channel id="maxTemperature_12" typeId="desiredTemperature">
+				<label>Max Temperature Zone 12</label>
+			</channel>
+		</channels>
 
-        <config-description>
-            <parameter name="deviceId" type="integer">
-                <label>DeviceId</label>
-                <description>The deviceId</description>
-            </parameter>
-        </config-description>
-    </thing-type>
+		<config-description>
+			<parameter name="deviceId" type="integer">
+				<label>DeviceId</label>
+				<description>The deviceId</description>
+			</parameter>
+		</config-description>
+	</thing-type>
 
 </thing:thing-descriptions>

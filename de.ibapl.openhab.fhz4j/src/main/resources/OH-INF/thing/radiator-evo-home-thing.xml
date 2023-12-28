@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
-    
+<thing:thing-descriptions bindingId="fhz4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-    <thing-type id="evo-home-radiator">
-        <supported-bridge-type-refs>
-            <bridge-type-ref id="rs232-bridge-cul" />
-        </supported-bridge-type-refs>
+	<thing-type id="evo-home-radiator">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="rs232-bridge-cul"/>
+		</supported-bridge-type-refs>
 
-        <label>FHZ4J Evo Home Radiator Binding Thing</label>
-        <description>Evo Home radiator binding</description>
+		<label>FHZ4J Evo Home Radiator Binding Thing</label>
+		<description>Evo Home radiator binding</description>
 
-        <channels>
-            <channel id="temperatureMeasured" typeId="temperatureMeasured" />
-            <channel id="desiredTemperature" typeId="desiredTemperature" />
-            <channel id="valvePos" typeId="valvePos" />
-            <channel id="heatDemand" typeId="heatDemand" />
-        </channels>
+		<channels>
+			<channel id="temperatureMeasured" typeId="temperatureMeasured"/>
+			<channel id="desiredTemperature" typeId="desiredTemperature"/>
+			<channel id="valvePos" typeId="valvePos"/>
+			<channel id="heatDemand" typeId="heatDemand"/>
+		</channels>
 
-        <config-description>
-            <parameter name="deviceId" type="integer">
-                <label>DeviceId</label>
-                <description>The deviceId</description>
-            </parameter>
-        </config-description>
-    </thing-type>
+		<config-description>
+			<parameter name="deviceId" type="integer">
+				<label>DeviceId</label>
+				<description>The deviceId</description>
+			</parameter>
+		</config-description>
+	</thing-type>
 
 </thing:thing-descriptions>

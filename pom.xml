@@ -52,7 +52,7 @@
         <onewire4j.version>1.1.1-SNAPSHOT</onewire4j.version>
         <openhab.onewire4j.version>${project.version}</openhab.onewire4j.version>
         <ohc.version>4.1.0</ohc.version>
-        <osgi.version.range>[6.0.0,7.0.0)</osgi.version.range>
+        <osgi.version.range>6.0.0</osgi.version.range>
         <oh.repo.baseUrl>https://openhab.jfrog.io/openhab</oh.repo.baseUrl>
     </properties>
 
@@ -316,7 +316,7 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.annotation</artifactId>
+                <artifactId>osgi.annotation</artifactId>
                 <version>${osgi.version.range}</version>
                 <scope>provided</scope>
             </dependency>

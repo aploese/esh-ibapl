@@ -1,75 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
-    
-    <thing-type id="fht80b">
-        <supported-bridge-type-refs>
-            <bridge-type-ref id="rs232-bridge-cul" />
-        </supported-bridge-type-refs>
+<thing:thing-descriptions bindingId="fhz4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-        <label>FHZ4J Radiator Binding Thing</label>
-        <description>Fht80b binding</description>
+	<thing-type id="fht80b">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="rs232-bridge-cul"/>
+		</supported-bridge-type-refs>
 
-        <channels>
-            <channel id="temperatureMeasured" typeId="temperatureMeasured" />
-            <channel id="desiredTemperature" typeId="desiredTemperature" />
-            <channel id="dayTemperature" typeId="dayTemperature" />
-            <channel id="nightTemperature" typeId="nightTemperature" />
-            <channel id="windowOpenTemperature" typeId="windowOpenTemperature" />
+		<label>FHZ4J Radiator Binding Thing</label>
+		<description>Fht80b binding</description>
 
-            <channel id="valveAllowLowBattBeep" typeId="valveAllowLowBattBeep" />
-            <channel id="valvePos" typeId="valvePos" />
-            
-            <channel id="mode" typeId="fht80Mode">
-                <label>Mode</label>
-            </channel>
-            
-            <channel id="low-battery" typeId="system.low-battery" />
+		<channels>
+			<channel id="temperatureMeasured" typeId="temperatureMeasured"/>
+			<channel id="desiredTemperature" typeId="desiredTemperature"/>
+			<channel id="dayTemperature" typeId="dayTemperature"/>
+			<channel id="nightTemperature" typeId="nightTemperature"/>
+			<channel id="windowOpenTemperature" typeId="windowOpenTemperature"/>
 
-            <channel id="holydayEndDate" typeId="date">
-                <label>Holyday End</label>
-                <description>date of holyday end</description>
-            </channel>
-            
-            <channel id="partyEndTime" typeId="fht80Time">
-                <label>Party End</label>
-            </channel>
+			<channel id="valveAllowLowBattBeep" typeId="valveAllowLowBattBeep"/>
+			<channel id="valvePos" typeId="valvePos"/>
 
-            <channel id="mondaySwitchTimes" typeId="switchTimes">
-                <label>Monday</label>
-            </channel>
-            <channel id="tuesdaySwitchTimes" typeId="switchTimes">
-                <label>Tuesday</label>
-            </channel>
-            <channel id="wednesdaySwitchTimes" typeId="switchTimes">
-                <label>Wednesday</label>
-            </channel>
-            <channel id="thursdaySwitchTimes" typeId="switchTimes">
-                <label>Thursday</label>
-            </channel>
-            <channel id="fridaySwitchTimes" typeId="switchTimes">
-                <label>Friday</label>
-            </channel>
-            <channel id="saturdaySwitchTimes" typeId="switchTimes">
-                <label>Saturday</label>
-            </channel>
-            <channel id="sundaySwitchTimes" typeId="switchTimes">
-                <label>Sunday</label>
-            </channel>
+			<channel id="mode" typeId="fht80Mode">
+				<label>Mode</label>
+			</channel>
 
-        </channels>
+			<channel id="low-battery" typeId="system.low-battery"/>
 
-        <config-description>
-            <parameter name="housecode" type="integer">
-                <label>Housecode</label>
-                <description>The housecode.</description>
-            </parameter>
-            <parameter name="cronPatternDevicePing" type="text" >
-                <label>Cron Pattern Device ping</label>
-                <description>The cron pattern for pinging the device.</description>
-            </parameter>
-        </config-description>
-    </thing-type>
+			<channel id="holydayEndDate" typeId="date">
+				<label>Holyday End</label>
+				<description>date of holyday end</description>
+			</channel>
+
+			<channel id="partyEndTime" typeId="fht80Time">
+				<label>Party End</label>
+			</channel>
+
+			<channel id="mondaySwitchTimes" typeId="switchTimes">
+				<label>Monday</label>
+			</channel>
+			<channel id="tuesdaySwitchTimes" typeId="switchTimes">
+				<label>Tuesday</label>
+			</channel>
+			<channel id="wednesdaySwitchTimes" typeId="switchTimes">
+				<label>Wednesday</label>
+			</channel>
+			<channel id="thursdaySwitchTimes" typeId="switchTimes">
+				<label>Thursday</label>
+			</channel>
+			<channel id="fridaySwitchTimes" typeId="switchTimes">
+				<label>Friday</label>
+			</channel>
+			<channel id="saturdaySwitchTimes" typeId="switchTimes">
+				<label>Saturday</label>
+			</channel>
+			<channel id="sundaySwitchTimes" typeId="switchTimes">
+				<label>Sunday</label>
+			</channel>
+
+		</channels>
+
+		<config-description>
+			<parameter name="housecode" type="integer">
+				<label>Housecode</label>
+				<description>The housecode.</description>
+			</parameter>
+			<parameter name="cronPatternDevicePing" type="text">
+				<label>Cron Pattern Device ping</label>
+				<description>The cron pattern for pinging the device.</description>
+			</parameter>
+		</config-description>
+	</thing-type>
 
 </thing:thing-descriptions>

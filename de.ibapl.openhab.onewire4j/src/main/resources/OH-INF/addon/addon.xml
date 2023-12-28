@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon:addon id="onewire4j"
-             xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-             xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
-             xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
+<addon:addon id="onewire4j" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
 
-    <type>binding</type>
-    <name>OneWire Binding</name>
-    <description>The OneWire binding integrates the 1-wire devices.</description>
-    <connection>local</connection>
+	<type>binding</type>
+	<name>OneWire Binding</name>
+	<description>The OneWire binding integrates the 1-wire devices.</description>
+	<connection>local</connection>
 
 </addon:addon>

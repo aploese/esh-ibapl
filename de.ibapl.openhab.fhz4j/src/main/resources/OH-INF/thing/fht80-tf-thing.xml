@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="fhz4j" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
-    
-    <thing-type id="fht80-tf">
-        <supported-bridge-type-refs>
-            <bridge-type-ref id="rs232-bridge-cul" />
-        </supported-bridge-type-refs>
+<thing:thing-descriptions bindingId="fhz4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-        <label>FHZ4J FHT80 TF Binding Thing</label>
-        <description>Fht80TF binding</description>
+	<thing-type id="fht80-tf">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="rs232-bridge-cul"/>
+		</supported-bridge-type-refs>
 
-        <channels>
-            <channel id="window-internal" typeId="sensor_window"/>
-            <channel id="window-external" typeId="sensor_window"/>
-            <channel id="low-battery" typeId="system.low-battery" />
-        </channels>
+		<label>FHZ4J FHT80 TF Binding Thing</label>
+		<description>Fht80TF binding</description>
 
-        <config-description>
-            <parameter name="address" type="text">
-                <label>Address</label>
-                <description>The address as hex.</description>
-            </parameter>
-        </config-description>
-    </thing-type>
+		<channels>
+			<channel id="window-internal" typeId="sensor_window"/>
+			<channel id="window-external" typeId="sensor_window"/>
+			<channel id="low-battery" typeId="system.low-battery"/>
+		</channels>
+
+		<config-description>
+			<parameter name="address" type="text">
+				<label>Address</label>
+				<description>The address as hex.</description>
+			</parameter>
+		</config-description>
+	</thing-type>
 
 </thing:thing-descriptions>

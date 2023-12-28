@@ -21,9 +21,6 @@
  */
 package de.ibapl.openhab.fhz4j.internal.discovery;
 
-import de.ibapl.openhab.fhz4j.FHZ4JBindingConstants;
-import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
-import de.ibapl.openhab.fhz4j.internal.FHZ4JHandlerFactory;
 import de.ibapl.fhz4j.api.Protocol;
 import de.ibapl.fhz4j.cul.CulMessage;
 import de.ibapl.fhz4j.cul.CulMessageListener;
@@ -35,6 +32,9 @@ import de.ibapl.fhz4j.protocol.fht.FhtMessage;
 import de.ibapl.fhz4j.protocol.fs20.FS20Message;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
+import de.ibapl.openhab.fhz4j.FHZ4JBindingConstants;
+import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
+import de.ibapl.openhab.fhz4j.internal.FHZ4JHandlerFactory;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;

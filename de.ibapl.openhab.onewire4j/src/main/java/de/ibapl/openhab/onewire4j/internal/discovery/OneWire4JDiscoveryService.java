@@ -33,13 +33,16 @@ import java.util.logging.Logger;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author aploese@gmx.de - Initial contribution
  */
+@Component(immediate = true, service = DiscoveryService.class, configurationPid = "discovery.onewire4j")
 public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
 
     private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.OneWire4JDiscoveryService");
