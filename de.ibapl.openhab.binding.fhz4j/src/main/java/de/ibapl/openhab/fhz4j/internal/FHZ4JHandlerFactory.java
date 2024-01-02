@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.scheduler.CronScheduler;
@@ -47,6 +48,7 @@ import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.BaseThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -75,7 +77,6 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
         s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME);
         s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
         SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(s);
-        s = null;
     }
 
     @Reference

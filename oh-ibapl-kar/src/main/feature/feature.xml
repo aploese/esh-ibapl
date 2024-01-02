@@ -23,17 +23,17 @@
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.jnhwprovider/${spsw.version}</bundle>
     </feature>
 
-    <feature name="openhab-fhz4j-binding" version="${openhab.fhz4j.version}" description="Fhz4J OH Binding">
+    <feature name="openhab-binding-fhz4j" version="${openhab.fhz4j.version}" description="Fhz4J OH Binding">
         <feature>openhab-runtime-base</feature>
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
         <bundle>mvn:de.ibapl.fhz4j/de.ibapl.fhz4j.parser.cul/${fhz4j.version}</bundle>
-        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.fhz4j/${openhab.fhz4j.version}</bundle>
+        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.fhz4j/${openhab.fhz4j.version}</bundle>
     </feature>
 
-    <feature name="openhab-onewire4j-binding" version="${openhab.onewire4j.version}" description="OneWire4J OH Binding">
+    <feature name="openhab-binding-onewire4j" version="${openhab.onewire4j.version}" description="OneWire4J OH Binding">
         <feature>openhab-runtime-base</feature>
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
         <bundle>mvn:de.ibapl.onewire4j/de.ibapl.onewire4j/${onewire4j.version}</bundle>
-        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.onewire4j/${openhab.onewire4j.version}</bundle>
+        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.onewire4j/${openhab.onewire4j.version}</bundle>
     </feature>
 </features>

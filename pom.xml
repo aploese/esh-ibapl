@@ -57,8 +57,8 @@
     </properties>
 
     <modules>
-        <module>de.ibapl.openhab.fhz4j</module>
-        <module>de.ibapl.openhab.onewire4j</module>
+        <module>de.ibapl.openhab.binding.fhz4j</module>
+        <module>de.ibapl.openhab.binding.onewire4j</module>
         <module>oh-ibapl-kar</module>
     </modules>
 
