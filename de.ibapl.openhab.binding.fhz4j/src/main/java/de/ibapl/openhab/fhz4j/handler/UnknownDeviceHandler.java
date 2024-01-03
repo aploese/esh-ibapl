@@ -23,7 +23,6 @@ package de.ibapl.openhab.fhz4j.handler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -33,12 +32,13 @@ import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.types.Command;
 
 /**
- * The {@link UnknownDeviceHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link UnknownDeviceHandler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
 public class UnknownDeviceHandler extends BaseThingHandler {
+
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final Logger logger = Logger.getLogger("d.i.e.f.h.UnknownDeviceHandler");
@@ -59,7 +59,6 @@ public class UnknownDeviceHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);

@@ -62,7 +62,7 @@ public class Fht80TfHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        LOGGER.log(Level.SEVERE, String.format("Unknown FHT80 TF 0x%06x channel: {%i} command: %s", address, channelUID.getId(), command));
+        LOGGER.log(Level.SEVERE, String.format("Unknown FHT80 TF 0x%06x channel: {%s} command: %s", address, channelUID.getId(), command));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class Fht80TfHandler extends BaseThingHandler {
         Configuration configuration = getConfig();
         try {
             address = Integer.parseUnsignedInt((String) configuration.get("address"), 16);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can't parse address");
             fht80TfHandlerStatus = ThingStatusDetail.HANDLER_INITIALIZING_ERROR;
             return;
@@ -81,7 +81,6 @@ public class Fht80TfHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             fht80TfHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);
@@ -107,29 +106,28 @@ public class Fht80TfHandler extends BaseThingHandler {
             updateState(new ChannelUID(getThing().getUID(), CHANNEL_BATT_LOW), OnOffType.OFF);
         }
         switch (fht80TfMsg.value) {
-            case WINDOW_INTERNAL_OPEN:
+            case WINDOW_INTERNAL_OPEN -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_INTERNAL), OpenClosedType.OPEN);
                 LOGGER.log(Level.SEVERE, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
-                break;
-            case WINDOW_INTERNAL_CLOSED:
+            }
+            case WINDOW_INTERNAL_CLOSED -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_INTERNAL), OpenClosedType.CLOSED);
                 LOGGER.log(Level.SEVERE, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
-                break;
-            case WINDOW_EXTERNAL_OPEN:
+            }
+            case WINDOW_EXTERNAL_OPEN -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_EXTERNAL), OpenClosedType.OPEN);
-                break;
-            case WINDOW_EXTERNAL_CLOSED:
+            }
+            case WINDOW_EXTERNAL_CLOSED -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_EXTERNAL), OpenClosedType.CLOSED);
-                break;
-            case SYNC:
+            }
+            case SYNC -> {
 //                    updateState(new ChannelUID(getThing().getUID(), CHANNEL_TF_SYNC), OnOffType.ON);
-                break;
-            case FINISH:
+            }
+            case FINISH -> {
 //                    updateState(new ChannelUID(getThing().getUID(), CHANNEL_TF_SYNC), OnOffType.OFF);
-                break;
-
-            default:
-                break;
+            }
+            default -> {
+            }
         }
     }
 

@@ -21,8 +21,8 @@
  */
 package de.ibapl.openhab.fhz4j.handler;
 
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import de.ibapl.fhz4j.protocol.em.EmMessage;
+import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -42,6 +42,7 @@ import org.openhab.core.types.Command;
  * @author aploese@gmx.de - Initial contribution
  */
 public class Em1000EmHandler extends BaseThingHandler {
+
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final Logger logger = Logger.getLogger("d.i.e.f.h.Em1000EmHandler");
@@ -72,7 +73,6 @@ public class Em1000EmHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);
@@ -93,17 +93,17 @@ public class Em1000EmHandler extends BaseThingHandler {
 
     public void updateFromMsg(EmMessage emMsg) {
         switch (emMsg.emDeviceType) {
-            case EM_1000_EM:
+            case EM_1000_EM -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_ENERGY_TOTAL),
                         new DecimalType(EmMessage.EM_1000_EM_ENERY * emMsg.valueCummulated));
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_POWER_5MINUTES),
                         new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5Min));
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_POWER_5MINUTES),
                         new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5MinPeak));
-                break;
+            }
             // case EM_1000_S:
             // case EM_1000_GZ:
-            default:
+            default ->
                 throw new RuntimeException("Cant handle EM 1000 Device: " + emMsg.emDeviceType);
         }
     }

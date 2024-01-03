@@ -59,7 +59,6 @@ public class UnknownDeviceHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);

@@ -25,6 +25,7 @@ import de.ibapl.onewire4j.OneWireAdapter;
 import de.ibapl.onewire4j.container.OneWireDevice;
 import de.ibapl.onewire4j.container.TemperatureContainer;
 import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.*;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -69,22 +70,23 @@ public class TemperatureHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         switch (channelUID.getId()) {
-            case CHANNEL_TEMPERATURE:
+            case CHANNEL_TEMPERATURE -> {
                 if (command instanceof RefreshType) {
                     // updateTemperature(++lastValue);
                 }
-                break;
-            case CHANNEL_MIN_TEMPERATURE:
+            }
+            case CHANNEL_MIN_TEMPERATURE -> {
                 if (command instanceof RefreshType) {
                     // updateMinTemperature(0);
                 }
-                break;
-            case CHANNEL_MAX_TEMPERATURE:
+            }
+            case CHANNEL_MAX_TEMPERATURE -> {
                 if (command instanceof RefreshType) {
                     // updateMaxTemperature(100);
                 }
-                break;
-            default:
+            }
+            default -> {
+            }
 
         }
     }
@@ -96,7 +98,7 @@ public class TemperatureHandler extends BaseThingHandler {
         long deviceId;
         try {
             deviceId = Long.parseUnsignedLong((String) configuration.get("deviceId"), 16);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can't parse DeviceId");
             return;
         }
@@ -108,7 +110,6 @@ public class TemperatureHandler extends BaseThingHandler {
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
@@ -129,14 +130,14 @@ public class TemperatureHandler extends BaseThingHandler {
             final double temp = temperatureContainer.getTemperature(request);
             updateTemperature(temp);
             updateStatus(ThingStatus.ONLINE);
-        } catch (Exception e) {
+        } catch (IOException e) {
             try {
                 TemperatureContainer.ReadScratchpadRequest request = new TemperatureContainer.ReadScratchpadRequest();
                 temperatureContainer.readScratchpad(oneWireAdapter, request);
                 final double temp = temperatureContainer.getTemperature(request);
                 updateTemperature(temp);
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
-            } catch (Exception e1) {
+            } catch (IOException e1) {
                 LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             }

@@ -29,20 +29,18 @@ import de.ibapl.openhab.onewire4j.OneWire4JBindingConstants;
 import de.ibapl.openhab.onewire4j.handler.SpswBridgeHandler;
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
-import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
-import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@Component(immediate = true, service = DiscoveryService.class, configurationPid = "discovery.onewire4j")
 public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
 
     private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.OneWire4JDiscoveryService");
@@ -68,8 +66,7 @@ public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
                 addDevice(container.getAddress());
             });
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "startScan", e);
         }
         stopScan();
     }
@@ -120,8 +117,7 @@ public class OneWire4JDiscoveryService extends AbstractDiscoveryService {
             }
         } catch (Exception e) {
             // Unknown device
-            //TODO logging
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "addDevice: " + deviceIdStr, e);
         }
     }
 

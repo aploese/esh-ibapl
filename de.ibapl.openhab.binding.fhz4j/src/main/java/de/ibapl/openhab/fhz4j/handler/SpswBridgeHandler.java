@@ -48,6 +48,7 @@ import de.ibapl.spsw.api.SerialPortSocketFactory;
 import de.ibapl.spsw.logging.LogExplainRead;
 import de.ibapl.spsw.logging.LogExplainWrite;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
+import de.ibapl.spsw.logging.SupressReadTimeoutExceptionLogWriter;
 import de.ibapl.spsw.logging.TimeStampLogging;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -127,7 +128,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 }
                 return;
             }
-            if (fhtMsg instanceof Fht8bMessage && !((Fht8bMessage) fhtMsg).fromFht_8B) {
+            if (fhtMsg instanceof Fht8bMessage msg && !msg.fromFht_8B) {
                 //no-op Its a message to the Fht8b, not from
             } else {
                 rfh.updateFromFhtMsg(fhtMsg);
@@ -226,8 +227,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             if (logExplainRead != null) {
                 logExplainRead.explainRead("EvoHome Message: %s", evoHomeMsg);
             }
-            if (evoHomeMsg instanceof EvoHomeDeviceMessage) {
-                final EvoHomeDeviceMessage edm = (EvoHomeDeviceMessage) evoHomeMsg;
+            if (evoHomeMsg instanceof EvoHomeDeviceMessage edm) {
                 final EvoHomeHandler reh = evoHomeThingHandler.get(edm.deviceId1.id);
                 if (reh == null) {
                     // Discovery
@@ -272,7 +272,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
             }
             try {
                 culAdapter = new CulAdapter(getSerialPortSocket(), this);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
                 LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
             }
@@ -322,10 +322,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         final SerialPortSocket sps = serialPortSocketFactory.open(port);
         if (logSerialPort) {
-            LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithAsciiOutputStream(sps,
-                    new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
-                    true,
-                    TimeStampLogging.UTC);
+            LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithCustomOutputStream(sps,
+                    new SupressReadTimeoutExceptionLogWriter(new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
+                            true,
+                            TimeStampLogging.UTC,
+                            true));
             logExplainRead = result;
             logExplainWrite = result;
             return result;
@@ -343,24 +344,19 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     @Override
     public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
         super.childHandlerInitialized(childHandler, childThing);
-        if (childHandler instanceof RadiatorFht80bHandler) {
-            final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
+        if (childHandler instanceof RadiatorFht80bHandler rfh) {
             fhtThingHandler.put(rfh.getHousecode(), rfh);
             LOGGER.log(Level.INFO, "Added FHT 80B {0}", rfh.getHousecode());
-        } else if (childHandler instanceof Fht80TfHandler) {
-            final Fht80TfHandler fth = (Fht80TfHandler) childHandler;
+        } else if (childHandler instanceof Fht80TfHandler fth) {
             fht80TfThingHandler.put(fth.getAddress(), fth);
             LOGGER.log(Level.INFO, "Added FHT80 TF {0}", fth.getAddress());
-        } else if (childHandler instanceof EvoHomeHandler) {
-            final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
-            evoHomeThingHandler.put(((EvoHomeHandler) childHandler).getDeviceId(), reh);
-            LOGGER.log(Level.INFO, "Added Evo Home device {0}", reh.getDeviceId());
-        } else if (childHandler instanceof Em1000EmHandler) {
-            final Em1000EmHandler emh = (Em1000EmHandler) childHandler;
+        } else if (childHandler instanceof EvoHomeHandler ehh) {
+            evoHomeThingHandler.put(ehh.getDeviceId(), ehh);
+            LOGGER.log(Level.INFO, "Added Evo Home device {0}", ehh.getDeviceId());
+        } else if (childHandler instanceof Em1000EmHandler emh) {
             emThingHandler.put(emh.getAddress(), emh);
             LOGGER.log(Level.INFO, "Added EM 1000 EM {0}", emh.getAddress());
-        } else if (childHandler instanceof Hms100TfHandler) {
-            final Hms100TfHandler hmsh = (Hms100TfHandler) childHandler;
+        } else if (childHandler instanceof Hms100TfHandler hmsh) {
             hmsThingHandler.put(hmsh.getHousecode(), hmsh);
             LOGGER.log(Level.INFO, "Added HMS 100 TF {0}", hmsh.getHousecode());
         } else {
@@ -371,20 +367,15 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     @Override
     public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
         super.childHandlerDisposed(childHandler, childThing);
-        if (childHandler instanceof RadiatorFht80bHandler) {
-            final RadiatorFht80bHandler rfh = (RadiatorFht80bHandler) childHandler;
+        if (childHandler instanceof RadiatorFht80bHandler rfh) {
             fhtThingHandler.remove(rfh.getHousecode());
-        } else if (childHandler instanceof Fht80TfHandler) {
-            final Fht80TfHandler fth = (Fht80TfHandler) childHandler;
+        } else if (childHandler instanceof Fht80TfHandler fth) {
             fht80TfThingHandler.remove(fth.getAddress());
-        } else if (childHandler instanceof EvoHomeHandler) {
-            final EvoHomeHandler reh = (EvoHomeHandler) childHandler;
-            evoHomeThingHandler.remove(reh.getDeviceId());
-        } else if (childHandler instanceof Em1000EmHandler) {
-            final Em1000EmHandler emh = (Em1000EmHandler) childHandler;
+        } else if (childHandler instanceof EvoHomeHandler ehh) {
+            evoHomeThingHandler.remove(ehh.getDeviceId());
+        } else if (childHandler instanceof Em1000EmHandler emh) {
             emThingHandler.remove(emh.getAddress());
-        } else if (childHandler instanceof Hms100TfHandler) {
-            final Hms100TfHandler hmsh = (Hms100TfHandler) childHandler;
+        } else if (childHandler instanceof Hms100TfHandler hmsh) {
             hmsThingHandler.remove(hmsh.getHousecode());
         } else {
             // TODO
@@ -425,18 +416,18 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
 
         Object protocol = config.get(PROTOCOL_FHT_PARAM);
-        LOGGER.log(Level.SEVERE, "Read protocolFHT from config: {0}", protocol);
-        if (protocol instanceof Boolean) {
-            this.protocolFHT = ((Boolean) protocol);
+        LOGGER.log(Level.INFO, "Read protocolFHT from config: {0}", protocol);
+        if (protocol instanceof Boolean aBoolean) {
+            this.protocolFHT = aBoolean;
         } else {
-            LOGGER.log(Level.SEVERE, "Throw away stored protocolFHT configuration: {0}", protocol);
+            LOGGER.log(Level.WARNING, "Throw away stored protocolFHT configuration: {0}", protocol);
         }
 
         protocol = config.get(PROTOCOL_EVO_HOME_PARAM);
-        LOGGER.log(Level.SEVERE, "Read protocolEvoHome from config: {0}", protocol);
-        if (protocol instanceof Boolean) {
-            this.protocolEvoHome = ((Boolean) protocol);
-            if (!((Boolean) protocol)) {
+        LOGGER.log(Level.INFO, "Read protocolEvoHome from config: {0}", protocol);
+        if (protocol instanceof Boolean aBoolean) {
+            this.protocolEvoHome = aBoolean;
+            if (!aBoolean) {
                 this.protocolFHT = true;
             }
         } else {

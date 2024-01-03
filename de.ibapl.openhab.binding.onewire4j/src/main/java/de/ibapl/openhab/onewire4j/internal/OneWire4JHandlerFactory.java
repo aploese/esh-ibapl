@@ -29,7 +29,6 @@ import de.ibapl.openhab.onewire4j.handler.UnknownDeviceHandler;
 import de.ibapl.openhab.onewire4j.internal.discovery.OneWire4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -54,14 +53,10 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.onewire4j")
 public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
-
-    static {
-        SUPPORTED_THING_TYPES_UIDS = new HashSet<>();
-        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE);
-        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY);
-        SUPPORTED_THING_TYPES_UIDS.add(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
-    }
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(
+            OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE,
+            OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY,
+            OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
 
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory;// = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();

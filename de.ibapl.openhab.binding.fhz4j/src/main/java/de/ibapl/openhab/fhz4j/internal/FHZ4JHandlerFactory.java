@@ -31,13 +31,10 @@ import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
 import de.ibapl.openhab.fhz4j.handler.UnknownDeviceHandler;
 import de.ibapl.openhab.fhz4j.internal.discovery.FHZ4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.scheduler.CronScheduler;
@@ -48,7 +45,6 @@ import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.BaseThingHandlerFactory;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerFactory;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -64,23 +60,18 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JHandlerFactory");
 
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS;
-
-    static {
-        Set<ThingTypeUID> s = new HashSet<>();
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT80_TF);
-        s.add(FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_EM_1000_EM);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_HMS_100_TF);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME);
-        s.add(FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
-        SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(s);
-    }
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_FHT80_TF,
+            FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_EM_1000_EM,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_HMS_100_TF,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_EVO_HOME,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_SINGLE_ZONE_THERMOSTAT_EVO_HOME,
+            FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
 
     @Reference
-    private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
+    private SerialPortSocketFactory serialPortSocketFactory;
 
     @Reference
     private CronScheduler cronScheduler;

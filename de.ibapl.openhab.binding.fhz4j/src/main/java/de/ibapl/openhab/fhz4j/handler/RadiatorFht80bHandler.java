@@ -21,7 +21,6 @@
  */
 package de.ibapl.openhab.fhz4j.handler;
 
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import de.ibapl.fhz4j.protocol.fht.Fht80bMode;
 import de.ibapl.fhz4j.protocol.fht.Fht80bWarning;
 import de.ibapl.fhz4j.protocol.fht.FhtDateMessage;
@@ -33,6 +32,7 @@ import de.ibapl.fhz4j.protocol.fht.FhtTimeMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtTimesMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtValvePosMessage;
 import de.ibapl.fhz4j.protocol.fht.FhtWarningMessage;
+import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -80,7 +80,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
 
     private String cronPatternDevicePing = "0 0 0 ? * SUN *";
 
-    private CronScheduler cronScheduler;
+    private final CronScheduler cronScheduler;
 
     private ScheduledCompletableFuture refreshJob;
 
@@ -89,10 +89,11 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
         this.cronScheduler = cronScheduler;
     }
 
+    @Override
     public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
         //Handle this here....
         if (configurationParameters.containsKey(CRON_PATTERN_DEVICE_PING)) {
-            LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = " + configurationParameters.get(CRON_PATTERN_DEVICE_PING));
+            LOGGER.log(Level.SEVERE, "handleConfigurationUpdate called: cronPatternDevicePing = {0}", configurationParameters.get(CRON_PATTERN_DEVICE_PING));
         } else {
             LOGGER.severe("handleConfigurationUpdate called: cronPatternDevicePing = ");
         }
@@ -102,137 +103,131 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         switch (channelUID.getId()) {
-            case CHANNEL_DESIRED_TEMPERATURE:
-                if (command instanceof DecimalType) {
+            case CHANNEL_DESIRED_TEMPERATURE -> {
+                if (command instanceof DecimalType decimalType) {
                     try {
-                        desiredTemp = ((DecimalType) command).floatValue();
+                        desiredTemp = decimalType.floatValue();
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode,
                                 FhtProperty.DESIRED_TEMP, desiredTemp);
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_DESIRED_TEMPERATURE", e);
                     }
                 } else if (command instanceof RefreshType) {
+                    //TODO
                     desiredTemp = 17.0f;
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
-                break;
-            case CHANNEL_TEMPERATURE_DAY:
-                if (command instanceof DecimalType) {
+            }
+            case CHANNEL_TEMPERATURE_DAY -> {
+                if (command instanceof DecimalType decimalType) {
                     try {
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode, FhtProperty.DAY_TEMP,
-                                ((DecimalType) command).floatValue());
+                                decimalType.floatValue());
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_TEMPERATURE_DAY", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
-                break;
-            case CHANNEL_TEMPERATURE_NIGHT:
-                if (command instanceof DecimalType) {
+            }
+            case CHANNEL_TEMPERATURE_NIGHT -> {
+                if (command instanceof DecimalType decimalType) {
                     try {
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode,
-                                FhtProperty.NIGHT_TEMP, ((DecimalType) command).floatValue());
+                                FhtProperty.NIGHT_TEMP, decimalType.floatValue());
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_TEMPERATURE_NIGHT", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
-                break;
-            case CHANNEL_TEMPERATURE_WINDOW_OPEN:
-                if (command instanceof DecimalType) {
+            }
+            case CHANNEL_TEMPERATURE_WINDOW_OPEN -> {
+                if (command instanceof DecimalType decimalType) {
                     try {
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode,
-                                FhtProperty.WINDOW_OPEN_TEMP, ((DecimalType) command).floatValue());
+                                FhtProperty.WINDOW_OPEN_TEMP, decimalType.floatValue());
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_TEMPERATURE_WINDOW_OPEN", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
-                break;
-            case CHANNEL_MONDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.MONDAY, (StringType) command);
+            }
+            case CHANNEL_MONDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.MONDAY, stringType);
                 }
-                break;
-            case CHANNEL_TUESDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.TUESDAY, (StringType) command);
+            }
+            case CHANNEL_TUESDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.TUESDAY, stringType);
                 }
-                break;
-            case CHANNEL_WEDNESDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.WEDNESDAY, (StringType) command);
+            }
+            case CHANNEL_WEDNESDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.WEDNESDAY, stringType);
                 }
-                break;
-            case CHANNEL_THURSDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.THURSDAY, (StringType) command);
+            }
+            case CHANNEL_THURSDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.THURSDAY, stringType);
                 }
-                break;
-            case CHANNEL_FRIDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.FRIDAY, (StringType) command);
+            }
+            case CHANNEL_FRIDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.FRIDAY, stringType);
                 }
-                break;
-            case CHANNEL_SATURDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.SATURDAY, (StringType) command);
+            }
+            case CHANNEL_SATURDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.SATURDAY, stringType);
                 }
-                break;
-            case CHANNEL_SUNDAY:
-                if (command instanceof StringType) {
-                    sendCycle(DayOfWeek.SUNDAY, (StringType) command);
+            }
+            case CHANNEL_SUNDAY -> {
+                if (command instanceof StringType stringType) {
+                    sendCycle(DayOfWeek.SUNDAY, stringType);
                 }
-                break;
-            case CHANNEL_VALVE_POSITION:
+            }
+            case CHANNEL_VALVE_POSITION -> {
                 if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            case CHANNEL_BATT_LOW:
+            }
+            case CHANNEL_BATT_LOW -> {
                 if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            case CHANNEL_MODE:
-                if (command instanceof StringType) {
+            }
+            case CHANNEL_MODE -> {
+                if (command instanceof StringType stringType) {
                     try {
-                        switch (((StringType) command).toString()) {
-                            case "AUTO":
+                        switch (stringType.toString()) {
+                            case "AUTO" ->
                                 ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtModeAutoMessage(housecode);
-                                break;
-                            case "MANUAL":
+                            case "MANUAL" ->
                                 ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtModeManuMessage(housecode);
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Cant set mode to " + ((StringType) command).toString());
+                            default ->
+                                throw new IllegalArgumentException("Cant set mode to " + stringType.toString());
                         }
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_MODE", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
                 }
-                break;
-            case CHANNEL_TEMPERATURE_MEASURED:
+            }
+            case CHANNEL_TEMPERATURE_MEASURED -> {
                 if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            case CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP:
+            }
+            case CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP -> {
                 if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            case CHANNEL_PARTY_END_TIME:
+            }
+            case CHANNEL_PARTY_END_TIME -> {
                 if (command instanceof StringType) {
                     String value = command.toString();
 
@@ -240,7 +235,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     String val = value.substring(0, 5);
                     final LocalTime toTime = TIME_NOT_SET.equals(val) ? null : TIME_FORMATTER.parse(val, LocalTime::from);
                     LocalDateTime toDateTime = LocalDateTime.now();
-                    LocalTime nowTime = LocalTime.from(toDateTime);
+                    final LocalTime nowTime = LocalTime.from(toDateTime);
                     if (toTime.isBefore(nowTime)) {
                         //it is tomorrow
                         toDateTime = toDateTime.plusDays(1);
@@ -250,29 +245,27 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     try {
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtPartyMessage(housecode, desiredTemp, toDateTime);
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_PARTY_END_TIME", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            case CHANNEL_HOLYDAY_END_DATE:
-                if (command instanceof DateTimeType) {
-                    final ZonedDateTime value = ((DateTimeType) command).getZonedDateTime();
+            }
+            case CHANNEL_HOLYDAY_END_DATE -> {
+                if (command instanceof DateTimeType dateTimeType) {
+                    final ZonedDateTime value = dateTimeType.getZonedDateTime();
 
                     final LocalDate toDate = LocalDate.of(value.getYear(), value.getMonth(), value.getDayOfMonth());
                     try {
                         ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtHolidayMessage(housecode, desiredTemp, toDate);
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_HOLYDAY_END_DATE", e);
                     }
                 } else if (command instanceof RefreshType) {
                     // updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION), new DecimalType(22.22));
                 }
-                break;
-            default:
+            }
+            default ->
                 LOGGER.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}", channelUID.getId());
         }
     }
@@ -295,8 +288,7 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
             ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode, dayOfWeek, from1, to1, from2,
                     to2);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "sendCycle", e);
         }
 
     }
@@ -334,9 +326,9 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                 LOGGER.log(Level.FINE, "Try run trigger reporting for {0}", housecode);
                 try {
                     final BridgeHandler myBridge = getBridge().getHandler();
-                    if (myBridge instanceof SpswBridgeHandler) {
-                        ((SpswBridgeHandler) myBridge).setClock(housecode, LocalDateTime.now());
-                        ((SpswBridgeHandler) myBridge).initFhtReporting(housecode);
+                    if (myBridge instanceof SpswBridgeHandler spswBridgeHandler) {
+                        spswBridgeHandler.setClock(housecode, LocalDateTime.now());
+                        spswBridgeHandler.initFhtReporting(housecode);
                         LOGGER.log(Level.INFO, "Did run update clock and trigger reporting of {0} succesfully", housecode);
                     } else {
                         LOGGER.log(Level.SEVERE, "Reporting for {0} not triggerd, can't get bridge.", housecode);
@@ -366,103 +358,90 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
     private void updateMode(FhtModeMessage modeMsg) {
         updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE), new StringType(modeMsg.mode.name()));
         switch (modeMsg.mode) {
-            case AUTO:
+            case AUTO -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
-                break;
-            case MANUAL:
+            }
+            case MANUAL -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
-                break;
-            case PARTY:
+            }
+            case PARTY ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_HOLYDAY_END_DATE), new StringType());
-                break;
-            case HOLIDAY:
+            case HOLIDAY ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME), new StringType());
-                break;
-            default:;
+            default -> {
+            }
         }
     }
 
     public void updateFromFhtMsg(FhtMessage fhtMsg) {
         switch (fhtMsg.command) {
-            case MODE:
+            case MODE ->
                 updateMode((FhtModeMessage) fhtMsg);
-                break;
-            case MONDAY_TIMES:
+            case MONDAY_TIMES ->
                 update_FROM_TO(CHANNEL_MONDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case TUESDAY_TIMES:
+            case TUESDAY_TIMES ->
                 update_FROM_TO(CHANNEL_TUESDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case WEDNESDAY_TIMES:
+            case WEDNESDAY_TIMES ->
                 update_FROM_TO(CHANNEL_WEDNESDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case THURSDAY_TIMES:
+            case THURSDAY_TIMES ->
                 update_FROM_TO(CHANNEL_THURSDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case FRIDAY_TIMES:
+            case FRIDAY_TIMES ->
                 update_FROM_TO(CHANNEL_FRIDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case SATURDAYDAY_TIMES:
+            case SATURDAYDAY_TIMES ->
                 update_FROM_TO(CHANNEL_SATURDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case SUNDAYDAY_TIMES:
+            case SUNDAYDAY_TIMES ->
                 update_FROM_TO(CHANNEL_SUNDAY, (FhtTimesMessage) fhtMsg);
-                break;
-            case WARNINGS:
+            case WARNINGS -> {
                 final Set<Fht80bWarning> warnings = ((FhtWarningMessage) fhtMsg).warnings;
                 if (warnings.contains(Fht80bWarning.BATT_LOW)) {
                     updateState(new ChannelUID(getThing().getUID(), CHANNEL_BATT_LOW), OnOffType.ON);
                 } else {
                     updateState(new ChannelUID(getThing().getUID(), CHANNEL_BATT_LOW), OnOffType.OFF);
                 }
-                break;
-            case DAY_TEMP:
+            }
+            case DAY_TEMP ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_DAY),
                         new DecimalType(((FhtTempMessage) fhtMsg).temp));
-                break;
-            case NIGHT_TEMP:
+            case NIGHT_TEMP ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_NIGHT),
                         new DecimalType(((FhtTempMessage) fhtMsg).temp));
-                break;
-            case WINDOW_OPEN_TEMP:
+            case WINDOW_OPEN_TEMP ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_WINDOW_OPEN),
                         new DecimalType(((FhtTempMessage) fhtMsg).temp));
-                break;
-            case MANU_TEMP:
-                break;
-            case HOLIDAY_END_DATE:
+            case MANU_TEMP -> {
+            }
+            case HOLIDAY_END_DATE -> {
                 updateHolidays((FhtDateMessage) fhtMsg);
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE),
                         new StringType(Fht80bMode.HOLIDAY.name()));
-                break;
-            case PARTY_END_TIME:
+            }
+            case PARTY_END_TIME -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_PARTY_END_TIME),
                         new StringType((((FhtTimeMessage) fhtMsg).time.format(TIME_FORMATTER))));
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_MODE), new StringType(Fht80bMode.PARTY.name()));
-                break;
-            case VALVE:
+            }
+            case VALVE -> {
                 //Do ignore FhtValveSynhcMessage
-                if (fhtMsg instanceof FhtValvePosMessage) {
+                if (fhtMsg instanceof FhtValvePosMessage fhtValvePosMessage) {
                     updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
-                            new DecimalType((((FhtValvePosMessage) fhtMsg).position)));
+                            new DecimalType((fhtValvePosMessage.position)));
                     updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_ALLOW_LOW_BATT_BEEP),
-                            ((FhtValvePosMessage) fhtMsg).allowLowBatteryBeep ? OnOffType.ON : OnOffType.OFF);
+                            fhtValvePosMessage.allowLowBatteryBeep ? OnOffType.ON : OnOffType.OFF);
                 }
-                break;
-            case MEASURED_TEMP:
+            }
+            case MEASURED_TEMP ->
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
                         new DecimalType((((FhtTempMessage) fhtMsg).temp)));
-                break;
-            case DESIRED_TEMP:
+            case DESIRED_TEMP -> {
                 desiredTemp = ((FhtTempMessage) fhtMsg).temp;
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
                         new DecimalType(desiredTemp));
-                break;
+            }
 
-            default:
-                break;
+            default -> {
+            }
         }
     }
 

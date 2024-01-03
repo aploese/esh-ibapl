@@ -67,17 +67,18 @@ public class HumidityHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         switch (channelUID.getId()) {
-            case CHANNEL_TEMPERATURE:
+            case CHANNEL_TEMPERATURE -> {
                 if (command instanceof RefreshType) {
                     // updateTemperature(++lastValue);
                 }
-                break;
-            case CHANNEL_HUMIDITY:
+            }
+            case CHANNEL_HUMIDITY -> {
                 if (command instanceof RefreshType) {
                     // updateHumidity(0);
                 }
-                break;
-            default:
+            }
+            default -> {
+            }
 
         }
     }

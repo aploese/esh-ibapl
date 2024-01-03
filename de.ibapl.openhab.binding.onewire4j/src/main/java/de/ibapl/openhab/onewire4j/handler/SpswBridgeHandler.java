@@ -83,7 +83,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
     public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory) {
         super(bridge);
         this.serialPortSocketFactory = serialPortSocketFactory;
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -144,12 +143,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         boolean ppN;
         try {
             ppN = TemperatureContainer.isAnyTempDeviceUsingParasitePower(oneWireAdapter);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // TODO: handle exception
             ppN = true;
         }
-
-        final boolean parasitePowerNeeded = ppN;
 
         refreshJob = scheduler.scheduleWithFixedDelay(this, 0, refreshRate.intValue(), TimeUnit.SECONDS);
 
@@ -162,7 +159,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         final boolean parasitePowerNeeded = true;
         try {
             TemperatureContainer.sendDoConvertRequestToAll(oneWireAdapter, parasitePowerNeeded);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not request parasite power needed", e);
         }
 
@@ -172,11 +169,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
                     continue; //just skip this thing
                 }
                 final ThingHandler thingHandler = thing.getHandler();
-                if (thingHandler instanceof TemperatureHandler) {
-                    final TemperatureHandler tempHandler = (TemperatureHandler) thingHandler;
-                    tempHandler.readDevice(oneWireAdapter);
-                } else if (thingHandler instanceof HumidityHandler) {
-                    final HumidityHandler humidityHandler = (HumidityHandler) thingHandler;
+                if (thingHandler instanceof TemperatureHandler temperatureHandler) {
+                    temperatureHandler.readDevice(oneWireAdapter);
+                } else if (thingHandler instanceof HumidityHandler humidityHandler) {
                     humidityHandler.readDevice(oneWireAdapter);
                 }
             } catch (Throwable t) {

@@ -37,6 +37,7 @@ import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
 import de.ibapl.openhab.fhz4j.internal.FHZ4JHandlerFactory;
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
@@ -259,20 +260,16 @@ public class FHZ4JDiscoveryService extends AbstractDiscoveryService implements C
 
     @Override
     public void evoHomeParsed(EvoHomeMessage evoHomeMsg) {
-        if (evoHomeMsg instanceof EvoHomeDeviceMessage) {
-            final EvoHomeDeviceMessage devMsg = (EvoHomeDeviceMessage) evoHomeMsg;
+        if (evoHomeMsg instanceof EvoHomeDeviceMessage devMsg) {
             switch (devMsg.deviceId1.type) {
-                case MULTI_ZONE_CONTROLLER:
+                case MULTI_ZONE_CONTROLLER ->
                     addMultiZoneControllerEvoHomeDevice(devMsg.deviceId1.id);
-                    break;
-                case SINGLE_ZONE_THERMOSTAT:
+                case SINGLE_ZONE_THERMOSTAT ->
                     addSingleZoneThermostatEvoHomeDevice(devMsg.deviceId1.id);
-                    break;
-                case RADIATOR_CONTROLLER:
+                case RADIATOR_CONTROLLER ->
                     addRadiatorEvoHomeDevice(devMsg.deviceId1.id);
-                    break;
-                default:
-                    logger.severe("Cant handle EvoHomeDeviceMessage: " + devMsg);
+                default ->
+                    logger.log(Level.SEVERE, "Cant handle EvoHomeDeviceMessage: {0}", devMsg);
             }
         }
     }

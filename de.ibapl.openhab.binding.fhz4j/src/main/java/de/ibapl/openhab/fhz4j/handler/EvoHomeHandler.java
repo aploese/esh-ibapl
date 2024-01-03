@@ -70,7 +70,7 @@ public class EvoHomeHandler extends BaseThingHandler {
     private byte getZoneId(ChannelUID channelUID) {
         final String cuid = channelUID.getId();
         final int length = cuid.length();
-        return Byte.valueOf(cuid.substring(length - 2, length));
+        return Byte.parseByte(cuid.substring(length - 2, length));
     }
 
     @Override
@@ -78,10 +78,9 @@ public class EvoHomeHandler extends BaseThingHandler {
         try {
             if (channelUID.getId().startsWith(CHANNEL_DESIRED_TEMPERATURE)) {
                 final byte zoneId = getZoneId(channelUID);
-                if (command instanceof DecimalType) {
-                    ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(
-                            new DeviceId(deviceId),
-                            new ZoneTemperature(zoneId, ((DecimalType) command).toBigDecimal()));
+                if (command instanceof DecimalType decimalType) {
+                    ((SpswBridgeHandler) (getBridge().getHandler())).sendEvoHomeZoneSetpointPermanent(new DeviceId(deviceId),
+                            new ZoneTemperature(zoneId, decimalType.toBigDecimal()));
                 } else if (command instanceof RefreshType) {
                 }
             } else {
@@ -109,7 +108,6 @@ public class EvoHomeHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             evoHomeRadiatorHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);
@@ -130,7 +128,7 @@ public class EvoHomeHandler extends BaseThingHandler {
 
     public void updateFromMsg(EvoHomeDeviceMessage msg) {
         switch (msg.command) {
-            case ZONE_HEAT_DEMAND: {
+            case ZONE_HEAT_DEMAND -> {
                 final float valvePos = ((ZoneHeatDemandInformationMessage) msg).calcValvePosition();
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_VALVE_POSITION),
                         new DecimalType(valvePos));
@@ -138,52 +136,44 @@ public class EvoHomeHandler extends BaseThingHandler {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_RADIATOR_HEAT_DEMAND),
                         new DecimalType(heatDeamnd));
             }
-            break;
-            case ZONE_TEMPERATURE: {
+            case ZONE_TEMPERATURE -> {
                 //From SingleZoneThermostat and RadiatorController and MultZoneController
                 final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
                 switch (m.deviceId1.type) {
-                    case RADIATOR_CONTROLLER:
-                    case SINGLE_ZONE_THERMOSTAT:
-                        //TODO ZoneID ???
+                    case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
                                 new DecimalType(m.zoneTemperatures.get(0).temperature));
-                        break;
-                    case MULTI_ZONE_CONTROLLER:
+                    case MULTI_ZONE_CONTROLLER -> {
                         for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
                             updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_TEMPERATURE_MEASURED, zoneTemperature.zone)),
                                     new DecimalType(zoneTemperature.temperature));
                         }
-                        break;
-                    default:
+                    }
+                    default -> {
+                    }
                 }
             }
-            break;
-            case ZONE_SETPOINT: {
+            case ZONE_SETPOINT -> {
                 //From RadiatorController and MultZoneController
                 final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
                 switch (m.deviceId1.type) {
-                    case RADIATOR_CONTROLLER:
-                    case SINGLE_ZONE_THERMOSTAT:
-                        //TODO ZoneID ???
+                    case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
                                 new DecimalType(m.zoneTemperatures.get(0).temperature));
-                        break;
-                    case MULTI_ZONE_CONTROLLER:
+                    case MULTI_ZONE_CONTROLLER -> {
                         for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
                             updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_DESIRED_TEMPERATURE, zoneTemperature.zone)),
                                     new DecimalType(zoneTemperature.temperature));
                         }
-                        break;
-                    default:
+                    }
+                    default -> {
+                    }
                 }
             }
-            break;
-            case ZONE_CONFIG: {
+            case ZONE_CONFIG -> {
                 final ZoneConfigPayloadMessage zpm = (ZoneConfigPayloadMessage) msg;
                 switch (zpm.deviceId1.type) {
-                    case RADIATOR_CONTROLLER:
-                    case SINGLE_ZONE_THERMOSTAT:
+                    case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> {
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_MIN_TEMP),
                                 new DecimalType(zpm.zones.get(0).minTemperature));
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMP),
@@ -192,9 +182,8 @@ public class EvoHomeHandler extends BaseThingHandler {
                                 zpm.zones.get(0).operationLock ? OnOffType.ON : OnOffType.OFF);
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_FUNCTION),
                                 zpm.zones.get(0).windowFunction ? OnOffType.ON : OnOffType.OFF);
-                        break;
-                    case MULTI_ZONE_CONTROLLER:
-
+                    }
+                    case MULTI_ZONE_CONTROLLER -> {
                         for (ZoneConfigPayloadMessage.ZoneParams zoneParam : zpm.zones) {
                             updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MIN_TEMP, zoneParam.zoneId)),
                                     new DecimalType(zoneParam.minTemperature));
@@ -205,13 +194,13 @@ public class EvoHomeHandler extends BaseThingHandler {
                             updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_WINDOW_FUNCTION, zoneParam.zoneId)),
                                     zoneParam.windowFunction ? OnOffType.ON : OnOffType.OFF);
                         }
-                        break;
-                    default:
+                    }
+                    default -> {
+                    }
                 }
             }
-            break;
-            default:
-                break;
+            default -> {
+            }
         }
     }
 

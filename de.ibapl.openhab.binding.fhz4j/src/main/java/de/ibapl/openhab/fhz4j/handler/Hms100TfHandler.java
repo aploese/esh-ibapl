@@ -21,10 +21,10 @@
  */
 package de.ibapl.openhab.fhz4j.handler;
 
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import de.ibapl.fhz4j.protocol.hms.Hms100TfMessage;
 import de.ibapl.fhz4j.protocol.hms.HmsDeviceStatus;
 import de.ibapl.fhz4j.protocol.hms.HmsMessage;
+import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -45,6 +45,7 @@ import org.openhab.core.types.Command;
  * @author aploese@gmx.de - Initial contribution
  */
 public class Hms100TfHandler extends BaseThingHandler {
+
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
     private final Logger logger = Logger.getLogger("d.i.e.f.h.Hms100TfHandler");
@@ -75,7 +76,6 @@ public class Hms100TfHandler extends BaseThingHandler {
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
             owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
-            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);
@@ -96,7 +96,7 @@ public class Hms100TfHandler extends BaseThingHandler {
 
     public void updateFromMsg(HmsMessage hmsMessage) {
         switch (hmsMessage.hmsDeviceType) {
-            case HMS_100_TF:
+            case HMS_100_TF -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
                         new DecimalType(((Hms100TfMessage) hmsMessage).temp));
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_HUMIDITY_MEASURED),
@@ -106,8 +106,8 @@ public class Hms100TfHandler extends BaseThingHandler {
                 } else {
                     updateState(new ChannelUID(getThing().getUID(), CHANNEL_BATT_LOW), OnOffType.OFF);
                 }
-                break;
-            default:
+            }
+            default ->
                 throw new RuntimeException("Cant handle HMS device: " + hmsMessage.hmsDeviceType);
         }
     }

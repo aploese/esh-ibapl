@@ -21,22 +21,23 @@
  */
 package de.ibapl.openhab.fhz4j.console;
 
+import de.ibapl.fhz4j.api.Response;
+import de.ibapl.fhz4j.cul.CulFhtDeviceOutBufferContentRequest;
+import de.ibapl.fhz4j.cul.CulGetFirmwareVersionRequest;
+import de.ibapl.fhz4j.cul.CulGetHardwareVersionRequest;
+import de.ibapl.fhz4j.cul.CulGetSlowRfSettingsRequest;
 import de.ibapl.fhz4j.cul.CulRemainingFhtDeviceOutBufferSizeRequest;
-import de.ibapl.fhz4j.cul.CulResponse;
-
-import java.util.Collection;
+import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import org.openhab.core.io.console.Console;
 import org.openhab.core.io.console.extensions.AbstractConsoleCommandExtension;
 import org.openhab.core.io.console.extensions.ConsoleCommandExtension;
-import org.openhab.core.thing.ManagedThingProvider;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.ThingManager;
 import org.openhab.core.thing.ThingRegistry;
 import org.openhab.core.thing.ThingStatusInfo;
 import org.openhab.core.thing.ThingUID;
@@ -45,15 +46,6 @@ import org.openhab.core.thing.i18n.ThingStatusInfoI18nLocalizationService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import de.ibapl.fhz4j.api.Response;
-import de.ibapl.fhz4j.cul.CulFhtDeviceOutBufferContentRequest;
-import de.ibapl.fhz4j.cul.CulGetFirmwareVersionRequest;
-import de.ibapl.fhz4j.cul.CulGetHardwareVersionRequest;
-import de.ibapl.fhz4j.cul.CulGetSlowRfSettingsRequest;
-
-import de.ibapl.openhab.fhz4j.handler.SpswBridgeHandler;
-import java.io.IOException;
 
 /**
  * {@link Fhz4JThingConsoleCommandExtension} provides console commands for
@@ -71,7 +63,7 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
 
     private final ThingRegistry thingRegistry;
     private final ThingStatusInfoI18nLocalizationService thingStatusInfoI18nLocalizationService;
- 
+
     @Activate
     public Fhz4JThingConsoleCommandExtension(
             final @Reference ThingRegistry thingRegistry,
@@ -86,10 +78,11 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
         if (args.length > 0) {
             String subCommand = args[0];
             switch (subCommand) {
-                case SUBCMD_LIST:
+                case SUBCMD_LIST -> {
                     printThings(console);
                     return;
-                case SUBCMD_TX_SHOW:
+                }
+                case SUBCMD_TX_SHOW -> {
                     if (args.length > 1) {
                         ThingUID thingUID = new ThingUID(args[1]);
                         txShow(console, thingUID);
@@ -97,7 +90,8 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
                         console.println("Specify fhz4j thing id to show tx buffer: fhz4j txclear <thingUID> (e.g. \"fhz4j:rs232-bridge-cul:CUL0\")");
                     }
                     return;
-                case SUBCMD_TX_CLEAR:
+                }
+                case SUBCMD_TX_CLEAR -> {
                     if (args.length > 1) {
                         ThingUID thingUID = new ThingUID(args[1]);
                         txClear(console, thingUID);
@@ -105,8 +99,9 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
                         console.println("Specify fhz4j thing id to clear tx buffer: fhz4j txclear <thingUID> (e.g. \"fhz4j:rs232-bridge-cul:CUL0\")");
                     }
                     return;
-                default:
-                    break;
+                }
+                default -> {
+                }
             }
         } else {
             printUsage(console);
@@ -115,8 +110,7 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
 
     private void txClear(Console console, ThingUID thingUID) {
         final ThingHandler thingHandler = thingRegistry.get(thingUID).getHandler();
-        if (thingHandler instanceof SpswBridgeHandler) {
-            final SpswBridgeHandler handler = (SpswBridgeHandler) thingHandler;
+        if (thingHandler instanceof SpswBridgeHandler handler) {
             try {
                 handler.clearFht8bBuffer();
                 console.println("tx cleared for thing " + thingUID + ".");
@@ -130,9 +124,8 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
 
     private void txShow(Console console, ThingUID thingUID) {
         ThingHandler thingHandler = thingRegistry.get(thingUID).getHandler();
-        
-        if (thingHandler instanceof SpswBridgeHandler) {
-            final SpswBridgeHandler handler = (SpswBridgeHandler) thingHandler;
+
+        if (thingHandler instanceof SpswBridgeHandler handler) {
             try {
                 Future<Response> future;
                 Response response;
@@ -158,8 +151,7 @@ public class Fhz4JThingConsoleCommandExtension extends AbstractConsoleCommandExt
     private void printThings(Console console) {
 
         for (Thing thing : thingRegistry.getAll()) {
-            if (thing.getHandler() instanceof SpswBridgeHandler) {
-                final SpswBridgeHandler handler = (SpswBridgeHandler) thing.getHandler();
+            if (thing.getHandler() instanceof SpswBridgeHandler handler) {
                 ThingStatusInfo status = thingStatusInfoI18nLocalizationService.getLocalizedThingStatusInfo(thing, null);
                 String label = thing.getLabel();
                 String id = thing.getUID().toString();
