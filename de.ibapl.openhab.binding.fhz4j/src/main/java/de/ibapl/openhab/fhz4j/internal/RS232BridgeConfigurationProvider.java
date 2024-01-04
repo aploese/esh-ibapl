@@ -22,6 +22,7 @@
 package de.ibapl.openhab.fhz4j.internal;
 
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import de.ibapl.spsw.api.Speed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -79,22 +80,33 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
                     withDescription("The Housecode of this devcice");
             configBuilder.withParameter(paramBuilder.build());
 
-            List<ParameterOption> serialPortList = new LinkedList<>();
             // TODO Filter used ports or not ???
             if (serialPortSocketFactory == null) {
                 LOGGER.severe("serialPortSocketFactory == null");
                 //TODO
             } else {
 
+                List<ParameterOption> optionList = new LinkedList<>();
                 for (String name : serialPortSocketFactory.getPortNames(false)) {
-                    serialPortList.add(new ParameterOption(name, name));
+                    optionList.add(new ParameterOption(name, name));
                 }
                 paramBuilder = ConfigDescriptionParameterBuilder.create("port", Type.TEXT).
-                        withOptions(serialPortList).
+                        withOptions(optionList).
                         withRequired(true).
                         withLabel("serial port").
                         withDescription("The serial port to use");
+                configBuilder.withParameter(paramBuilder.build());
 
+                optionList = new LinkedList<>();
+                for (Speed s : Speed.values()) {
+                    optionList.add(new ParameterOption(String.valueOf(s.value), s.toString()));
+                }
+                paramBuilder = ConfigDescriptionParameterBuilder.create("speed", Type.INTEGER).
+                        withOptions(optionList).
+                        withRequired(true).
+                        withDefault(String.valueOf(Speed._9600_BPS.value)).
+                        withLabel("speed ").
+                        withDescription("The speed (baudrate) to use. Default is 9600 bps.");
                 configBuilder.withParameter(paramBuilder.build());
 
                 paramBuilder = ConfigDescriptionParameterBuilder.create("protocolEvoHome", Type.BOOLEAN).
@@ -102,7 +114,6 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
                         withRequired(true).
                         withLabel("protocol Evo Home").
                         withDescription("The Protocol Evo Home");
-
                 configBuilder.withParameter(paramBuilder.build());
 
                 paramBuilder = ConfigDescriptionParameterBuilder.create("protocolFHT", Type.BOOLEAN).withDefault(String.valueOf(false)).

@@ -45,6 +45,7 @@ import de.ibapl.fhz4j.protocol.hms.HmsMessage;
 import de.ibapl.fhz4j.protocol.lacrosse.tx2.LaCrosseTx2Message;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import de.ibapl.spsw.api.Speed;
 import de.ibapl.spsw.logging.LogExplainRead;
 import de.ibapl.spsw.logging.LogExplainWrite;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
@@ -271,7 +272,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 //nothing to do
             }
             try {
-                culAdapter = new CulAdapter(getSerialPortSocket(), this);
+                culAdapter = new CulAdapter(getSerialPortSocket(), this, speed);
             } catch (IOException e) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
                 LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
@@ -283,6 +284,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private final SerialPortSocketFactory serialPortSocketFactory;
 
     private static final String PORT_PARAM = "port";
+    private static final String SPEED_PARAM = "speed";
     private static final String HOUSE_CODE_PARAM = "housecode";
     private static final String PROTOCOL_FHT_PARAM = "protocolFHT";
     private static final String PROTOCOL_EVO_HOME_PARAM = "protocolEvoHome";
@@ -291,6 +293,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private static final Logger LOGGER = Logger.getLogger("d.i.e.f.h.SpswBridgeHandler");
 
     private String port;
+    private Speed speed;
     private short housecode;
     private boolean protocolEvoHome;
     private boolean protocolFHT;
@@ -406,6 +409,12 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         Configuration config = getThing().getConfiguration();
 
         port = (String) config.get(PORT_PARAM);
+        if (config.containsKey(SPEED_PARAM)) {
+            speed = Speed.fromNative(((BigDecimal) config.get(SPEED_PARAM)).intValueExact());
+        } else {
+            //update from fhz4j < 2.2.0
+            speed = Speed._9600_BPS;
+        }
 
         housecode = ((BigDecimal) config.get(HOUSE_CODE_PARAM)).shortValue();
 
@@ -442,7 +451,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         evoHomeThingHandler.clear();
 
         try {
-            culAdapter = new CulAdapter(getSerialPortSocket(), new Listener());
+            culAdapter = new CulAdapter(getSerialPortSocket(), new Listener(), speed);
             initCulAdapter();
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());

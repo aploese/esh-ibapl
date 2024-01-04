@@ -47,7 +47,7 @@
         <karaf.version>4.3.7</karaf.version>
         <jnhw.version>3.0.0</jnhw.version>
         <spsw.version>3.2.0-SNAPSHOT</spsw.version>
-        <fhz4j.version>2.1.1-SNAPSHOT</fhz4j.version>
+        <fhz4j.version>2.2.0-SNAPSHOT</fhz4j.version>
         <openhab.fhz4j.version>${project.version}</openhab.fhz4j.version>
         <onewire4j.version>1.1.1-SNAPSHOT</onewire4j.version>
         <openhab.onewire4j.version>${project.version}</openhab.onewire4j.version>
