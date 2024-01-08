@@ -77,7 +77,6 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
     private boolean logSerialPort;
 
     private ScheduledFuture<?> refreshJob;
-    private SerialPortSocket serialPortSocket;
     private OneWireAdapter oneWireAdapter;
 
     public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory) {
@@ -111,22 +110,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         }
 
         try {
-            serialPortSocket = serialPortSocketFactory.open(port);
-            if (logSerialPort) {
-//Wrap socket with logger
-                String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-                serialPortSocket = LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
-                        new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
-                        false,
-                        TimeStampLogging.UTC);
-            }
-
-            oneWireAdapter = new AdapterFactory().open(serialPortSocket, 3);
-            LOGGER.info("Onewire adapter opend");
+            oneWireAdapter = new AdapterFactory().open(createSerialPort(), 3);
+            LOGGER.log(Level.INFO, "Onewire adapter opend port: {0}", port);
         } catch (IOException | IllegalStateException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
             LOGGER.log(Level.SEVERE, "Could not open Onewire adapter", e);
-            serialPortSocket = null;
             if (oneWireAdapter != null) {
                 try {
                     oneWireAdapter.close();
@@ -174,8 +162,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
                 } else if (thingHandler instanceof HumidityHandler humidityHandler) {
                     humidityHandler.readDevice(oneWireAdapter);
                 }
-            } catch (Throwable t) {
-                LOGGER.log(Level.SEVERE, "uncaughth exception(!) in handler for thing: " + thing, t);
+            } catch (IOException ioe) {
+                handleIOException(ioe);
             }
         }
     }
@@ -195,19 +183,57 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             }
             oneWireAdapter = null;
         }
-        if (serialPortSocket != null) {
-            try {
-                serialPortSocket.close();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Could not shutdown serial port", e);
-            }
-            serialPortSocket = null;
-        }
         LOGGER.info("Onewire adapter closed");
     }
 
     public void discover(Consumer<OneWireContainer> consumer) throws IOException {
         oneWireAdapter.searchDevices(SearchCommand.SEARCH_ROM, consumer);
+    }
+
+    private SerialPortSocket createSerialPort() throws IOException {
+        SerialPortSocket serialPortSocket = serialPortSocketFactory.open(port);
+        if (logSerialPort) {
+            //Wrap socket with logger
+            String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+            return LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
+                    new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
+                    false,
+                    TimeStampLogging.UTC);
+        } else {
+            return serialPortSocket;
+        }
+    }
+
+    private void handleIOException(IOException ioe) {
+        LOGGER.log(Level.SEVERE, "Got IOE in oneWireAdapter", ioe);
+        try {
+            oneWireAdapter.sendReset();
+            return;
+        } catch (IOException e) {
+        }
+        //Delete any reference to oneWireAdapter, so gc can pick it up.
+        oneWireAdapter = null;
+        //Try to run garbage collection
+        LOGGER.log(Level.SEVERE, "set oneWireAdapter to null and run gc first time");
+        System.gc();
+        LOGGER.log(Level.SEVERE, "gc ran first time, wait 5s");
+        try {
+            Thread.sleep(5000);//try to recover => 5 s rest
+        } catch (InterruptedException ex) {
+            //nothing to do
+        }
+        //Try to run garbage collection again ... sometimes only this will pick it up
+        LOGGER.log(Level.SEVERE, "set oneWireAdapter to null and run gc second time");
+        System.gc();
+        LOGGER.log(Level.SEVERE, "gc ran second time, try to create new oneWireAdapter");
+        try {
+            oneWireAdapter = new AdapterFactory().open(createSerialPort(), 3);
+            LOGGER.log(Level.SEVERE, "Onewire adapter opend port: {0}", port);
+        } catch (IOException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
+        }
+        LOGGER.log(Level.SEVERE, "Creating new oneWireAdapter succeeded");
     }
 
 }

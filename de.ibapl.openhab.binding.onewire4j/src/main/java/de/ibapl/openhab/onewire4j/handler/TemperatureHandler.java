@@ -123,7 +123,7 @@ public class TemperatureHandler extends BaseThingHandler {
     public void dispose() {
     }
 
-    public void readDevice(OneWireAdapter oneWireAdapter) {
+    public void readDevice(OneWireAdapter oneWireAdapter) throws IOException {
         try {
             TemperatureContainer.ReadScratchpadRequest request = new TemperatureContainer.ReadScratchpadRequest();
             temperatureContainer.readScratchpad(oneWireAdapter, request);
@@ -140,6 +140,7 @@ public class TemperatureHandler extends BaseThingHandler {
             } catch (IOException e1) {
                 LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+                throw e1;
             }
         }
     }

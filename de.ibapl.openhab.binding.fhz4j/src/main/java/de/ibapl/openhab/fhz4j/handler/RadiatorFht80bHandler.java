@@ -333,8 +333,10 @@ public class RadiatorFht80bHandler extends BaseThingHandler {
                     } else {
                         LOGGER.log(Level.SEVERE, "Reporting for {0} not triggerd, can't get bridge.", housecode);
                     }
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode, e);
+                } catch (IOException ioe) {
+                    LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode + "due to an IO error", ioe);
+                } catch (NullPointerException npe) {
+                    LOGGER.log(Level.SEVERE, "Could not init fht reporting for " + housecode + "due cul adapter may be null", npe);
                 }
             }, cronPatternDevicePing);
         } catch (Exception ex) {

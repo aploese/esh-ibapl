@@ -115,16 +115,17 @@ public class HumidityHandler extends BaseThingHandler {
     public void dispose() {
     }
 
-    public void readDevice(OneWireAdapter oneWireAdapter) {
+    public void readDevice(OneWireAdapter oneWireAdapter) throws IOException {
         try {
             final double humidity = device.getHIH4031Humidity(oneWireAdapter);
             updateHumidity(humidity);
             final double temp = device.getTemperature(oneWireAdapter);
             updateTemperature(temp);
             updateStatus(ThingStatus.ONLINE);
-        } catch (IOException e) {
-            LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+        } catch (IOException ioe) {
+            LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", ioe);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
+            throw ioe;
         }
     }
 

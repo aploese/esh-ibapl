@@ -261,24 +261,41 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
         @Override
         public void onIOException(IOException ioe) {
-            LOGGER.log(Level.WARNING, "Got IOE in CUL Adapter", ioe);
-            try {
-                culAdapter.close();
-            } catch (Exception e) {
-            }
-            try {
-                Thread.sleep(5000);//try to recover => 5 s rest
-            } catch (InterruptedException ex) {
-                //nothing to do
-            }
-            try {
-                culAdapter = new CulAdapter(getSerialPortSocket(), this, speed);
-            } catch (IOException e) {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
-                LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
+            /* We synchronize on thne writeLock, while this takes time,
+             * and until we setup a new culAdapter it woult be pointless to try to send anything...
+             */
+            synchronized (writeLock) {
+
+                LOGGER.log(Level.SEVERE, "Got IOE in CUL Adapter", ioe);
+                try {
+                    culAdapter.close();
+                } catch (Exception e) {
+                }
+                //Delete any reference to culAdaper, so gc can pick it up.
+                culAdapter = null;
+                //Try to run garbage collection
+                LOGGER.log(Level.SEVERE, "set culAdapter to null and run gc first time");
+                System.gc();
+                LOGGER.log(Level.SEVERE, "gc ran first time, wait 5s");
+                try {
+                    Thread.sleep(5000);//try to recover => 5 s rest
+                } catch (InterruptedException ex) {
+                    //nothing to do
+                }
+                //Try to run garbage collection again ... sometimes only this will pick it up
+                LOGGER.log(Level.SEVERE, "set culAdapter to null and run gc second time");
+                System.gc();
+                LOGGER.log(Level.SEVERE, "gc ran second time, try to create new culAdapter");
+                try {
+                    culAdapter = new CulAdapter(createSerialPortSocket(), this, speed);
+                    initCulAdapter();
+                } catch (IOException e) {
+                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+                    LOGGER.log(Level.SEVERE, "Can't reopen Serial port", e);
+                }
+                LOGGER.log(Level.SEVERE, "Creating new culAdapter succeeded");
             }
         }
-
     }
 
     private final SerialPortSocketFactory serialPortSocketFactory;
@@ -321,7 +338,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         protocolFHT = true;
     }
 
-    private SerialPortSocket getSerialPortSocket() throws IOException {
+    private SerialPortSocket createSerialPortSocket() throws IOException {
         String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         final SerialPortSocket sps = serialPortSocketFactory.open(port);
         if (logSerialPort) {
@@ -451,7 +468,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         evoHomeThingHandler.clear();
 
         try {
-            culAdapter = new CulAdapter(getSerialPortSocket(), new Listener(), speed);
+            culAdapter = new CulAdapter(createSerialPortSocket(), new Listener(), speed);
             initCulAdapter();
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
@@ -519,7 +536,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         this.discoveryListener = discoveryListener;
     }
 
-    public void sendFhtModeAutoMessage(short housecode) throws IOException {
+    public void sendFhtModeAutoMessage(short housecode) throws IOException, NullPointerException {
         synchronized (writeLock) {
             if (logExplainWrite != null) {
                 logExplainWrite.explainWrite("Set mode to auto of: %d", housecode);
@@ -530,7 +547,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public void sendFhtModeManuMessage(short housecode) throws IOException {
+    public void sendFhtModeManuMessage(short housecode) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFhtModeManu(housecode);
@@ -538,7 +555,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public void sendFhtMessage(short housecode, FhtProperty fhtProperty, float value) throws IOException {
+    public void sendFhtMessage(short housecode, FhtProperty fhtProperty, float value) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFht(housecode, fhtProperty, value);
@@ -547,7 +564,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     }
 
     public void sendFhtMessage(short housecode, DayOfWeek dayOfWeek, LocalTime from1, LocalTime to1, LocalTime from2,
-            LocalTime to2) throws IOException {
+            LocalTime to2) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFhtCycle(housecode, dayOfWeek, from1, to1, from2, to2);
@@ -555,7 +572,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public void sendFhtPartyMessage(short housecode, float temp, LocalDateTime to) throws IOException {
+    public void sendFhtPartyMessage(short housecode, float temp, LocalDateTime to) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFhtModeParty(housecode, temp, to);
@@ -563,7 +580,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException {
+    public void sendFhtHolidayMessage(short housecode, float temp, LocalDate to) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFhtModeHoliday(housecode, temp, to);
@@ -571,19 +588,19 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public void sendEvoHomeZoneSetpointPermanent(DeviceId deviceId, ZoneTemperature temperature) throws IOException {
+    public void sendEvoHomeZoneSetpointPermanent(DeviceId deviceId, ZoneTemperature temperature) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.writeEvoHomeZoneSetpointPermanent(deviceId, temperature);
         }
     }
 
-    public void sendEvoHomeZoneSetpointUntil(DeviceId deviceId, ZoneTemperature temperature, LocalDateTime localDateTime) throws IOException {
+    public void sendEvoHomeZoneSetpointUntil(DeviceId deviceId, ZoneTemperature temperature, LocalDateTime localDateTime) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.writeEvoHomeZoneSetpointUntil(deviceId, temperature, localDateTime);
         }
     }
 
-    public void initFhtReporting(short housecode) throws IOException {
+    public void initFhtReporting(short housecode) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.initFhtReporting(housecode);
@@ -591,7 +608,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    void setClock(short housecode, LocalDateTime localDateTime) throws IOException {
+    void setClock(short housecode, LocalDateTime localDateTime) throws IOException, NullPointerException {
         synchronized (writeLock) {
             culAdapter.gatherCulDebugInfos();
             culAdapter.writeFhtTimeAndDate(housecode, localDateTime);
@@ -599,7 +616,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    public Future<Response> sendRequest(Request request) throws IOException {
+    public Future<Response> sendRequest(Request request) throws IOException, NullPointerException {
         synchronized (writeLock) {
             return culAdapter.sendRequest(request);
         }
