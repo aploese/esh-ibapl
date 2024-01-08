@@ -108,11 +108,15 @@ public class Fht80TfHandler extends BaseThingHandler {
         switch (fht80TfMsg.value) {
             case WINDOW_INTERNAL_OPEN -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_INTERNAL), OpenClosedType.OPEN);
-                LOGGER.log(Level.SEVERE, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
+                if (LOGGER.isLoggable(Level.FINER)) {
+                    LOGGER.log(Level.FINER, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
+                }
             }
             case WINDOW_INTERNAL_CLOSED -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_INTERNAL), OpenClosedType.CLOSED);
-                LOGGER.log(Level.SEVERE, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
+                if (LOGGER.isLoggable(Level.FINER)) {
+                    LOGGER.log(Level.FINER, String.format("update FHT80 TF %s channel: {%s}", fht80TfMsg, getThing().getUID()));
+                }
             }
             case WINDOW_EXTERNAL_OPEN -> {
                 updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_EXTERNAL), OpenClosedType.OPEN);
