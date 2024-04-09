@@ -1,6 +1,6 @@
 /*
  * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017-2023, Arne Plöse and individual contributors as indicated
+ * Copyright (C) 2024, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -59,7 +59,7 @@ import org.openhab.core.types.Command;
  *
  * @author aploese@gmx.de - Initial contribution
  */
-public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
+public class SpswBridgeHandler extends BaseBridgeHandler {
 
     private final SerialPortSocketFactory serialPortSocketFactory;
 
@@ -68,9 +68,9 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
 
     private static final String PORT_PARAM = "port";
     private static final String REFRESH_RATE_PARAM = "refreshrate";
-    private static final String LOG_SERIAL_PORT = "logSerialPort";
+    private static final String LOG_SERIAL_PORT_PARAM = "logSerialPort";
 
-    private static final Logger LOGGER = Logger.getLogger("d.i.e.o.SpswBridgeHandler");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.ow.h.SpswBridgeHandler");
 
     private String port;
     private BigDecimal refreshRate;
@@ -103,10 +103,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             config.put(REFRESH_RATE_PARAM, refreshRate);
         }
 
-        if (!config.containsKey(LOG_SERIAL_PORT)) {
+        if (!config.containsKey(LOG_SERIAL_PORT_PARAM)) {
             logSerialPort = false;
         } else {
-            logSerialPort = ((Boolean) config.get(LOG_SERIAL_PORT));
+            logSerialPort = ((Boolean) config.get(LOG_SERIAL_PORT_PARAM));
         }
 
         try {
@@ -136,14 +136,13 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
             ppN = true;
         }
 
-        refreshJob = scheduler.scheduleWithFixedDelay(this, 0, refreshRate.intValue(), TimeUnit.SECONDS);
+        refreshJob = scheduler.scheduleWithFixedDelay(this::scheduledAquireData, 0, refreshRate.intValue(), TimeUnit.SECONDS);
 
         updateStatus(ThingStatus.ONLINE);
         LOGGER.info("Onewire adapter ONLINE");
     }
 
-    @Override
-    public void run() {
+    public void scheduledAquireData() {
         final boolean parasitePowerNeeded = true;
         try {
             TemperatureContainer.sendDoConvertRequestToAll(oneWireAdapter, parasitePowerNeeded);
@@ -152,18 +151,29 @@ public class SpswBridgeHandler extends BaseBridgeHandler implements Runnable {
         }
 
         for (Thing thing : getThing().getThings()) {
-            try {
-                if (ThingStatusDetail.DISABLED.equals(thing.getStatusInfo().getStatusDetail())) {
-                    continue; //just skip this thing
+            if (ThingStatusDetail.DISABLED.equals(thing.getStatusInfo().getStatusDetail())) {
+                continue; //just skip this thing
+            }
+            final ThingHandler thingHandler = thing.getHandler();
+            //In case of an error try 3 times to readout the device
+            for (int i = 0; i < 3; i++) {
+                try {
+                    if (thingHandler instanceof TemperatureHandler temperatureHandler) {
+                        temperatureHandler.readDevice(oneWireAdapter);
+                        break;
+                    } else if (thingHandler instanceof HumidityHandler humidityHandler) {
+                        humidityHandler.readDevice(oneWireAdapter);
+                        break;
+                    }
+                } catch (IOException ioe) {
+                    handleIOException(ioe);
+                } catch (Throwable t) {
+                    if (i < 3) {
+                        LOGGER.log(Level.WARNING, "Could not read Device in round(max 3): " + i, t);
+                    } else {
+                        LOGGER.log(Level.WARNING, "Could not read Device, max(3) tries reached!", t);
+                    }
                 }
-                final ThingHandler thingHandler = thing.getHandler();
-                if (thingHandler instanceof TemperatureHandler temperatureHandler) {
-                    temperatureHandler.readDevice(oneWireAdapter);
-                } else if (thingHandler instanceof HumidityHandler humidityHandler) {
-                    humidityHandler.readDevice(oneWireAdapter);
-                }
-            } catch (IOException ioe) {
-                handleIOException(ioe);
             }
         }
     }

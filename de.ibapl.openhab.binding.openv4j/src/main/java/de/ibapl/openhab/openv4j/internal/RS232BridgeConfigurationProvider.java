@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package de.ibapl.openhab.fhz4j.internal;
+package de.ibapl.openhab.openv4j.internal;
 
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import de.ibapl.spsw.api.Speed;
@@ -50,7 +50,7 @@ public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvid
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
 
-    private final Logger LOGGER = Logger.getLogger("d.i.o.f.i.RS232BridgeConfigurationProvider");
+    private final Logger LOGGER = Logger.getLogger("d.i.o.o.i.RS232BridgeConfigurationProvider");
 
     private static final URI RS_232_URI;
 

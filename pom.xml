@@ -51,6 +51,8 @@
         <openhab.fhz4j.version>${project.version}</openhab.fhz4j.version>
         <onewire4j.version>1.1.1-SNAPSHOT</onewire4j.version>
         <openhab.onewire4j.version>${project.version}</openhab.onewire4j.version>
+        <openv4j.version>0.2.0-SNAPSHOT</openv4j.version>
+        <openhab.openv4j.version>${project.version}</openhab.openv4j.version>
         <ohc.version>4.1.0</ohc.version>
         <osgi.version.range>6.0.0</osgi.version.range>
         <oh.repo.baseUrl>https://openhab.jfrog.io/openhab</oh.repo.baseUrl>
@@ -59,6 +61,7 @@
     <modules>
         <module>de.ibapl.openhab.binding.fhz4j</module>
         <module>de.ibapl.openhab.binding.onewire4j</module>
+        <module>de.ibapl.openhab.binding.openv4j</module>
         <module>oh-ibapl-kar</module>
     </modules>
 
@@ -126,12 +129,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.3</version>
+                    <version>3.2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.12.1</version>
                     <configuration>
                         <source>${compile.source}</source>
                         <target>${compile.target}</target>
@@ -176,37 +179,30 @@
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>4.3</version>
-                <inherited>false</inherited>
-                <configuration>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>true</aggregate>
-                    <strictCheck>true</strictCheck>
-                    <properties>
-                        <copyright-range>${project.inceptionYear}-2023</copyright-range>
-                    </properties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>check-java-headers</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <header>header-template-lgpl-java.txt</header>
-                            <mapping>
-                                <java>SLASHSTAR_STYLE</java>
-                            </mapping>
-                            <includes>
-                                <include>**/*.java</include>
-                            </includes>
-                            <excludes>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
+                    <inherited>false</inherited>
+                    <configuration>
+                        <failIfMissing>true</failIfMissing>
+                        <aggregate>true</aggregate>
+                        <strictCheck>true</strictCheck>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>header-template-lgpl-java.txt</header>
+                                <includes>
+                                    <include>**/*.java</include>
+                                </includes>
+                                <excludes>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.mycila</groupId>
+                            <artifactId>license-maven-plugin-git</artifactId>
+                            <version>4.3</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -225,7 +221,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -252,7 +248,7 @@
                 <plugin>
                     <groupId>org.apache.karaf.tooling</groupId>
                     <artifactId>karaf-maven-plugin</artifactId>
-                    <version>4.4.4</version>
+                    <version>4.4.5</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -298,6 +294,11 @@
                 <version>${spsw.version}</version>
             </dependency>
             <dependency>
+                <groupId>de.ibapl.spsw</groupId>
+                <artifactId>de.ibapl.spsw.inmemoryprovider</artifactId>
+                <version>${spsw.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>de.ibapl.fhz4j</groupId>
                 <artifactId>de.ibapl.fhz4j.parser.cul</artifactId>
                 <version>${fhz4j.version}</version>
@@ -306,6 +307,11 @@
                 <groupId>de.ibapl.onewire4j</groupId>
                 <artifactId>de.ibapl.onewire4j</artifactId>
                 <version>${onewire4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.ibapl.openv4j</groupId>
+                <artifactId>de.ibapl.openv4j.core</artifactId>
+                <version>${openv4j.version}</version>
             </dependency>
 
             <dependency>

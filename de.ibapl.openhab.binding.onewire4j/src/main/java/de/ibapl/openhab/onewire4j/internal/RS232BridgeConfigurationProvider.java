@@ -1,6 +1,6 @@
 /*
  * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017-2023, Arne Plöse and individual contributors as indicated
+ * Copyright (C) 2024, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -46,7 +46,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ConfigDescriptionProvider.class, immediate = true, configurationPid = "config.rs232-bridge")
 public class RS232BridgeConfigurationProvider implements ConfigDescriptionProvider {
 
-    private static final Logger LOGGER = Logger.getLogger("d.i.e.o.RS232BridgeConfigurationProvider");
+    private static final Logger LOGGER = Logger.getLogger("d.i.o.o.i.RS232BridgeConfigurationProvider");
 
     @Reference
     private SerialPortSocketFactory serialPortSocketFactory; // = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();

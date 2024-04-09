@@ -19,33 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package de.ibapl.openhab.onewire4j;
+package de.ibapl.openhab.openv4j;
 
 import org.openhab.core.thing.ThingTypeUID;
 
 /**
- * The {@link OneWire4JBindingConstants} class defines common constants, which
- * are used across the whole binding.
+ * The {@link OpenV4JBindingConstants} class defines common constants, which are
+ * used across the whole binding.
  *
  * @author aploese@gmx.de - Initial contribution
  */
-public class OneWire4JBindingConstants {
+public class OpenV4JBindingConstants {
 
-    public static final String BINDING_ID = "onewire4j";
+    public static final String BINDING_ID = "opnev4j";
 
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_ONEWIRE_TEMPERATURE = new ThingTypeUID(BINDING_ID, "temperature");
-    public static final ThingTypeUID THING_TYPE_ONEWIRE_HUMIDITY = new ThingTypeUID(BINDING_ID, "humidity");
-    public static final ThingTypeUID THING_TYPE_ONEWIRE_SMART_BATTERY_MONITOR = new ThingTypeUID(BINDING_ID, "smart_battery_monitor");
-    public static final ThingTypeUID THING_TYPE_ONEWIRE_UNKNOWN = new ThingTypeUID(BINDING_ID, "unknown");
+    public static final ThingTypeUID THING_TYPE_OPENV4J_BOILER_V200KW2 = new ThingTypeUID(BINDING_ID, "boiler-v200-kw2");
+    public static final ThingTypeUID BRIDGE_TYPE_OPENV4J_UNKNOWN = new ThingTypeUID(BINDING_ID, "unknown");
 
     // List of all Bridge Type UIDs
-    public static final ThingTypeUID BRIDGE_TYPE_ONEWIRE_RS232 = new ThingTypeUID(BINDING_ID, "rs232-bridge");
+    public static final ThingTypeUID BRIDGE_TYPE_OPENV4J_RS232 = new ThingTypeUID(BINDING_ID, "rs232-bridge-optolink");
 
     // List of all Channel ids
-    public static final String CHANNEL_TEMPERATURE = "temperature";
-    public static final String CHANNEL_HUMIDITY = "humidity";
-    public static final String CHANNEL_MIN_TEMPERATURE = "minTemperature";
-    public static final String CHANNEL_MAX_TEMPERATURE = "maxTemperature";
+    public static final String CHANNEL_BOILER_WATER_TEMP = "boiler_water_temperature";
 
 }

@@ -23,6 +23,12 @@
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.jnhwprovider/${spsw.version}</bundle>
     </feature>
 
+    <feature name="de.ibapl.spsw.inmemoryprovider" version="${spsw.version}" description="JNHW in memory provider for serial port dummy">
+        <feature>de.ibapl.jnhw.jnhw</feature>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.inmemoryprovider/${spsw.version}</bundle>
+    </feature>
+
     <feature name="openhab-binding-fhz4j" version="${openhab.fhz4j.version}" description="Fhz4J OH Binding">
         <feature>openhab-runtime-base</feature>
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
@@ -36,4 +42,12 @@
         <bundle>mvn:de.ibapl.onewire4j/de.ibapl.onewire4j/${onewire4j.version}</bundle>
         <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.onewire4j/${openhab.onewire4j.version}</bundle>
     </feature>
+
+    <feature name="openhab-binding-openv4j" version="${openhab.openv4j.version}" description="OpenV4J OH Binding">
+        <feature>openhab-runtime-base</feature>
+        <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
+        <bundle>mvn:de.ibapl.openv4j/de.ibapl.openv4j.core/${openv4j.version}</bundle>
+        <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.openv4j/${openhab.openv4j.version}</bundle>
+    </feature>
+
 </features>

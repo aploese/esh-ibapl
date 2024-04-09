@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openv4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="boiler-v200-kw2">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="rs232-bridge-optolink"/>
+		</supported-bridge-type-refs>
+
+		<label>Boiler V200KW2 </label>
+		<description>Boiler (oil or gas with one or two staged or modulating) with VControl 200 and two heatuing circuits</description>
+
+		<channels>
+			<channel id="boiler-water-temperature" typeId="tempMeasured" />
+		</channels>
+
+		<config-description>
+			<parameter name="address" type="integer">
+				<label>Address</label>
+				<description>The Address.</description>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+</thing:thing-descriptions>

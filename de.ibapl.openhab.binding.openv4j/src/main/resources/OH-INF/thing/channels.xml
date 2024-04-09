@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="fhz4j"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<channel-type id="boiler_water_temperature">
+		<item-type>Number</item-type>
+		<label>Boiler Water Temperature</label>
+		<description>Temperature of the water in the boiler.
+		</description>
+		<category>Boiler</category>
+		<tags>
+                    <tag>CurrentTemperature</tag>
+		</tags>
+		<state readOnly="true" pattern="%.1f °C">
+		</state>
+	</channel-type>
+
+</thing:thing-descriptions>

@@ -19,14 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package de.ibapl.openhab.fhz4j.handler;
+package de.ibapl.openhab.openv4j.handler;
 
-import de.ibapl.fhz4j.protocol.em.EmMessage;
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openhab.core.config.core.Configuration;
-import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -36,38 +32,28 @@ import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.types.Command;
 
 /**
- * The {@link Em1000EmHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link UnknownDeviceHandler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
-public class Em1000EmHandler extends BaseThingHandler {
+public class UnknownDeviceHandler extends BaseThingHandler {
 
     protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("d.i.o.f.h.Em1000EmHandler");
+    private final Logger logger = Logger.getLogger("d.i.o.o.h.UnknownDeviceHandler");
 
-    private short address;
-
-    public Em1000EmHandler(Thing thing) {
+    public UnknownDeviceHandler(Thing thing) {
         super(thing);
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        // no-op
     }
 
     @Override
     public void initialize() {
         logger.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
-        Configuration configuration = getConfig();
-        try {
-            address = ((Number) configuration.get("address")).shortValue();
-        } catch (Exception e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can't parse housecode");
-            return;
-        }
 
         Bridge bridge = getBridge();
         if (bridge == null) {
@@ -85,27 +71,6 @@ public class Em1000EmHandler extends BaseThingHandler {
 
     @Override
     public void dispose() {
-    }
-
-    public short getAddress() {
-        return address;
-    }
-
-    public void updateFromMsg(EmMessage emMsg) {
-        switch (emMsg.emDeviceType) {
-            case EM_1000_EM -> {
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_ENERGY_TOTAL),
-                        new DecimalType(EmMessage.EM_1000_EM_ENERY * emMsg.valueCummulated));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_POWER_5MINUTES),
-                        new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5Min));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_POWER_5MINUTES),
-                        new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5MinPeak));
-            }
-            // case EM_1000_S:
-            // case EM_1000_GZ:
-            default ->
-                throw new RuntimeException("Cant handle EM 1000 Device: " + emMsg.emDeviceType);
-        }
     }
 
 }

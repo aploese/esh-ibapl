@@ -1,6 +1,6 @@
 /*
  * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017-2023, Arne Plöse and individual contributors as indicated
+ * Copyright (C) 2024, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -130,18 +130,10 @@ public class TemperatureHandler extends BaseThingHandler {
             final double temp = temperatureContainer.getTemperature(request);
             updateTemperature(temp);
             updateStatus(ThingStatus.ONLINE);
-        } catch (IOException e) {
-            try {
-                TemperatureContainer.ReadScratchpadRequest request = new TemperatureContainer.ReadScratchpadRequest();
-                temperatureContainer.readScratchpad(oneWireAdapter, request);
-                final double temp = temperatureContainer.getTemperature(request);
-                updateTemperature(temp);
-                updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
-            } catch (IOException e1) {
-                LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", e);
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
-                throw e1;
-            }
+        } catch (Throwable t) {
+            LOGGER.logp(Level.SEVERE, this.getClass().getName(), "run()", "Exception occurred during execution", t);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, t.getMessage());
+            throw t;
         }
     }
 

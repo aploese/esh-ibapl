@@ -1,6 +1,6 @@
 /*
  * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017-2023, Arne Plöse and individual contributors as indicated
+ * Copyright (C) 2024, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -47,7 +47,7 @@ public class Fht80TfHandler extends BaseThingHandler {
 
     protected ThingStatusDetail fht80TfHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final static Logger LOGGER = Logger.getLogger("d.i.e.f.h.Fht80TfHandler");
+    private final static Logger LOGGER = Logger.getLogger("d.i.o.f.h.Fht80TfHandler");
 
     private int address;
 

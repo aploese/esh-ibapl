@@ -19,10 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package de.ibapl.openhab.fhz4j.handler;
+package de.ibapl.openhab.openv4j.handler;
 
-import de.ibapl.fhz4j.protocol.em.EmMessage;
-import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
+import static de.ibapl.openhab.openv4j.OpenV4JBindingConstants.*;
+import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openhab.core.config.core.Configuration;
@@ -34,78 +35,75 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 
 /**
- * The {@link Em1000EmHandler} is responsible for handling commands, which are
- * sent to one of the channels.
+ * The {@link BoilerV200KW2Handler} is responsible for handling commands, which
+ * are sent to one of the channels.
  *
  * @author aploese@gmx.de - Initial contribution
  */
-public class Em1000EmHandler extends BaseThingHandler {
+public class BoilerV200KW2Handler extends BaseThingHandler {
 
-    protected ThingStatusDetail owHandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
+    protected ThingStatusDetail BoilerV200KW2HandlerStatus = ThingStatusDetail.HANDLER_CONFIGURATION_PENDING;
 
-    private final Logger logger = Logger.getLogger("d.i.o.f.h.Em1000EmHandler");
+    private final static Logger LOGGER = Logger.getLogger("d.i.o.o.h.BoilerV200KW2Handler");
 
-    private short address;
-
-    public Em1000EmHandler(Thing thing) {
+    public BoilerV200KW2Handler(Thing thing) {
         super(thing);
     }
 
     @Override
+    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+        super.handleConfigurationUpdate(configurationParameters);
+    }
+
+    @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        // no-op
+        switch (channelUID.getId()) {
+            case CHANNEL_BOILER_WATER_TEMP -> {
+                if (command instanceof DecimalType decimalType) {
+                    try {
+                        desiredTemp = decimalType.floatValue();
+                        ((SpswBridgeHandler) (getBridge().getHandler())).sendFhtMessage(housecode,
+                                FhtProperty.DESIRED_TEMP, desiredTemp);
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, "handleCommand CHANNEL_DESIRED_TEMPERATURE", e);
+                    }
+                } else if (command instanceof RefreshType) {
+                    //TODO
+                    desiredTemp = 17.0f;
+                    // updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE), new DecimalType(00.00));
+                }
+            }
+            default ->
+                LOGGER.log(Level.SEVERE, "Unknown Fht80 (" + housecode + ") channel: {0}", channelUID.getId());
+        }
     }
 
     @Override
     public void initialize() {
-        logger.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
+        LOGGER.log(Level.FINE, "thing {0} is initializing", this.thing.getUID());
         Configuration configuration = getConfig();
-        try {
-            address = ((Number) configuration.get("address")).shortValue();
-        } catch (Exception e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can't parse housecode");
-            return;
-        }
 
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "no bridge assigned");
-            owHandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
+            BoilerV200KW2HandlerStatus = ThingStatusDetail.CONFIGURATION_ERROR;
+            return;
         } else {
             if (bridge.getStatus().equals(ThingStatus.ONLINE)) {
                 updateStatus(ThingStatus.ONLINE);
-                owHandlerStatus = ThingStatusDetail.NONE;
+                BoilerV200KW2HandlerStatus = ThingStatusDetail.NONE;
             } else {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             }
         }
+        //init here
     }
 
     @Override
     public void dispose() {
-    }
-
-    public short getAddress() {
-        return address;
-    }
-
-    public void updateFromMsg(EmMessage emMsg) {
-        switch (emMsg.emDeviceType) {
-            case EM_1000_EM -> {
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_ENERGY_TOTAL),
-                        new DecimalType(EmMessage.EM_1000_EM_ENERY * emMsg.valueCummulated));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_POWER_5MINUTES),
-                        new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5Min));
-                updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_POWER_5MINUTES),
-                        new DecimalType(EmMessage.EM_1000_EM_POWER * emMsg.value5MinPeak));
-            }
-            // case EM_1000_S:
-            // case EM_1000_GZ:
-            default ->
-                throw new RuntimeException("Cant handle EM 1000 Device: " + emMsg.emDeviceType);
-        }
     }
 
 }

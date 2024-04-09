@@ -1,5 +1,5 @@
 ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
-Copyright (C) ${copyright-range}, Arne Plöse and individual contributors as indicated
+Copyright (C) ${license.git.copyrightExistenceYears}, Arne Plöse and individual contributors as indicated
 by the @authors tag. See the copyright.txt in the distribution for a
 full listing of individual contributors.
 

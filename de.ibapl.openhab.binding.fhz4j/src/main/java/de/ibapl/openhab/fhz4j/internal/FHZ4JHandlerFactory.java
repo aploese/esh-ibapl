@@ -1,6 +1,6 @@
 /*
  * ESH-IBAPL  - OpenHAB bindings for various IB APL drivers, https://github.com/aploese/esh-ibapl/
- * Copyright (C) 2017-2023, Arne Plöse and individual contributors as indicated
+ * Copyright (C) 2024, Arne Plöse and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -58,7 +58,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.fhz4j")
 public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
 
-    private static final Logger logger = Logger.getLogger("d.i.e.f.h.FHZ4JHandlerFactory");
+    private static final Logger logger = Logger.getLogger("d.i.o.f.i.FHZ4JHandlerFactory");
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(
             FHZ4JBindingConstants.THING_TYPE_FHZ4J_RADIATOR_FHT80B,

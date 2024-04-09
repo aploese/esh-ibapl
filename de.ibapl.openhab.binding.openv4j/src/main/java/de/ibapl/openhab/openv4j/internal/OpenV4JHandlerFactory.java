@@ -19,20 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package de.ibapl.openhab.onewire4j.internal;
+package de.ibapl.openhab.openv4j.internal;
 
-import de.ibapl.openhab.onewire4j.OneWire4JBindingConstants;
-import de.ibapl.openhab.onewire4j.handler.HumidityHandler;
-import de.ibapl.openhab.onewire4j.handler.SpswBridgeHandler;
-import de.ibapl.openhab.onewire4j.handler.TemperatureHandler;
-import de.ibapl.openhab.onewire4j.handler.UnknownDeviceHandler;
-import de.ibapl.openhab.onewire4j.internal.discovery.OneWire4JDiscoveryService;
+import de.ibapl.openhab.openv4j.OpenV4JBindingConstants;
+import de.ibapl.openhab.openv4j.handler.BoilerV200KW2Handler;
+import de.ibapl.openhab.openv4j.handler.SpswBridgeHandler;
+import de.ibapl.openhab.openv4j.handler.UnknownDeviceHandler;
+import de.ibapl.openhab.openv4j.internal.discovery.OpenV4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.scheduler.CronScheduler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;
@@ -45,23 +46,22 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * The {@link OneWire4JHandlerFactory} is responsible for creating things and
+ * The {@link OpenV4JHandlerFactory} is responsible for creating things and
  * thing handlers.
  *
  * @author aploese@gmx.de - Initial contribution
  */
-@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.onewire4j")
-public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
+@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.fhz4j")
+public class OpenV4JHandlerFactory extends BaseThingHandlerFactory {
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(
-            OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE,
-            OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY,
-            OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
+    private static final Logger logger = Logger.getLogger("d.i.o.o.h.OpenV4JHandlerFactory");
+
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(OpenV4JBindingConstants.THING_TYPE_OPENV4J_BOILER_V200KW2);
 
     @Reference
-    private SerialPortSocketFactory serialPortSocketFactory;// = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
+    private List<SerialPortSocketFactory> serialPortSocketFactories;
 
-    private final Map<ThingUID, org.osgi.framework.ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
+    private final Map<ThingUID, ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -72,15 +72,19 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
     protected ThingHandler createHandler(Thing thing) {
         final ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE)) {
-            return new TemperatureHandler(thing);
-        } else if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY)) {
-            return new HumidityHandler(thing);
-        } else if (thingTypeUID.equals(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232)) {
-            final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactory);
-            registerDiscoveryService(spswBridgeHandler);
-            return spswBridgeHandler;
-        } else if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_UNKNOWN)) {
+        if (thingTypeUID.equals(OpenV4JBindingConstants.THING_TYPE_OPENV4J_BOILER_V200KW2)) {
+            return new BoilerV200KW2Handler(thing);
+        } else if (thingTypeUID.equals(OpenV4JBindingConstants.BRIDGE_TYPE_OPENV4J_RS232)) {
+            if (serialPortSocketFactories == null) {
+                logger.severe("serialPortSocketFactory == null");
+                //TODO
+                return null;
+            } else {
+                final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactories);
+                registerDiscoveryService(spswBridgeHandler);
+                return spswBridgeHandler;
+            }
+        } else if (thingTypeUID.equals(OpenV4JBindingConstants.THING_TYPE_OPENV4J_UNKNOWN)) {
             return new UnknownDeviceHandler(thing);
         } else {
             return null;
@@ -88,9 +92,9 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
     }
 
     private synchronized void registerDiscoveryService(SpswBridgeHandler spswBridgeHandler) {
-        OneWire4JDiscoveryService discoveryService = new OneWire4JDiscoveryService(spswBridgeHandler);
-        this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(), bundleContext
-                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
+        OpenV4JDiscoveryService discoveryService = new OpenV4JDiscoveryService(spswBridgeHandler);
+        this.discoveryServiceRegs.put(spswBridgeHandler.getThing().getUID(),
+                bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
     }
 
     @Override
@@ -99,7 +103,7 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
             ServiceRegistration<?> serviceReg = this.discoveryServiceRegs.get(thingHandler.getThing().getUID());
             if (serviceReg != null) {
                 // remove discovery service, if bridge handler is removed
-                OneWire4JDiscoveryService service = (OneWire4JDiscoveryService) bundleContext
+                OpenV4JDiscoveryService service = (OpenV4JDiscoveryService) bundleContext
                         .getService(serviceReg.getReference());
                 if (service != null) {
                     service.deactivate();

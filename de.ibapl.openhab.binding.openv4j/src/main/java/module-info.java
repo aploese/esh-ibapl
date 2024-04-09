@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-module de.ibapl.opnhab.bindings.fhz4j {
+module de.ibapl.opnhab.bindings.openv4j {
     requires java.logging;
 
     requires osgi.core;
@@ -33,5 +33,5 @@ module de.ibapl.opnhab.bindings.fhz4j {
 
     requires org.openhab.core.thing;
 
-    requires de.ibapl.fhz4j.parser.cul;
+    requires de.ibapl.openv4j.core;
 }
