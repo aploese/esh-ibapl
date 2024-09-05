@@ -143,12 +143,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                     cp.close();
                 } catch (Exception e) {
                     LOGGER.log(Level.SEVERE, "Could not shutdown OpenV4JAdapter", e);
-//TODO How to suppress warning??                    @SuppressWarnings("Unused Assignment")
 //Set cp to null, so the gc can collect it.
+//TODO How to suppress warning??                    @SuppressWarnings("Unused Assignment")
                     cp = null;
                     //Trigger gc to get rid of current cp ...
-                    System.gc();
-                    Runtime.getRuntime().runFinalization();
                     System.gc();
                 }
             }

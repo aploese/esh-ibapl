@@ -5,7 +5,7 @@
 
     <groupId>de.ibapl.openhab</groupId>
     <artifactId>ibapl-oh</artifactId>
-    <version>4.1.0.3-SNAPSHOT</version>
+    <version>4.2.0-0-SNAPSHOT</version>
 
     <name>OH IbAPl</name>
     <packaging>pom</packaging>
@@ -53,7 +53,7 @@
         <openhab.onewire4j.version>${project.version}</openhab.onewire4j.version>
         <openv4j.version>0.2.0-SNAPSHOT</openv4j.version>
         <openhab.openv4j.version>${project.version}</openhab.openv4j.version>
-        <ohc.version>4.1.0</ohc.version>
+        <ohc.version>4.2.0</ohc.version>
         <osgi.version.range>6.0.0</osgi.version.range>
         <oh.repo.baseUrl>https://openhab.jfrog.io/openhab</oh.repo.baseUrl>
     </properties>
@@ -61,7 +61,6 @@
     <modules>
         <module>de.ibapl.openhab.binding.fhz4j</module>
         <module>de.ibapl.openhab.binding.onewire4j</module>
-        <module>de.ibapl.openhab.binding.openv4j</module>
         <module>oh-ibapl-kar</module>
     </modules>
 

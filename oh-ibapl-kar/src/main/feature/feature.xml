@@ -43,11 +43,12 @@
         <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.onewire4j/${openhab.onewire4j.version}</bundle>
     </feature>
 
-    <feature name="openhab-binding-openv4j" version="${openhab.openv4j.version}" description="OpenV4J OH Binding">
+<!-- Yet to come
+        <feature name="openhab-binding-openv4j" version="${openhab.openv4j.version}" description="OpenV4J OH Binding">
         <feature>openhab-runtime-base</feature>
         <bundle>mvn:de.ibapl.spsw/de.ibapl.spsw.api/${spsw.version}</bundle>
         <bundle>mvn:de.ibapl.openv4j/de.ibapl.openv4j.core/${openv4j.version}</bundle>
         <bundle>mvn:de.ibapl.openhab/de.ibapl.openhab.binding.openv4j/${openhab.openv4j.version}</bundle>
     </feature>
-
+-->
 </features>
