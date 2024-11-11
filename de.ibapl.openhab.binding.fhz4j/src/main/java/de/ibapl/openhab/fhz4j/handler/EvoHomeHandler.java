@@ -31,8 +31,11 @@ import static de.ibapl.fhz4j.protocol.evohome.EvoHomeCommand.ZONE_TEMPERATURE;
 import de.ibapl.fhz4j.protocol.evohome.EvoHomeDeviceMessage;
 import de.ibapl.fhz4j.protocol.evohome.ZoneTemperature;
 import de.ibapl.fhz4j.protocol.evohome.messages.AbstractZoneSetpointPayloadMessage;
+import de.ibapl.fhz4j.protocol.evohome.messages.AbstractZoneTemperaturePayloadMessage;
 import de.ibapl.fhz4j.protocol.evohome.messages.ZoneConfigPayloadMessage;
+import de.ibapl.fhz4j.protocol.evohome.messages.ZoneConfigRequestMessage;
 import de.ibapl.fhz4j.protocol.evohome.messages.ZoneHeatDemandInformationMessage;
+import de.ibapl.fhz4j.protocol.evohome.messages.ZoneSetpointRequestMessage;
 import static de.ibapl.openhab.fhz4j.FHZ4JBindingConstants.*;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -99,7 +102,7 @@ public class EvoHomeHandler extends BaseThingHandler {
         try {
             deviceId = ((Number) configuration.get("deviceId")).intValue();
         } catch (Exception e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can't parse deviceId");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, "Can''t parse deviceId");
             evoHomeRadiatorHandlerStatus = ThingStatusDetail.HANDLER_INITIALIZING_ERROR;
             return;
         }
@@ -138,7 +141,7 @@ public class EvoHomeHandler extends BaseThingHandler {
             }
             case ZONE_TEMPERATURE -> {
                 //From SingleZoneThermostat and RadiatorController and MultZoneController
-                final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
+                final AbstractZoneTemperaturePayloadMessage m = (AbstractZoneTemperaturePayloadMessage) msg;
                 switch (m.deviceId1.type) {
                     case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> //TODO ZoneID ???
                         updateState(new ChannelUID(getThing().getUID(), CHANNEL_TEMPERATURE_MEASURED),
@@ -150,56 +153,70 @@ public class EvoHomeHandler extends BaseThingHandler {
                         }
                     }
                     default -> {
+                        LOGGER.log(Level.SEVERE, "Can''t handle ZONE_TEMPERATURE message: {0}", msg);
                     }
                 }
             }
             case ZONE_SETPOINT -> {
-                //From RadiatorController and MultZoneController
-                final AbstractZoneSetpointPayloadMessage m = (AbstractZoneSetpointPayloadMessage) msg;
-                switch (m.deviceId1.type) {
-                    case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> //TODO ZoneID ???
-                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
-                                new DecimalType(m.zoneTemperatures.get(0).temperature));
-                    case MULTI_ZONE_CONTROLLER -> {
-                        for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
-                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_DESIRED_TEMPERATURE, zoneTemperature.zone)),
-                                    new DecimalType(zoneTemperature.temperature));
+                if (msg instanceof AbstractZoneSetpointPayloadMessage m) {
+                    //From RadiatorController and MultZoneController
+                    switch (m.deviceId1.type) {
+                        case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> //TODO ZoneID ???
+                            updateState(new ChannelUID(getThing().getUID(), CHANNEL_DESIRED_TEMPERATURE),
+                                    new DecimalType(m.zoneTemperatures.get(0).temperature));
+                        case MULTI_ZONE_CONTROLLER -> {
+                            for (ZoneTemperature zoneTemperature : m.zoneTemperatures) {
+                                updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_DESIRED_TEMPERATURE, zoneTemperature.zone)),
+                                        new DecimalType(zoneTemperature.temperature));
+                            }
+                        }
+                        default -> {
+                            LOGGER.log(Level.SEVERE, "Can''t handle ZONE_SETPOINT message: {0}", msg);
                         }
                     }
-                    default -> {
-                    }
+                } else if (msg instanceof ZoneSetpointRequestMessage m) {
+                    LOGGER.log(Level.INFO, "ZoneSetpointRequestMessage received ZONE_SETPOINT payload: \"{0}\"", m);
+                } else {
+                    LOGGER.log(Level.SEVERE, "Can''t handle ZONE_SETPOINT message: {0}", msg);
                 }
             }
             case ZONE_CONFIG -> {
-                final ZoneConfigPayloadMessage zpm = (ZoneConfigPayloadMessage) msg;
-                switch (zpm.deviceId1.type) {
-                    case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> {
-                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_MIN_TEMP),
-                                new DecimalType(zpm.zones.get(0).minTemperature));
-                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMP),
-                                new DecimalType(zpm.zones.get(0).maxTemperature));
-                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_OPERATION_LOCK),
-                                zpm.zones.get(0).operationLock ? OnOffType.ON : OnOffType.OFF);
-                        updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_FUNCTION),
-                                zpm.zones.get(0).windowFunction ? OnOffType.ON : OnOffType.OFF);
-                    }
-                    case MULTI_ZONE_CONTROLLER -> {
-                        for (ZoneConfigPayloadMessage.ZoneParams zoneParam : zpm.zones) {
-                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MIN_TEMP, zoneParam.zoneId)),
-                                    new DecimalType(zoneParam.minTemperature));
-                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MAX_TEMP, zoneParam.zoneId)),
-                                    new DecimalType(zoneParam.maxTemperature));
-                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_OPERATION_LOCK, zoneParam.zoneId)),
-                                    zoneParam.operationLock ? OnOffType.ON : OnOffType.OFF);
-                            updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_WINDOW_FUNCTION, zoneParam.zoneId)),
-                                    zoneParam.windowFunction ? OnOffType.ON : OnOffType.OFF);
+                if (msg instanceof ZoneConfigPayloadMessage zpm) {
+                    switch (zpm.deviceId1.type) {
+                        case RADIATOR_CONTROLLER, SINGLE_ZONE_THERMOSTAT -> {
+                            updateState(new ChannelUID(getThing().getUID(), CHANNEL_MIN_TEMP),
+                                    new DecimalType(zpm.zones.get(0).minTemperature));
+                            updateState(new ChannelUID(getThing().getUID(), CHANNEL_MAX_TEMP),
+                                    new DecimalType(zpm.zones.get(0).maxTemperature));
+                            updateState(new ChannelUID(getThing().getUID(), CHANNEL_OPERATION_LOCK),
+                                    zpm.zones.get(0).operationLock ? OnOffType.ON : OnOffType.OFF);
+                            updateState(new ChannelUID(getThing().getUID(), CHANNEL_WINDOW_FUNCTION),
+                                    zpm.zones.get(0).windowFunction ? OnOffType.ON : OnOffType.OFF);
+                        }
+                        case MULTI_ZONE_CONTROLLER -> {
+                            for (ZoneConfigPayloadMessage.ZoneParams zoneParam : zpm.zones) {
+                                updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MIN_TEMP, zoneParam.zoneId)),
+                                        new DecimalType(zoneParam.minTemperature));
+                                updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_MAX_TEMP, zoneParam.zoneId)),
+                                        new DecimalType(zoneParam.maxTemperature));
+                                updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_OPERATION_LOCK, zoneParam.zoneId)),
+                                        zoneParam.operationLock ? OnOffType.ON : OnOffType.OFF);
+                                updateState(new ChannelUID(getThing().getUID(), String.format(_XX_TEMPLATE, CHANNEL_WINDOW_FUNCTION, zoneParam.zoneId)),
+                                        zoneParam.windowFunction ? OnOffType.ON : OnOffType.OFF);
+                            }
+                        }
+                        default -> {
+                            LOGGER.log(Level.SEVERE, "Can''t handle ZONE_SETPOINT message: {0}", msg);
                         }
                     }
-                    default -> {
-                    }
+                } else if (msg instanceof ZoneConfigRequestMessage m) {
+                    LOGGER.log(Level.INFO, "ZoneConfigRequestMessage received ZONE_CONFIG payload: \"{0}\"", m);
+                } else {
+                    LOGGER.log(Level.SEVERE, "Can''t handle ZONE_CONFIG message: {0}", msg);
                 }
             }
             default -> {
+                LOGGER.log(Level.SEVERE, "Can''t handle {0} message: {1}", new Object[]{msg.command, msg});
             }
         }
     }

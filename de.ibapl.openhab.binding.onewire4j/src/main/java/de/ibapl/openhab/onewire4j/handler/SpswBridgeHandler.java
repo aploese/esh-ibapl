@@ -29,6 +29,8 @@ import de.ibapl.onewire4j.request.data.SearchCommand;
 import static de.ibapl.openhab.onewire4j.OneWire4JBindingConstants.THING_TYPE_ONEWIRE_TEMPERATURE;
 import de.ibapl.spsw.api.SerialPortSocket;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
+import de.ibapl.spsw.logging.LogExplainRead;
+import de.ibapl.spsw.logging.LogExplainWrite;
 import de.ibapl.spsw.logging.LoggingSerialPortSocket;
 import de.ibapl.spsw.logging.TimeStampLogging;
 import java.io.FileOutputStream;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +64,7 @@ import org.openhab.core.types.Command;
  */
 public class SpswBridgeHandler extends BaseBridgeHandler {
 
-    private final SerialPortSocketFactory serialPortSocketFactory;
+    private final List<SerialPortSocketFactory> serialPortSocketFactories;
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Stream.of(THING_TYPE_ONEWIRE_TEMPERATURE)
             .collect(Collectors.toSet());
@@ -75,13 +78,15 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private String port;
     private BigDecimal refreshRate;
     private boolean logSerialPort;
+    private LogExplainRead logExplainRead;
+    private LogExplainWrite logExplainWrite;
 
     private ScheduledFuture<?> refreshJob;
     private OneWireAdapter oneWireAdapter;
 
-    public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory) {
+    public SpswBridgeHandler(Bridge bridge, List<SerialPortSocketFactory> serialPortSocketFactories) {
         super(bridge);
-        this.serialPortSocketFactory = serialPortSocketFactory;
+        this.serialPortSocketFactories = serialPortSocketFactories;
     }
 
     @Override
@@ -168,9 +173,11 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
                 } catch (IOException ioe) {
                     handleIOException(ioe);
                 } catch (Throwable t) {
-                    if (i < 3) {
+                    if (i < 2) {
+                        logExplainRead.explainRead(t);
                         LOGGER.log(Level.WARNING, "Could not read Device in round(max 3): " + i, t);
                     } else {
+                        logExplainRead.explainRead(t);
                         LOGGER.log(Level.WARNING, "Could not read Device, max(3) tries reached!", t);
                     }
                 }
@@ -201,20 +208,34 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     }
 
     private SerialPortSocket createSerialPort() throws IOException {
-        SerialPortSocket serialPortSocket = serialPortSocketFactory.open(port);
-        if (logSerialPort) {
-            //Wrap socket with logger
-            String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-            return LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
-                    new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
-                    false,
-                    TimeStampLogging.UTC);
-        } else {
-            return serialPortSocket;
+        for (SerialPortSocketFactory spsf : serialPortSocketFactories) {
+            try {
+                SerialPortSocket serialPortSocket = spsf.open(port);
+                if (logSerialPort) {
+                    //Wrap socket with logger
+                    String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+                    LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
+                            new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
+                            false,
+                            TimeStampLogging.UTC);
+                    logExplainRead = result;
+                    logExplainWrite = result;
+                    return result;
+                } else {
+                    logExplainRead = null;
+                    logExplainWrite = null;
+                    return serialPortSocket;
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.INFO, "Can't use spsw factory: " + spsf, e);
+            }
         }
+        throw new RuntimeException("No useable spsw factory found");
     }
 
     private void handleIOException(IOException ioe) {
+        //TODO This might be not correct for write
+        logExplainRead.explainRead(ioe);
         LOGGER.log(Level.SEVERE, "Got IOE in oneWireAdapter", ioe);
         try {
             oneWireAdapter.sendReset();

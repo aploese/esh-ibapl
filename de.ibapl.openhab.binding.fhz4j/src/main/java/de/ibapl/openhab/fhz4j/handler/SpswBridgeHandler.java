@@ -62,6 +62,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -298,7 +299,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         }
     }
 
-    private final SerialPortSocketFactory serialPortSocketFactory;
+    private final List<SerialPortSocketFactory> serialPortSocketFactories;
 
     private static final String PORT_PARAM = "port";
     private static final String SPEED_PARAM = "speed";
@@ -331,28 +332,37 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private final CronScheduler cronScheduler;
     private ScheduledCompletableFuture refreshJob;
 
-    public SpswBridgeHandler(Bridge bridge, SerialPortSocketFactory serialPortSocketFactory, CronScheduler cronScheduler) {
+    public SpswBridgeHandler(Bridge bridge, List<SerialPortSocketFactory> serialPortSocketFactories, CronScheduler cronScheduler) {
         super(bridge);
-        this.serialPortSocketFactory = serialPortSocketFactory;
+        this.serialPortSocketFactories = serialPortSocketFactories;
         this.cronScheduler = cronScheduler;
         protocolFHT = true;
     }
 
     private SerialPortSocket createSerialPortSocket() throws IOException {
         String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-        final SerialPortSocket sps = serialPortSocketFactory.open(port);
-        if (logSerialPort) {
-            LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithCustomOutputStream(sps,
-                    new SupressReadTimeoutExceptionLogWriter(new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
-                            true,
-                            TimeStampLogging.UTC,
-                            true));
-            logExplainRead = result;
-            logExplainWrite = result;
-            return result;
-        } else {
-            return sps;
+        for (SerialPortSocketFactory spsf : serialPortSocketFactories) {
+            try {
+                final SerialPortSocket sps = spsf.open(port);
+                if (logSerialPort) {
+                    LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithCustomOutputStream(sps,
+                            new SupressReadTimeoutExceptionLogWriter(new FileOutputStream("CUL_SpswBridgeHandler_" + opendString + ".log.txt"),
+                                    true,
+                                    TimeStampLogging.UTC,
+                                    true));
+                    logExplainRead = result;
+                    logExplainWrite = result;
+                    return result;
+                } else {
+                    logExplainRead = null;
+                    logExplainWrite = null;
+                    return sps;
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.INFO, "Can't use spsw factory: " + spsf, e);
+            }
         }
+        throw new RuntimeException("No useable spsw factory found");
     }
 
     @Override
@@ -421,7 +431,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
     @Override
     public void initialize() {
-        LOGGER.log(Level.FINE, "Initializing SpswBridgeHandler.");
+        //TODO make log level fine
+        LOGGER.log(Level.INFO, "Initializing SpswBridgeHandler: {0}", this);
 
         Configuration config = getThing().getConfiguration();
 
@@ -470,11 +481,12 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
         try {
             culAdapter = new CulAdapter(createSerialPortSocket(), new Listener(), speed);
             initCulAdapter();
-        } catch (IOException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+        } catch (IOException ioe) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ioe.getMessage());
+            LOGGER.log(Level.SEVERE, "Got IOE in CUL Adapter during initialization", ioe);
             try {
                 culAdapter.close();
-            } catch (Exception e1) {
+            } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Could not shutdown fhzAdapter", e);
             }
             culAdapter = null;
@@ -497,6 +509,8 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
 
     @Override
     public void dispose() {
+        //TODO make log level fine
+        LOGGER.log(Level.INFO, "Disposing SpswBridgeHandler: {0}", this);
         if (refreshJob != null) {
             refreshJob.cancel(true);
             refreshJob = null;

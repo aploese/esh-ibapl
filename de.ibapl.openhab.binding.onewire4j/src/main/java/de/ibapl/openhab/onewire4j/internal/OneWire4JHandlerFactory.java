@@ -30,6 +30,7 @@ import de.ibapl.openhab.onewire4j.internal.discovery.OneWire4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.openhab.core.config.discovery.DiscoveryService;
@@ -59,7 +60,7 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
             OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232);
 
     @Reference
-    private SerialPortSocketFactory serialPortSocketFactory;// = new de.ibapl.spsw.jniprovider.SerialPortSocketFactoryImpl();
+    private List<SerialPortSocketFactory> serialPortSocketFactories;
 
     private final Map<ThingUID, org.osgi.framework.ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
@@ -77,7 +78,7 @@ public class OneWire4JHandlerFactory extends BaseThingHandlerFactory {
         } else if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_HUMIDITY)) {
             return new HumidityHandler(thing);
         } else if (thingTypeUID.equals(OneWire4JBindingConstants.BRIDGE_TYPE_ONEWIRE_RS232)) {
-            final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactory);
+            final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactories);
             registerDiscoveryService(spswBridgeHandler);
             return spswBridgeHandler;
         } else if (thingTypeUID.equals(OneWire4JBindingConstants.THING_TYPE_ONEWIRE_UNKNOWN)) {

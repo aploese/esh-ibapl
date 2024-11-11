@@ -33,6 +33,7 @@ import de.ibapl.openhab.fhz4j.internal.discovery.FHZ4JDiscoveryService;
 import de.ibapl.spsw.api.SerialPortSocketFactory;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -71,7 +72,7 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
             FHZ4JBindingConstants.THING_TYPE_FHZ4J_MULTI_ZONE_CONTROLLER_EVO_HOME);
 
     @Reference
-    private SerialPortSocketFactory serialPortSocketFactory;
+    private List<SerialPortSocketFactory> serialPortSocketFactories;
 
     @Reference
     private CronScheduler cronScheduler;
@@ -104,12 +105,16 @@ public class FHZ4JHandlerFactory extends BaseThingHandlerFactory {
             final Hms100TfHandler hms100TkHandler = new Hms100TfHandler(thing);
             return hms100TkHandler;
         } else if (thingTypeUID.equals(FHZ4JBindingConstants.BRIDGE_TYPE_FHZ4J_RS232)) {
-            if (serialPortSocketFactory == null) {
-                logger.severe("serialPortSocketFactory == null");
+            if (serialPortSocketFactories == null) {
+                logger.severe("serialPortSocketFactories == null");
+                //TODO
+                return null;
+            } else if (serialPortSocketFactories.isEmpty()) {
+                logger.severe("serialPortSocketFactories is empty");
                 //TODO
                 return null;
             } else {
-                final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactory, cronScheduler);
+                final SpswBridgeHandler spswBridgeHandler = new SpswBridgeHandler((Bridge) thing, serialPortSocketFactories, cronScheduler);
                 registerDiscoveryService(spswBridgeHandler);
                 return spswBridgeHandler;
             }
