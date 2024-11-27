@@ -73,16 +73,6 @@
 
     <repositories>
         <repository>
-            <id>sonatype-snapshots</id>
-            <name>Sonatype Snapshots Maven Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <name>Sonatype Maven Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </repository>
-        <repository>
             <id>openhab-release</id>
             <releases>
                 <enabled>true</enabled>
@@ -128,7 +118,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -156,7 +146,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.11.1</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -177,12 +167,12 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.5</version>
+                    <version>4.6</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.mycila</groupId>
                             <artifactId>license-maven-plugin-git</artifactId>
-                            <version>4.5</version>
+                            <version>4.6</version>
                         </dependency>
                     </dependencies>
                     <!-- do not pass config to the modules-->
@@ -229,7 +219,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>3.2.7</version>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -258,7 +248,7 @@
                     <artifactId>karaf-maven-plugin</artifactId>
                     <version>4.4.6</version>
                 </plugin>
-                <plugin>
+                <!--plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>0.6.0</version>
@@ -266,7 +256,7 @@
                     <configuration>
                         <publishingServerId>central</publishingServerId>
                     </configuration>
-                </plugin>
+                </plugin-->
             </plugins>
         </pluginManagement>
 
@@ -295,10 +285,10 @@
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
 
