@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="fhz4j"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="evo-home-single-zone-thermostat">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge-cul"/>
-		</supported-bridge-type-refs>
+    <thing-type id="evo-home-single-zone-thermostat">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge-cul"/>
+        </supported-bridge-type-refs>
 
-		<label>FHZ4J Evo Home Multi Zone Controller Binding Thing</label>
-		<description>Evo Home multi zone controller binding</description>
+        <label>FHZ4J Evo Home Single Zone Controller Binding Thing</label>
+        <description>Evo Home single zone controller binding</description>
 
-		<channels>
-			<channel id="temperatureMeasured" typeId="temperatureMeasured"/>
-			<channel id="desiredTemperature" typeId="desiredTemperature"/>
-			<channel id="windowFunction" typeId="system.rawbutton"/>
-			<channel id="operationLock" typeId="system.rawbutton"/>
-			<channel id="minTemperature" typeId="desiredTemperature"/>
-			<channel id="maxTemperature" typeId="desiredTemperature"/>
-		</channels>
+        <channels>
+            <channel id="temperatureMeasured" typeId="temperatureMeasured"/>
+            <channel id="desiredTemperature" typeId="desiredTemperature"/>
+            <channel id="windowFunction" typeId="system.rawbutton"/>
+            <channel id="operationLock" typeId="system.rawbutton"/>
+            <channel id="minTemperature" typeId="desiredTemperature"/>
+            <channel id="maxTemperature" typeId="desiredTemperature"/>
+            <channel id="low-battery" typeId="system.low-battery"/>
+        </channels>
 
-		<config-description>
-			<parameter name="deviceId" type="integer">
-				<label>DeviceId</label>
-				<description>The deviceId</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <properties>
+            <property name="thingTypeVersion">1</property>
+        </properties>
+
+        <config-description>
+            <parameter name="deviceId" type="integer">
+                <label>DeviceId</label>
+                <description>The deviceId</description>
+            </parameter>
+        </config-description>
+        
+    </thing-type>
 
 </thing:thing-descriptions>

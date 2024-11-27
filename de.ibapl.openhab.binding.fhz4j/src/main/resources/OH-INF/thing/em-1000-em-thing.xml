@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="fhz4j"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="em-1000-em">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge-cul"/>
-		</supported-bridge-type-refs>
+    <thing-type id="em-1000-em">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge-cul"/>
+        </supported-bridge-type-refs>
 
-		<label>EM 1000 EM</label>
-		<description>Energy Measurement</description>
+        <label>EM 1000 EM</label>
+        <description>Energy Measurement</description>
 
-		<channels>
-			<channel id="energyTotal" typeId="energyMeasured"/>
-			<channel id="power5Minutes" typeId="powerMeasured">
-				<label>Power 5 min</label>
-			</channel>
-			<channel id="maxPower5Minutes" typeId="powerMeasured">
-				<label>max Power 5 min</label>
-			</channel>
-		</channels>
+        <channels>
+            <channel id="energyTotal" typeId="energyMeasured"/>
+            <channel id="power5Minutes" typeId="powerMeasured">
+                <label>Power 5 min</label>
+            </channel>
+            <channel id="maxPower5Minutes" typeId="powerMeasured">
+                <label>max Power 5 min</label>
+            </channel>
+        </channels>
 
-		<config-description>
-			<parameter name="address" type="integer">
-				<label>Address</label>
-				<description>The Address.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <config-description>
+            <parameter name="address" type="integer">
+                <label>Address</label>
+                <description>The Address.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 
 </thing:thing-descriptions>

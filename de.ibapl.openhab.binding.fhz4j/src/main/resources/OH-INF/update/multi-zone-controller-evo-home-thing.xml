@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<update:update-descriptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:update="https://openhab.org/schemas/update-description/v1.0.0"
+                            xsi:schemaLocation="https://openhab.org/schemas/update-description/v1.0.0 https://openhab.org/schemas/update-description-1.0.0.xsd">
+
+    <thing-type uid="fhz4j:evo-home-multi-zone-controller">
+        <instruction-set targetVersion="1">
+            <add-channel id="windowOpen_00">
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 00</label>
+            </add-channel>
+            <add-channel id="windowOpen_01">
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 01</label>
+            </add-channel>
+            <add-channel id="windowOpen_02">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 02</label>
+            </add-channel>
+            <add-channel id="windowOpen_03">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 03</label>
+            </add-channel>
+            <add-channel id="windowOpen_04">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 04</label>
+            </add-channel>
+            <add-channel id="windowOpen_05">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 05</label>
+            </add-channel>
+            <add-channel id="windowOpen_06">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 06</label>
+            </add-channel>
+            <add-channel id="windowOpen_07">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 07</label>
+            </add-channel>
+            <add-channel id="windowOpen_08">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 08</label>
+            </add-channel>
+            <add-channel id="windowOpen_09">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 09</label>
+            </add-channel>
+            <add-channel id="windowOpen_10">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 10</label>
+            </add-channel>
+            <add-channel id="windowOpen_11">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 11</label>
+            </add-channel>
+            <add-channel id="windowOpen_12">                
+                <type>fhz4j:sensor_window</type>
+                <label>Window Open Zone 12</label>
+            </add-channel>
+        </instruction-set>
+    </thing-type>
+
+</update:update-descriptions>

@@ -71,6 +71,7 @@ public class FHZ4JBindingConstants {
     public static final String _10 = "_10";
     public static final String _11 = "_11";
     public static final String _12 = "_12";
+    public static final String CHANNEL_WINDOW_OPEN = "windowOpen";
     public static final String CHANNEL_WINDOW_FUNCTION = "windowFunction";
     public static final String CHANNEL_OPERATION_LOCK = "operationLock";
     public static final String CHANNEL_MIN_TEMP = "minTemp";

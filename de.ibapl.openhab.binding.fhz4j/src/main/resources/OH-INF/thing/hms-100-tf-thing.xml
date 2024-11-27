@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="fhz4j"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="hms-100-tf">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="rs232-bridge-cul"/>
-		</supported-bridge-type-refs>
+    <thing-type id="hms-100-tf">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="rs232-bridge-cul"/>
+        </supported-bridge-type-refs>
 
-		<label>HMS 100 TF Sensor</label>
-		<description>Temp Humidity sensor</description>
+        <label>HMS 100 TF Sensor</label>
+        <description>Temp Humidity sensor</description>
 
-		<channels>
-			<channel id="temperatureMeasured" typeId="temperatureMeasured"/>
-			<channel id="humidityMeasured" typeId="humidityMeasured"/>
-			<channel id="low-battery" typeId="system.low-battery"/>
-		</channels>
+        <channels>
+            <channel id="temperatureMeasured" typeId="temperatureMeasured"/>
+            <channel id="humidityMeasured" typeId="humidityMeasured"/>
+            <channel id="low-battery" typeId="system.low-battery"/>
+        </channels>
 
-		<config-description>
-			<parameter name="housecode" type="integer">
-				<label>Housecode</label>
-				<description>The Housecode.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+        <config-description>
+            <parameter name="housecode" type="integer">
+                <label>Housecode</label>
+                <description>The Housecode.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 
 </thing:thing-descriptions>

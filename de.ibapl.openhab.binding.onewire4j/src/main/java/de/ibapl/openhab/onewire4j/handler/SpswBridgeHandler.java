@@ -210,10 +210,10 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     private SerialPortSocket createSerialPort() throws IOException {
         for (SerialPortSocketFactory spsf : serialPortSocketFactories) {
             try {
-                SerialPortSocket serialPortSocket = spsf.open(port);
+                final SerialPortSocket serialPortSocket = spsf.open(port);
                 if (logSerialPort) {
                     //Wrap socket with logger
-                    String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+                    final String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
                     LoggingSerialPortSocket result = LoggingSerialPortSocket.wrapWithHexOutputStream(serialPortSocket,
                             new FileOutputStream("OneWire_SpswBridgeHandler_" + opendString + ".log.txt"),
                             false,

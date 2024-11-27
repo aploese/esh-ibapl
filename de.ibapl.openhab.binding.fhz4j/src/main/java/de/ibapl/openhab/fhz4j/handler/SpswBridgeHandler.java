@@ -340,7 +340,7 @@ public class SpswBridgeHandler extends BaseBridgeHandler {
     }
 
     private SerialPortSocket createSerialPortSocket() throws IOException {
-        String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+        final String opendString = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         for (SerialPortSocketFactory spsf : serialPortSocketFactories) {
             try {
                 final SerialPortSocket sps = spsf.open(port);
